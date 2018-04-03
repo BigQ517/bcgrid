@@ -1,0 +1,132 @@
+/**
+ * File:bc.grid.css
+ * Youth is just a section of unoptimized code!
+ * -------------------------------------------------------------------------
+ * Created by BigQ on 2018/4/3.
+ *--------------------------------------------------------------------------
+ * This technical information is confidential information,
+ * without my written,permission is prohibited for commercial purposes.　
+ *--------------------------------------------------------------------------
+ */
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    background-color: transparent;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.table-bordered {
+    border: 1px solid #ddd;
+}
+.table>thead>tr {
+    color: #707070;
+    font-weight: 400;
+    background: #F2F2F2;
+    background-image: -o-linear-gradient(top,#f8f8f8 0,#ececec 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff8f8f8', endColorstr='#ffececec', GradientType=0);
+}
+.table.table-bordered>thead>tr>th:first-child {
+    border-left-color: #ddd;
+}
+.table>thead:first-child>tr:first-child>th,.table>thead:first-child>tr:first-child>td {
+    border-top: 0;
+}
+.table>thead>tr>th {
+    vertical-align: middle;
+    border-color: #ddd;
+    font-weight: 700;
+    border-bottom: 2px solid #ddd;
+}
+.table>thead>tr>th:first-child {
+    border-left-color: #F1F1F1;
+}
+.table-bordered>thead>tr>th, .table-bordered>thead>tr>td {
+    border-bottom-width: 2px;
+}
+.table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+    border: 1px solid #ddd;
+}
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+    padding: 8px;
+    line-height: 20px;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}
+th,td, .table-bordered {
+    border-radius: 0!important;
+}
+.table-striped>tbody>tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+.table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+    border: 1px solid #ddd;
+}
+.table-hover>tbody>tr:hover {
+    background-color: #f5f5f5;
+}
+.table-hover>tbody>tr>td.active:hover, .table-hover>tbody>tr>th.active:hover, .table-hover>tbody>tr.active:hover>td, .table-hover>tbody>tr:hover>.active, .table-hover>tbody>tr.active:hover>th {
+    background-color: #e8e8e8;
+}
+.table>td>label, .table>th>label {
+    margin-bottom: 0;
+    line-height: inherit;
+    vertical-align: middle;
+    font-weight: 400;
+    font-size: 14px;
+    position: relative;
+}
+.table label input[type=checkbox], .table label input[type=radio] {
+    z-index: -100!important;
+    width: 1px!important;
+    height: 1px!important;
+    clip: rect(1px,1px,1px,1px);
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    margin: 4px 0 0;
+    line-height: normal;
+    box-sizing: border-box;
+    padding: 0;
+}
+.table input[type=checkbox]+.lbl, .table input[type=radio]+.lbl {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    line-height: 20px;
+    min-height: 18px;
+    min-width: 18px;
+    font-weight: 400;
+    cursor: pointer;
+}
+.table input[type=checkbox]+.lbl::before, .table input[type=radio]+.lbl::before {
+    cursor: pointer;
+    font-family: fontAwesome;
+    font-weight: 400;
+    font-size: 12px;
+    color: #32a3ce;
+    content: "\a0";
+    background-color: #FAFAFA;
+    border: 1px solid #c8c8c8;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    border-radius: 0;
+    display: inline-block;
+    text-align: center;
+    height: 16px;
+    line-height: 14px;
+    min-width: 16px;
+    margin-right: 1px;
+    position: relative;
+    top: -1px;
+    box-sizing: border-box;
+}
+.table input[type=checkbox]:hover+.lbl::before,.table input[type=radio]:hover+.lbl::before,.table input[type=checkbox]+.lbl:hover::before,.table input[type=radio]+.lbl:hover::before {
+    border-color: #ff893c;
+}
+.table input[type=checkbox]:checked+.lbl::before,.table input[type=radio]:checked+.lbl::before {
+    display: inline-block;
+    content: '\f00c';
+    background-color: #F5F8FC;
+    border-color: #adb8c0;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05),inset 0 -15px 10px -12px rgba(0,0,0,.05),inset 15px 10px -12px rgba(255,255,255,.1);
+}
