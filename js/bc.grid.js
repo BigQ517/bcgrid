@@ -29,11 +29,13 @@
             csrfVaildate: true,
             csrfName: '_csrf',
             csrf: '',
-            url: false,                             //ajax url
+            url: '',                             //ajax url
             data: [],                            //初始化数据
             localData: [],
             autoLoadData: true,
-            showLoadingTip: true,               //是否显示加载状态提示
+            showLoading: true,               //是否显示加载状态提示
+            loadingTip: 'Loading',//加载提示信息
+            loadingStyle: 3,//加载样式
             usePager: true,                         //是否分页
             page: 1,                                //默认当前页
             pageSize: 20,                           //每页默认的结果数 all全部
@@ -45,16 +47,18 @@
             columns: [],                          //数据源
             dataSource: 'server',                     //数据源：本地(local)或(server),本地是将读取p.data。不需要配置，取决于设置了data或是url
             pageSourceType: 'ajax',                    //分页的方式：本地(local)或(server),选择本地方式时将在客服端分页、排序。
-            checkbox: false,                         //是否显示复选框
-            serialNum: true,    //是否显示序号
-            showBorder: true,
+            showCheckbox: false,                         //是否显示复选框
+            showSerialNum: true,    //是否显示序号
+            showBorder: true, //是否显示边框
+            showStripe: true,//是否显示条纹间隔效果
+            showHover: true,//是否显示hover效果
             showHead: true,
             showTitle: false,
             title: "",
             noDataText: '<div class="center">暂无任何记录</div>',
             dateFormat: 'yyyy-MM-dd hh:mm:ss',              //默认时间显示格式
             wrapCssClass: '',                    //类名
-            cssClass: '.table',                    //类名
+            cssClass: 'table',                    //类名
             rows: 'rows',                       //数据源字段名
             total: 'total',                     //数据源记录数字段名
             pageParamName: 'page',               //页索引参数名，(提交给服务器)
@@ -90,12 +94,12 @@
         if (this.treeOpt) {
             this.treeOpt = $.extend({columnID: '', name: 'child', expand: false}, this.treeOpt);
         }
-        this.options.url = $.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
+        this.options.url = utils.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
     };
     //定义bcGrid的方法
     bcGrid.prototype = {
         render: function () {
-            this._init();
+            _init.call(this);
             return this;
         },
 
@@ -109,64 +113,64 @@
             var g = this, p = this.options;
             var dataParam = [];
             if (p.params) {
-                var params = $.isFunction(p.params) ? p.params() : p.params;
-                if (params.length) {
+                var params = utils.isFunction(p.params) ? p.params.call(g) : p.params;
+                if (utils.isArray(params)) {
                     $.each(params, function () {
                         dataParam.push({name: this.name, value: this.value});
                     });
                 }
-                else if (typeof params == "object") {
+                else if (utils.isObject(params)) {
                     for (var name in params) {
                         dataParam.push({name: name, value: params[name]});
                     }
                 }
 
             }
-            if (p.enableSort && p.sortname && p.sortorder) {
-                dataParam.push({name: p.sortnameParamName, value: p.sortname});
-                dataParam.push({name: p.sortorderParamName, value: p.sortorder});
+            if (p.enableSort && p.sortName) {
+                dataParam.push({name: p.sortNameParamName, value: p.sortName});
+                dataParam.push({name: p.sortTypeParamName, value: p.sortType});
             }
             dataParam.push({name: p.pageParamName, value: p.page});
-            dataParam.push({name: p.pagesizeParamName, value: p.pageSize});
-
+            dataParam.push({name: p.pageSizeParamName, value: p.pageSize});
 
             if (p.csrfVaildate) {
                 dataParam.push({name: p.csrfName, value: p.csrf});
             }
+            var beforeRes = true;
             if (p.onLoadData) {
-                p.onLoadData.call(g);
+                beforeRes=  p.onLoadData.call(g) || true;
+            }
+            if(beforeRes == false){
+                return;
             }
             if (p.dataSource == 'server') {
-                BC.ajax({
+                utils.ajax({
                     url: p.url,
-                    showLoading: p.showLoadingTip,
-                    loadingTip: '数据加载中...',
+                    showLoading: p.showLoading,
+                    loadingTip: p.loadingTip,
                     data: $.param(dataParam),
-                    success: function (message, data) {
+                    dataType:'json',
+                    success: function (data) {
                         p.data = data;
-                        g._displayData();
+                        _displayData.call(g);
                         if (isReloadPage) {
-                            g._displayPage();
-                        }
-                        if (p.onComplete) {
-                            p.onComplete.call(g, p.data);
-                        }
-                    },
-                    fail: function (message) {
-                        g._error(message);
-                    },
-                    error: function (MLHttpRequest, textStatus, errorThrown) {
-                        g._error('数据加载失败！[' + textStatus + ']');
-                    },
-                    complete: function () {
-                        //
-                        if (g.checkedTool) {
-                            $(".dataTotalCount", g.checkedTool).html(p.data[p.total]);
-                            $(".dataCurrentCount", g.checkedTool).html(p.data[p.rows].length);
+                         //   g._displayPage();
                         }
                         if (p.onLoadedData) {
                             p.onLoadedData.call(g, p.data);
                         }
+                    },
+
+                    error: function (MLHttpRequest, textStatus, errorThrown) {
+                        _error.call(g,'数据加载失败！'+errorThrown.toLocaleString());
+                    },
+                    complete: function () {
+                        //
+                      /*  if (g.checkedTool) {
+                            $(".dataTotalCount", g.checkedTool).html(p.data[p.total]);
+                            $(".dataCurrentCount", g.checkedTool).html(p.data[p.rows].length);
+                        }*/
+
                     }
                 });
             }
@@ -268,7 +272,7 @@
         getCheckedRows: function () {
             var rows = [];
             var g = this, p = this.options;
-            if (p.checkbox) {
+            if (p.showCheckbox) {
                 $('input[tag="bcgrid_checkbox"]', g.gridContent).each(function () {
                     if ($(this).is(':checked')) {
                         rows.push(p.data[p.rows][parseInt($(this).data('index'))]);
@@ -291,7 +295,7 @@
         getCheckedRowsIndex: function () {
             var rows = [];
             var g = this, p = this.options;
-            if (p.checkbox) {
+            if (p.showCheckbox) {
                 $('input[tag="bcgrid_checkbox"]', g.gridContent).each(function () {
                     if ($(this).is(':checked')) {
                         rows.push(parseInt($(this).data('index')));
@@ -355,36 +359,78 @@
     var _init = function () {
         var g = this, p = this.options;
 
-        this.ID = uitls.getID();
+        this.ID = utils.getID();
         //csrf
-        if (p.csrfVaildate && $.isEmptyObject(p.csrf)) {
+        if (p.csrfVaildate && utils.isEmptyObject(p.csrf)) {
             p.csrf = $("input[name='" + p.csrfName + "']").val();
         }
         if (!g.gridWrap.hasClass(p.wrapCssClass)) {
             g.gridWrap.addClass(p.wrapCssClass);
         }
         //page
-        var page = g._getQueryString(p.pageParamName);
+        var page = utils.getQueryString(p.pageParamName);
         if (!isNaN(page) && page != '') {
             p.page = page;
         }
-        this.grid = $('<table role="grid"></table>');
+        g.grid = $('<table role="grid"></table>');
         g.grid.addClass(p.cssClass);
-        if (!p.showBorder) {
-            g.grid.removeClass("table-bordered");
+        if (p.showBorder) {
+            g.grid.addClass("table-bordered");
         }
-        if (p.onSelectRow) {
-            g.grid.addClass("enable-select");
+        if (p.showStripe) {
+            g.grid.addClass("table-striped");
         }
-        g.gridWrap.html(g.grid);
+        if (p.showHover) {
+            g.grid.addClass("table-hover");
+        }
         _preRenderColumnOpt.call(g);
         if (p.showHead || p.showTitle) {
             _setHead.call(g);
         }
         _setGridContent.call(g);
+        g.gridWrap.html(g.grid);
         if (p.autoLoadData) {
-            loadData.call(g, true);
+            g.loadData(true);
         }
+        if (p.onCompleted) {
+            p.onCompleted.call(g, p.data);
+        }
+    };
+    var _preRenderColumnOpt = function () {
+        var g = this, p = this.options;
+        var defaultOpt = {
+            display: '数据',
+            id: '',
+            name: 'name',
+            type: 'text',
+            render: null,
+            hide: false,
+            align: null,
+            maxLength: null,
+            format: null,
+            role: 'data',
+            enableSort: true,
+            enableEdit: false,
+            editType: 'textField',
+            action: null,
+            saveUrl: ''
+
+        };
+        _showColumnLength = p.columns.length;
+        for (var i = 0; i < p.columns.length; i++) {
+            p.columns[i] = $.extend({}, defaultOpt, p.columns[i] || {});
+            if (p.columns[i].hide) {
+                _showColumnLength--;
+            }
+        }
+        //
+        if (p.showCheckbox) {
+            _showColumnLength++;
+        }
+        if (p.showSerialNum) {
+            _showColumnLength++;
+        }
+
     };
     //head
     var _setHead = function () {
@@ -393,49 +439,45 @@
         headAttr.push('<thead>')
         if (p.showTitle) {
             headAttr.push('<tr role="row">');
-            headAttr.push('<th class="text-center" colspan="' + g._showColumnLength + '" id="bcgrid_' + g.ID + '_title">' + p.title + '</th>');
+            headAttr.push('<th class="center" colspan="' + _showColumnLength + '" id="bcgrid_' + g.ID + '_title">' + p.title + '</th>');
             headAttr.push('</tr>')
         }
         if (p.showHead) {
             headAttr.push('<tr role="row">');
-            if (p.checkbox) {
+            if (p.showCheckbox) {
                 headAttr.push('<th class="center"> <label><input type="checkbox" id="bcgrid_' + g.ID + '_checkbox_all" tag="bcgrid_checkbox"/><span class="lbl"></span></label></th>');
             }
-            if (p.serialNum) {
+            if (p.showSerialNum) {
                 headAttr.push('<th class="center">序号</th>');
             }
             //标题
             $.each(p.columns, function (index, item) {
-                var btnStr = '';
-                if (item.enableEdit) {
-                    btnStr = '<a href="javascript:;" class="grid_head_btn_edit" data-columnIndex="' + index + '" id="bcgrid_head_edit_' + index + '" data-action="edit" data-edittype="' + item.editType + '">[编辑]</a>';
-                }
-                var showText = '<span data-col="' + item.name + '" data-columnindex="' + index + '">' + item.display + '</span>' + btnStr;
-                if (item.hide) {
-                    headAttr.push('<th data-col="' + item.name + '" class="hidden">' + showText + '</th>');
-                }
-                else {
-                    if (item.width) {
-                        if (!isNaN(item.width)) {
-                            headAttr.push('<th class="width-' + item.width + '">' + showText + '</th>');
-                        }
-                        else {
-                            headAttr.push('<th  width="' + item.width + '">' + showText + '</th>');
-                        }
+                var $showText = $('<span data-col="' + item.name + '" data-columnindex="' + index + '">' + item.display + '</span>');
+                /*   if (item.hide) {
+                 headAttr.push('<th data-col="' + item.name + '" class="hidden">' + showText + '</th>');
+                 }
+                 else {*/
+                var $th = $('<th></th>');
+                if (!utils.isEmptyObject(item.width)) {
+                    if (!isNaN(item.width)) {
+                        $th.addClass("width-" + item.width);
                     }
                     else {
-                        headAttr.push('<th>' + showText + '</th>');
+                        $th.attr("width", item.width);
+
                     }
                 }
+                if (item.hide) {
+                    $th.addClass("hidden");
+                }
+                $th.html($showText);
+                headAttr.push($th.prop('outerHTML'));
             });
             headAttr.push('</tr>')
         }
         headAttr.push('</thead>')
         g.gridHead = $(headAttr.join(''));
-        if (p.showCheckedTool) {
-            g.checkedTool = $('.checkedTool', this.gridHead);
-        }
-        g.grid.html(this.gridHead);
+        g.grid.html(g.gridHead);
     };
     var _setGridContent = function () {
         this.gridContent = $('<tbody></tbody>');
@@ -444,61 +486,60 @@
     var _displayData = function () {
         _rowIndex = 0;
         var g = this;
-        if (!$.isEmptyObject(this.options.data)) {
-            _displayListData(typeof this.options.data[this.options.rows] != 'undefined' ? this.options.data[this.options.rows] : [])
+        if (!utils.isEmptyObject(this.options.data)) {
+            _displayListData.call(this,utils.isDefined(this.options.data[this.options.rows]) ? this.options.data[this.options.rows] : [])
         }
-        g._bindEvent();
+     //   _bindEvent.call(this);
     };
     var _error = function (message) {
         if (this.options.onError) {
             this.options.onError.call(this, message);
         }
-        else {
-            BC.showError(message);
+       else {
+            console.log(message);
         }
     };
     var _displayListData = function (data) {
         var g = this, p = this.options;
         g.gridContent.empty();
-        g._rowIndex = 0;
+        _rowIndex = 0;
         var dataHtml = [];
         if (data.length == 0) {
             dataHtml.push('<tr id="bcgrid_' + g.ID + '_list_nodata" role="row" class="odd no_data">');
-            dataHtml.push('<td colspan="' + g._showColumnLength + '" class="text-center">' + p.noDataText + '</td>');
+            dataHtml.push('<td colspan="' + _showColumnLength + '" class="text-center">' + p.noDataText + '</td>');
             dataHtml.push('</tr>');
-            //check disable
 
         }
         else {
             $.each(data, function (index, rowItem) {
-                g._treeDepth = 0;
+                _treeDepth = 0;
                 var tr = [];
-                if (g._rowIndex % 2 == 0) {
-                    tr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '" role="row" data-rowindex="' + g._rowIndex + '" class="odd">');
+                if (_rowIndex % 2 == 0) {
+                    tr.push('<tr id="bcgrid_' + g.ID + '_list_' + _rowIndex + '" role="row" data-rowindex="' + _rowIndex + '" class="odd">');
                 } else {
-                    tr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '" role="row" data-rowindex="' + g._rowIndex + '" class="even">');
+                    tr.push('<tr id="bcgrid_' + g.ID + '_list_' + _rowIndex + '" role="row" data-rowindex="' + _rowIndex + '" class="even">');
                 }
-                tr.push(g._preRenderColumn());
+                tr.push(_preRenderColumn.call(g));
                 $.each(p.columns, function (index, item) {
-                    tr.push(g._renderColumnData(item, rowItem, index, g._rowIndex));
+                    tr.push(_renderColumnData.call(g,item, rowItem, index, _rowIndex));
                 });
                 tr.push('</tr>');
                 tr = tr.join('');
                 //tree
-                var $tr = $(tr);
+                /*var $tr = $(tr);
                 if ($(".classification_name", $tr).length > 0 && rowItem[g.treeOpt.name].length > 0) {
                     g._treeDepth++;
                     tr += g._displayChildListData(rowItem[g.treeOpt.name], g._rowIndex + 0);
-                }
+                }*/
                 dataHtml.push(tr);
-                g._rowIndex++;
+                _rowIndex++;
 
             });
         }
         g.gridContent.html(dataHtml.join(''));
-        if (!g.isCheckedAll) {
+       /* if (!g.isCheckedAll) {
             $(':checkbox[tag="bcgrid_checkbox"]', g.gridHead).prop('checked', false);
-        }
+        }*/
     };
     var _displayChildListData = function (data, parentRowIndex) {
         var g = this, p = this.options;
@@ -533,65 +574,26 @@
         return dataHtml.join('');
 
     };
-    var _preRenderColumnOpt = function () {
-        var g = this, p = this.options;
-        var defaultOpt = {
-            display: '数据',
-            id: '',
-            name: 'name',
-            type: 'text',
-            render: null,
-            hide: false,
-            align: null,
-            maxLength: null,
-            format: null,
-            role: 'data',
-            enableSort: true,
-            enableEdit: false,
-            editType: 'textField',
-            onEdit: null,
-            onSave: null,
-            onSaved: null,
-            action: null,
-            saveUrl: ''
 
-        };
-        //_showColumnLength
-        g._showColumnLength = p.columns.length;
-        for (var i = 0; i < p.columns.length; i++) {
-            p.columns[i] = $.extend({}, defaultOpt, p.columns[i] || {});
-            if (p.columns[i].hide) {
-                g._showColumnLength--;
-            }
-        }
-        //
-        if (p.checkbox) {
-            g._showColumnLength++;
-        }
-        if (p.serialNum) {
-            g._showColumnLength++;
-        }
-
-    };
     var _preRenderColumn = function () {
         var g = this, p = this.options;
         var dataHtml = [];
-        if (p.checkbox) {
+        if (p.showCheckbox) {
             var checked = '';
-            if (g.isCheckedAll) {
+       /*     if (g.isCheckedAll) {
                 checked = ' checked="checked"';
-            }
-            dataHtml.push('<td class="center" data-role="checkbox"> <label class="pos-rel"><input type="checkbox" id="bcgrid_' + g.ID + '_checkbox_list_' + g._rowIndex + '" data-index="' + g._rowIndex + '" tag="bcgrid_checkbox" class="ace"' + checked + '/> </label></td>');
+            }*/
+            dataHtml.push('<td class="center" data-role="checkbox"> <label class="pos-rel"><input type="checkbox" id="bcgrid_' + g.ID + '_checkbox_list_' + _rowIndex + '" data-index="' + _rowIndex + '" tag="bcgrid_checkbox" ' + checked + '/><span class="lbl"></span></label></td>');
         }
-        if (p.serialNum) {
+        if (p.showSerialNum) {
             var serial = 0;
             if ((p.pageSize + '').toLowerCase() == 'all') {
-                serial = (  g._rowIndex + 1);
+                serial = (  _rowIndex + 1);
             }
             else {
-                serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
+                serial = (_rowIndex + 1) + (p.page - 1) * p.pageSize;
             }
-            dataHtml.push('<td class="text-center" data-role="data">' + serial + '</td>');
+            dataHtml.push('<td class="center" data-role="data">' + serial + '</td>');
         }
         return dataHtml.join('');
     };
@@ -630,49 +632,52 @@
         if (typeof opt.render === "string") {
             eval("opt.render=" + opt.render);
         }
-        if ($.isFunction(opt.render)) {
-            dataRes = opt.render(data, g._rowIndex);
-            if (dataRes && typeof dataRes === 'object') {
-                if (dataRes instanceof jQuery) {
+        if (utils.isFunction(opt.render)) {
+            dataRes = opt.render.call(g,data,_rowIndex);
+            if (utils.isObject(dataRes)) {
+                if (utils.isJqueryObject(dataRes)) {
                     dataRes = dataRes[0].outerHTML;
                 }
                 else {
                     dataRes = dataRes.outerHTML;
                 }
             }
+            if(!utils.isDefined(dataRes)){
+                dataRes="";
+            }
         }
         else {
             switch (opt.type) {
                 case 'grid':
                 case 'table':
-                    dataRes = g._tableItem(rowIndex + 0, column, data, colIndex);
+                    dataRes = _tableItem.call(g,rowIndex + 0, column, data, colIndex);
                     break;
                 case 'date':
-                    dataRes = g._formatDate(data[column.name], opt.format);
+                    dataRes = _formatDate.call(g,data[column.name], opt.format);
                     break;
                 case 'checkbox':
-                    dataRes = g._checkBoxItem(rowIndex + 0, column, data, colIndex);
+                    dataRes = _checkboxItem.call(g,rowIndex + 0, column, data, colIndex);
                     break;
                 case 'textField':
-                    dataRes = g._inputItem(rowIndex + 0, column, data, colIndex);
+                    dataRes = _inputItem.call(g,rowIndex + 0, column, data, colIndex);
                     break;
                 case 'select':
-                    dataRes = g._selectItem(rowIndex + 0, column, data, colIndex);
+                    dataRes = _selectItem.call(g,rowIndex + 0, column, data, colIndex);
                     break;
                 default:
-                    var val = typeof data[column.name] != 'undefined' ? data[column.name] + '' : '';
-                    if (opt.maxLength && !isNaN(opt.maxLength)) {
+                    var val = utils.isDefined(data[column.name])? data[column.name] + '' : '';
+                    if (opt.maxLength && utils.isNumber(opt.maxLength)) {
                         if (val.length > opt.maxLength) {
                             val = val.substr(0, opt.maxLength) + '...';
                         }
                     }
-                    dataRes = g._formatText(val, opt.format);
+                    dataRes = _formatText.call(this,val, opt.format);
                     break;
             }
         }
         dataRes += "";
         //childOpt
-        if (p.tree && p.tree.columnID == column.id) {
+     /*   if (p.tree && p.tree.columnID == column.id) {
             if (g._treeDepth > 0) {
                 var treeSpace = '';
                 for (var i = 0; i <= g._treeDepth; i++) {
@@ -688,11 +693,11 @@
         }
         if (opt.enableEdit) {
             dataRes = '<span data-role="display">' + dataRes + '</span>';
-        }
+        }*/
         dataRes = '<td data-role="' + opt.role + '" data-columnindex="' + colIndex + '">' + dataRes + '</td>';
         var $ret = $(dataRes);
         if (opt.align) {
-            $ret.addClass("text-" + opt.align);
+            $ret.addClass(opt.align);
         }
         if (opt.type == "table") {
             $ret.addClass("none-padding");
@@ -782,7 +787,7 @@
                 }
             }
             //
-            if (subOpt.serialNum) {
+            if (subOpt.showSerialNum) {
                 self._showColumnLength++;
             }
 
@@ -798,7 +803,7 @@
             }
             if (subOpt.showHead) {
                 headAttr.push('<tr role="row">');
-                if (subOpt.serialNum) {
+                if (subOpt.showSerialNum) {
                     headAttr.push('<th class="text-center">序号</th>');
                 }
                 //标题
@@ -851,7 +856,7 @@
                     } else {
                         tr.push('<tr role="row" data-rowindex="' + g._rowIndex + '" class="even">');
                     }
-                    if (subOpt.serialNum) {
+                    if (subOpt.showSerialNum) {
                         var serial = self._rowIndex + 1;
                         tr.push('<td class="text-center">' + serial + '</td>');
                     }
@@ -894,7 +899,7 @@
                         dataRes = g._formatDate(data[column.name], opt.format);
                         break;
                     case 'checkbox':
-                        dataRes = g._checkBoxItem(rowIndex + 0, column, data, colIndex);
+                        dataRes = g._checkboxItem(rowIndex + 0, column, data, colIndex);
                         break;
                     case 'textField':
                         dataRes = g._inputItem(rowIndex + 0, column, data, colIndex);
@@ -930,7 +935,7 @@
         }
 
     };
-    var _checkBoxItem = function (rowIndex, column, data, colIndex) {
+    var _checkboxItem = function (rowIndex, column, data, colIndex) {
         column.elValue = typeof column.elValue != 'undefined' ? column.elValue : 1;
         var $item = $("<label></label>");
         $check = $('<input class="columnCheckBox"   type="checkbox" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" >');
@@ -1035,13 +1040,6 @@
             return value.toString();
         }
     };
-    var _getQueryString = function (name) {
-        var result = location.search.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
-        if (result == null || result.length < 1) {
-            return "";
-        }
-        return result[1];
-    };
     var _initToolBtn = function () {
         var self = this, p = this.options;
         var toolArr = [];
@@ -1116,7 +1114,7 @@
             if ($(this).is(':checked')) {
                 isChecked = true;
             } else {
-                g.isCheckedAll = false;
+                //g.isCheckedAll = false;
             }
             var rowIndex = parseInt($(this).data('index'));
             if (p.onCheckClick && $.isFunction(p.onCheckClick)) {
@@ -1239,7 +1237,7 @@
                     var input = "";
                     switch (editType) {
                         case 'checkbox':
-                            input = g._checkBoxItem(rowIndex, column, data, columnIndex);
+                            input = g._checkboxItem(rowIndex, column, data, columnIndex);
                             break;
                         case 'textField':
                             input = g._inputItem(rowIndex, column, data, columnIndex);
@@ -1299,8 +1297,8 @@
         });
 
     };
-    var userAgent = (win.navigator && win.navigator.userAgent) || '';
-    var uitls = {
+    var userAgent = (window.navigator && window.navigator.userAgent) || '';
+    var utils = {
         isMS: /(edge|msie|trident)/i.test(userAgent) && !window.opera,
         isWebKit: /AppleWebKit/.test(userAgent),
         isFirefox: /Firefox/.test(userAgent),
@@ -1360,6 +1358,9 @@
         isFunction: function (obj) {
             return obj && typeof (obj) == "function";
         },
+        isEmptyObject: function (obj) {
+            return !this.isDefined(obj) || obj === "" || obj === null || obj === false;
+        },
         /**
          * in Array
          * @param arr
@@ -1382,6 +1383,165 @@
          */
         isDefined: function (obj) {
             return obj !== undefined && obj !== null;
+        },
+        getQueryString: function (name) {
+            var result = location.search.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
+            if (result == null || result.length < 1) {
+                return "";
+            }
+            return result[1];
+        },
+        getUrlParam: function (url,name) {
+            var match = RegExp('[?&]' + name + '=([^&]*)')
+                .exec(url);
+            return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+        },
+        setUrlParam: function (url, name, value) {
+            var r = url;
+            if (r != null && r != 'undefined' && r != "") {
+                value = encodeURIComponent(value);
+                var reg = new RegExp("(^|)" + name + "=([^&]*)(|$)");
+                var tmp = name + "=" + value;
+                if (url.match(reg) != null) {
+                    r = url.replace(eval(reg), tmp);
+                }
+                else {
+                    if (url.match("[\?]")) {
+                        r = url + "&" + tmp;
+                    } else {
+                        r = url + "?" + tmp;
+                    }
+                }
+            }
+            return r;
+        },
+        setLoadingCenterInBrowser: function () {
+            var ele = $(".bc-loading");
+            var bH = 0, bW = 0;
+            if (window.innerWidth) {
+                bW = window.innerWidth;
+                bH = window.innerHeight;
+
+            } else if (document.compatMode === "CSS1Compat") {
+                bW = document.documentElement.clientWidth;
+                bH = document.documentElement.clientHeight;
+
+            } else {
+                bW = document.body.clientWidth;
+                bH = document.body.clientHeight;
+            }
+            var eleW = ele.outerWidth();
+            var eleH = ele.outerHeight();
+            var left = (bW - eleW) / 2;
+            var top = (bH - eleH) / 2;
+            ele.css("left", left + "px");
+            ele.css("top", top + "px");
+        },
+        showShade: function (opacity, zIndex) {
+            opacity = this.isNumber(opacity) ? opacity : 0.4;
+            zIndex = this.isNumber(zIndex) ? zIndex : 19870515;
+            var shade = $('<div class="bc-shade"></div>');
+            shade.css("z-index", zIndex).css("opacity", opacity);
+            $('body').append(shade);
+        },
+        hideShade: function () {
+            $('.bc-shade').remove();
+        },
+        showLoading: function (options) {
+            var defOpt = {
+                style: 1,
+                text: 'Loading...',
+                zIndex: 19870515,
+                shade: 0.2
+            };
+            var opt = $.extend({}, defOpt, options || {});
+            //shade
+            this.showShade(opt.opacity, opt.zIndex - 1);
+            var $loadingWrap = $('<div class="bc-loading"></div>');
+            var $loadingContent = $('<div class="bc-loading-content"></div>');
+            //
+            if (opt.style != 3) {
+                $loadingContent.addClass("bc-loading" + opt.style);
+            } else {
+                $loadingWrap.addClass("bc-loading-msg");
+                $loadingContent.html('<i class="ico"></i>' + opt.text);
+            }
+            $loadingWrap.css("z-index", defOpt.zIndex);
+            $loadingWrap.append($loadingContent);
+            $('body').append($loadingWrap);
+            this.setLoadingCenterInBrowser();
+            $(window).on("resize", this.setLoadingCenterInBrowser);
+        },
+        hideLoading: function () {
+            $(window).unbind("resize", this.setLoadingCenterInBrowser);
+            $(".bc-loading").remove();
+            this.hideShade();
+        },
+        closeLoading: function () {
+            this.hideLoading();
+        },
+        ajax: function (options) {
+            //默认值
+            var defaultOpt = {
+                url: '',
+                async: true,
+                showLoading: true,
+                loadingTip: "数据请求中...",
+                loadingStyle: 3,
+                type: 'post',
+                dataType: 'json',
+                data: '',
+                beforeSend: null,
+                complete: null,
+                success: null,
+                error: null
+            };
+            var p = $.extend({}, defaultOpt, options || {});
+            if (utils.isEmptyObject(p.url)) {
+                p.url = window.location.href;
+            }
+            p.url = utils.setUrlParam(p.url, "_tmp", (new Date()).valueOf());
+            $.ajax({
+                cache: false,
+                async: p.async,
+                url: p.url,
+                data: p.data,
+                dataType: p.dataType,
+                type: p.type,
+                beforeSend: function () {
+                    if (p.showLoading) {
+                        utils.showLoading({style:p.loadingStyle,text:p.loadingTip});
+                    }
+                    if (p.beforeSend) {
+                        p.beforeSend();
+                    }
+
+                },
+                complete: function () {
+                    if (p.showLoading) {
+                        utils.hideLoading();
+                    }
+                    if (p.complete) {
+                        p.complete();
+                    }
+
+                },
+                success: function (result) {
+                    console.log(result);
+                    if (!result) return;
+                    if (p.success) {
+                        p.success(result);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    if (p.error) {
+                        p.error(XMLHttpRequest, textStatus, errorThrown);
+                    }
+                    else {
+                        console.log(errorThrown);
+                    }
+                }
+            });
         }
 
     };

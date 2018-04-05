@@ -16,62 +16,78 @@
     border-collapse: collapse;
     border-spacing: 0;
 }
+
 .table-bordered {
     border: 1px solid #ddd;
 }
-.table>thead>tr {
+
+.table > thead > tr {
     color: #707070;
     font-weight: 400;
     background: #F2F2F2;
-    background-image: -o-linear-gradient(top,#f8f8f8 0,#ececec 100%);
+    background-image: -o-linear-gradient(top, #f8f8f8 0, #ececec 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff8f8f8', endColorstr='#ffececec', GradientType=0);
 }
-.table.table-bordered>thead>tr>th:first-child {
+
+.table.table-bordered > thead > tr > th:first-child {
     border-left-color: #ddd;
 }
-.table>thead:first-child>tr:first-child>th,.table>thead:first-child>tr:first-child>td {
+
+.table > thead:first-child > tr:first-child > th, .table > thead:first-child > tr:first-child > td {
     border-top: 0;
 }
-.table>thead>tr>th {
+
+.table > thead > tr > th {
     vertical-align: middle;
     border-color: #ddd;
     font-weight: normal;
     border-bottom: 2px solid #ddd;
 }
-.table>thead>tr>th:first-child {
+
+.table > thead > tr > th:first-child {
     border-left-color: #F1F1F1;
 }
-.table-bordered>thead>tr>th, .table-bordered>thead>tr>td {
+
+.table-bordered > thead > tr > th, .table-bordered > thead > tr > td {
     border-bottom-width: 2px;
 }
-.table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
     border: 1px solid #ddd;
 }
-.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
     padding: 8px;
     line-height: 20px;
     vertical-align: top;
     border-top: 1px solid #ddd;
 }
-th,td, .table-bordered {
-    border-radius: 0!important;
+
+th, td, .table-bordered {
+    border-radius: 0 !important;
 }
-.table-striped>tbody>tr:nth-child(odd) {
+
+.table-striped > tbody > tr:nth-child(odd) {
     background-color: #f9f9f9;
 }
-.table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
     border: 1px solid #ddd;
 }
-.table-hover>tbody>tr:hover {
+
+.table-hover > tbody > tr:hover {
     background-color: #f5f5f5;
 }
-.table>thead>tr>td.active, .table>tbody>tr>td.active, .table>tfoot>tr>td.active, .table>thead>tr>th.active, .table>tbody>tr>th.active, .table>tfoot>tr>th.active, .table>thead>tr.active>td, .table>tbody>tr.active>td, .table>tfoot>tr.active>td, .table>thead>tr.active>th, .table>tbody>tr.active>th, .table>tfoot>tr.active>th {
+
+.table > thead > tr > td.active, .table > tbody > tr > td.active, .table > tfoot > tr > td.active, .table > thead > tr > th.active, .table > tbody > tr > th.active, .table > tfoot > tr > th.active, .table > thead > tr.active > td, .table > tbody > tr.active > td, .table > tfoot > tr.active > td, .table > thead > tr.active > th, .table > tbody > tr.active > th, .table > tfoot > tr.active > th {
     background-color: #f5f5f5;
 }
-.table-hover>tbody>tr>td.active:hover, .table-hover>tbody>tr>th.active:hover, .table-hover>tbody>tr.active:hover>td, .table-hover>tbody>tr:hover>.active, .table-hover>tbody>tr.active:hover>th {
+
+.table-hover > tbody > tr > td.active:hover, .table-hover > tbody > tr > th.active:hover, .table-hover > tbody > tr.active:hover > td, .table-hover > tbody > tr:hover > .active, .table-hover > tbody > tr.active:hover > th {
     background-color: #e8e8e8;
 }
-.table>td>label, .table>th>label {
+
+.table > td > label, .table > th > label {
     margin-bottom: 0;
     line-height: inherit;
     vertical-align: middle;
@@ -79,11 +95,12 @@ th,td, .table-bordered {
     font-size: 14px;
     position: relative;
 }
+
 .table label input[type=checkbox], .table label input[type=radio] {
-    z-index: -100!important;
-    width: 1px!important;
-    height: 1px!important;
-    clip: rect(1px,1px,1px,1px);
+    z-index: -100 !important;
+    width: 1px !important;
+    height: 1px !important;
+    clip: rect(1px, 1px, 1px, 1px);
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -92,7 +109,8 @@ th,td, .table-bordered {
     box-sizing: border-box;
     padding: 0;
 }
-.table input[type=checkbox]+.lbl, .table input[type=radio]+.lbl {
+
+.table input[type=checkbox] + .lbl, .table input[type=radio] + .lbl {
     position: relative;
     display: inline-block;
     margin: 0;
@@ -102,7 +120,8 @@ th,td, .table-bordered {
     font-weight: 400;
     cursor: pointer;
 }
-.table input[type=checkbox]+.lbl::before, .table input[type=radio]+.lbl::before {
+
+.table input[type=checkbox] + .lbl::before, .table input[type=radio] + .lbl::before {
     cursor: pointer;
     font-family: fontAwesome;
     font-weight: 400;
@@ -111,7 +130,7 @@ th,td, .table-bordered {
     content: "\a0";
     background-color: #FAFAFA;
     border: 1px solid #c8c8c8;
-    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
     border-radius: 0;
     display: inline-block;
     text-align: center;
@@ -123,26 +142,181 @@ th,td, .table-bordered {
     top: -1px;
     box-sizing: border-box;
 }
-.table input[type=checkbox]:hover+.lbl::before,.table input[type=radio]:hover+.lbl::before,.table input[type=checkbox]+.lbl:hover::before,.table input[type=radio]+.lbl:hover::before {
+
+.table input[type=checkbox]:hover + .lbl::before, .table input[type=radio]:hover + .lbl::before, .table input[type=checkbox] + .lbl:hover::before, .table input[type=radio] + .lbl:hover::before {
     border-color: #ff893c;
 }
-.table input[type=checkbox]:checked+.lbl::before,.table input[type=radio]:checked+.lbl::before {
+
+.table input[type=checkbox]:checked + .lbl::before, .table input[type=radio]:checked + .lbl::before {
     display: inline-block;
     content: '\f00c';
     background-color: #F5F8FC;
     border-color: #adb8c0;
-    box-shadow: 0 1px 2px rgba(0,0,0,.05),inset 0 -15px 10px -12px rgba(0,0,0,.05),inset 15px 10px -12px rgba(255,255,255,.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .05), inset 0 -15px 10px -12px rgba(0, 0, 0, .05), inset 15px 10px -12px rgba(255, 255, 255, .1);
 }
-.table th.center,.table td.center {
-    text-align: center!important;
+
+.table th.center, .table td.center {
+    text-align: center !important;
 }
-.table th.left,.table td.left {
-    text-align: left!important;
+
+.table th.left, .table td.left {
+    text-align: left !important;
 }
-.table th.center,.table td.center {
-    text-align: center!important;
+
+.table th.center, .table td.center {
+    text-align: center !important;
 }
+
 .table th.right, .table td.right {
-    text-align: right!important;
+    text-align: right !important;
 }
-.table .none-padding { padding: 0 !important; }
+
+.table .none-padding {
+    padding: 0 !important;
+}
+
+.table width-5 {
+    width: 5%;
+}
+
+.table width-10 {
+    width: 10%;
+}
+
+.table width-15 {
+    width: 15%;
+}
+
+.table width-20 {
+    width: 20%;
+}
+
+.table width-25 {
+    width: 25%;
+}
+
+.table width-30 {
+    width: 30%;
+}
+
+.table width-35 {
+    width: 35%;
+}
+
+.table width-40 {
+    width: 40%;
+}
+
+.table width-45 {
+    width: 45%;
+}
+
+.table width-50 {
+    width: 50%;
+}
+
+.table width-55 {
+    width: 55%;
+}
+
+.table width-60 {
+    width: 60%;
+}
+
+.table width-65 {
+    width: 65%;
+}
+
+.table width-70 {
+    width: 70%;
+}
+
+.table width-75 {
+    width: 75%;
+}
+
+.table width-80 {
+    width: 80%;
+}
+
+.table width-85 {
+    width: 85%;
+}
+
+.table width-90 {
+    width: 90%;
+}
+
+.table width-95 {
+    width: 95%;
+}
+
+.table width-100 {
+    width: 100%;
+}
+.table hidden, .table .hide {
+    display: none !important;
+}
+.bc-shade{
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    _height: expression(document.body.offsetHeight+"px");
+    position: fixed;
+    _position: absolute;
+    pointer-events: auto;
+    background-color:rgb(0,0,0);
+}
+.bc-loading {
+    position: fixed;
+    _position: absolute;
+    pointer-events: auto;
+    border-radius: 100%;
+    background: 0 0;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+.bc-loading .bc-loading-content {
+    position: relative;
+}
+.bc-loading .bc-loading1 {
+    width: 32px;
+    height: 32px;
+    background: url(../img/loading-1.gif) no-repeat;
+}
+.bc-loading .bc-loading2 {
+    width: 37px;
+    height: 37px;
+    background: url(../img/loading-2.gif) no-repeat;
+}
+.bc-loading-msg {
+    min-width: 180px;
+    border: 1px solid #D3D4D3;
+    box-shadow: none;
+    border-radius: 2px;
+    background-color: #fff;
+    border-radius: 2px;
+}
+.bc-loading-msg .bc-loading-content {
+    padding: 20px 20px 20px 55px;
+    text-align: left;
+    line-height: 24px;
+    word-break: break-all;
+    overflow: hidden;
+    font-size: 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-size: 14px;
+}
+.bc-loading-content .ico {
+    position: absolute;
+    top: 16px;
+    left: 15px;
+    _left: -40px;
+    width: 30px;
+    height: 30px;
+    background: url(../img/loading-1.gif) no-repeat;
+}
