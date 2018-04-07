@@ -86,7 +86,9 @@ th, td, .table-bordered {
 .table-hover > tbody > tr > td.active:hover, .table-hover > tbody > tr > th.active:hover, .table-hover > tbody > tr.active:hover > td, .table-hover > tbody > tr:hover > .active, .table-hover > tbody > tr.active:hover > th {
     background-color: #e8e8e8;
 }
-
+.table>thead>tr>td.selected, .table>tbody>tr>td.selected, .table>tfoot>tr>td.selected, .table>thead>tr>th.selected, .table>tbody>tr>th.selected, .table>tfoot>tr>th.selected, .table>thead>tr.selected>td, .table>tbody>tr.selected>td, .table>tfoot>tr.selected>td, .table>thead>tr.selected>th, .table>tbody>tr.selected>th, .table>tfoot>tr.selected>th {
+    background-color: #dff0d8;
+}
 .table > td > label, .table > th > label {
     margin-bottom: 0;
     line-height: inherit;
@@ -174,6 +176,10 @@ th, td, .table-bordered {
 .table .none-padding {
     padding: 0 !important;
 }
+.table input[disabled] {
+    color: #848484!important;
+    background-color: #eee!important;
+}
 
 .table width-5 {
     width: 5%;
@@ -250,13 +256,13 @@ th, td, .table-bordered {
 .table width-95 {
     width: 95%;
 }
-
 .table width-100 {
     width: 100%;
 }
 .table hidden, .table .hide {
     display: none !important;
 }
+/**utils**/
 .bc-shade{
     top: 0;
     left: 0;

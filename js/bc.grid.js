@@ -8,7 +8,7 @@
  * without my written,permission is prohibited for commercial purposes.　
  *--------------------------------------------------------------------------
  */
-(function ($) {
+;(function ($) {
     /**
      * grid
      * @param ele
@@ -80,7 +80,8 @@
             onCompleted: null,                          //加载完函数
             onLoadData: null,                       //加载数据前事件
             onLoadedData: null,                  //加载完数据事件
-            onSelectRow: null, //选择行事件
+            onSelectedRow: null, //选择行事件
+            onRowClick: null, //选择行事件
             onTreeExpandOrCollapse: null,//树展开/收缩事件
             refreshBtnEnable: false,//刷新按钮
             onDataChange: null, //数据改变事件
@@ -99,7 +100,7 @@
     //定义bcGrid的方法
     bcGrid.prototype = {
         render: function () {
-            _init.call(this);
+          _init.call(this);
             return this;
         },
 
@@ -138,9 +139,9 @@
             }
             var beforeRes = true;
             if (p.onLoadData) {
-                beforeRes=  p.onLoadData.call(g) || true;
+                beforeRes = p.onLoadData.call(g) || true;
             }
-            if(beforeRes == false){
+            if (beforeRes == false) {
                 return;
             }
             if (p.dataSource == 'server') {
@@ -149,12 +150,12 @@
                     showLoading: p.showLoading,
                     loadingTip: p.loadingTip,
                     data: $.param(dataParam),
-                    dataType:'json',
+                    dataType: 'json',
                     success: function (data) {
                         p.data = data;
                         _displayData.call(g);
                         if (isReloadPage) {
-                         //   g._displayPage();
+                            //   g._displayPage();
                         }
                         if (p.onLoadedData) {
                             p.onLoadedData.call(g, p.data);
@@ -162,14 +163,14 @@
                     },
 
                     error: function (MLHttpRequest, textStatus, errorThrown) {
-                        _error.call(g,'数据加载失败！'+errorThrown.toLocaleString());
+                        _error.call(g, '数据加载失败！' + errorThrown.toLocaleString());
                     },
                     complete: function () {
                         //
-                      /*  if (g.checkedTool) {
-                            $(".dataTotalCount", g.checkedTool).html(p.data[p.total]);
-                            $(".dataCurrentCount", g.checkedTool).html(p.data[p.rows].length);
-                        }*/
+                        /*  if (g.checkedTool) {
+                         $(".dataTotalCount", g.checkedTool).html(p.data[p.total]);
+                         $(".dataCurrentCount", g.checkedTool).html(p.data[p.rows].length);
+                         }*/
 
                     }
                 });
@@ -487,15 +488,15 @@
         _rowIndex = 0;
         var g = this;
         if (!utils.isEmptyObject(this.options.data)) {
-            _displayListData.call(this,utils.isDefined(this.options.data[this.options.rows]) ? this.options.data[this.options.rows] : [])
+            _displayListData.call(this, utils.isDefined(this.options.data[this.options.rows]) ? this.options.data[this.options.rows] : [])
         }
-     //   _bindEvent.call(this);
+      _bindEvent.call(g);
     };
     var _error = function (message) {
         if (this.options.onError) {
             this.options.onError.call(this, message);
         }
-       else {
+        else {
             console.log(message);
         }
     };
@@ -505,7 +506,7 @@
         _rowIndex = 0;
         var dataHtml = [];
         if (data.length == 0) {
-            dataHtml.push('<tr id="bcgrid_' + g.ID + '_list_nodata" role="row" class="odd no_data">');
+            dataHtml.push('<tr id="bcgrid_' + g.ID + '_list_nodata" role="row" class="no_data">');
             dataHtml.push('<td colspan="' + _showColumnLength + '" class="text-center">' + p.noDataText + '</td>');
             dataHtml.push('</tr>');
 
@@ -514,32 +515,33 @@
             $.each(data, function (index, rowItem) {
                 _treeDepth = 0;
                 var tr = [];
-                if (_rowIndex % 2 == 0) {
+                tr.push('<tr id="bcgrid_' + g.ID + '_list_' + _rowIndex + '" role="row" data-rowindex="' + _rowIndex + '">');
+               /* if (_rowIndex % 2 == 0) {
                     tr.push('<tr id="bcgrid_' + g.ID + '_list_' + _rowIndex + '" role="row" data-rowindex="' + _rowIndex + '" class="odd">');
                 } else {
                     tr.push('<tr id="bcgrid_' + g.ID + '_list_' + _rowIndex + '" role="row" data-rowindex="' + _rowIndex + '" class="even">');
-                }
+                }*/
                 tr.push(_preRenderColumn.call(g));
                 $.each(p.columns, function (index, item) {
-                    tr.push(_renderColumnData.call(g,item, rowItem, index, _rowIndex));
+                    tr.push(_renderColumnData.call(g, item, rowItem, index, _rowIndex));
                 });
                 tr.push('</tr>');
                 tr = tr.join('');
                 //tree
                 /*var $tr = $(tr);
-                if ($(".classification_name", $tr).length > 0 && rowItem[g.treeOpt.name].length > 0) {
-                    g._treeDepth++;
-                    tr += g._displayChildListData(rowItem[g.treeOpt.name], g._rowIndex + 0);
-                }*/
+                 if ($(".classification_name", $tr).length > 0 && rowItem[g.treeOpt.name].length > 0) {
+                 g._treeDepth++;
+                 tr += g._displayChildListData(rowItem[g.treeOpt.name], g._rowIndex + 0);
+                 }*/
                 dataHtml.push(tr);
                 _rowIndex++;
 
             });
         }
         g.gridContent.html(dataHtml.join(''));
-       /* if (!g.isCheckedAll) {
-            $(':checkbox[tag="bcgrid_checkbox"]', g.gridHead).prop('checked', false);
-        }*/
+        /* if (!g.isCheckedAll) {
+         $(':checkbox[tag="bcgrid_checkbox"]', g.gridHead).prop('checked', false);
+         }*/
     };
     var _displayChildListData = function (data, parentRowIndex) {
         var g = this, p = this.options;
@@ -580,10 +582,7 @@
         var dataHtml = [];
         if (p.showCheckbox) {
             var checked = '';
-       /*     if (g.isCheckedAll) {
-                checked = ' checked="checked"';
-            }*/
-            dataHtml.push('<td class="center" data-role="checkbox"> <label class="pos-rel"><input type="checkbox" id="bcgrid_' + g.ID + '_checkbox_list_' + _rowIndex + '" data-index="' + _rowIndex + '" tag="bcgrid_checkbox" ' + checked + '/><span class="lbl"></span></label></td>');
+            dataHtml.push('<td class="center" data-role="checkbox"> <label class="pos-rel"><input type="checkbox" id="bcgrid_' + g.ID + '_checkbox_list_' + _rowIndex + '" tag="bcgrid_checkbox" ' + checked + '/><span class="lbl"></span></label></td>');
         }
         if (p.showSerialNum) {
             var serial = 0;
@@ -633,7 +632,7 @@
             eval("opt.render=" + opt.render);
         }
         if (utils.isFunction(opt.render)) {
-            dataRes = opt.render.call(g,data,_rowIndex);
+            dataRes = opt.render.call(g, data, _rowIndex);
             if (utils.isObject(dataRes)) {
                 if (utils.isJqueryObject(dataRes)) {
                     dataRes = dataRes[0].outerHTML;
@@ -642,58 +641,58 @@
                     dataRes = dataRes.outerHTML;
                 }
             }
-            if(!utils.isDefined(dataRes)){
-                dataRes="";
+            if (!utils.isDefined(dataRes)) {
+                dataRes = "";
             }
         }
         else {
             switch (opt.type) {
                 case 'grid':
                 case 'table':
-                    dataRes = _tableItem.call(g,rowIndex + 0, column, data, colIndex);
+                    dataRes = _tableItem.call(g, rowIndex + 0, column, data, colIndex);
                     break;
                 case 'date':
-                    dataRes = _formatDate.call(g,data[column.name], opt.format);
+                    dataRes = _formatDate.call(g, data[column.name], opt.format);
                     break;
                 case 'checkbox':
-                    dataRes = _checkboxItem.call(g,rowIndex + 0, column, data, colIndex);
+                    dataRes = _checkboxItem.call(g, rowIndex + 0, column, data, colIndex);
                     break;
                 case 'textField':
-                    dataRes = _inputItem.call(g,rowIndex + 0, column, data, colIndex);
+                    dataRes = _inputItem.call(g, rowIndex + 0, column, data, colIndex);
                     break;
                 case 'select':
-                    dataRes = _selectItem.call(g,rowIndex + 0, column, data, colIndex);
+                    dataRes = _selectItem.call(g, rowIndex + 0, column, data, colIndex);
                     break;
                 default:
-                    var val = utils.isDefined(data[column.name])? data[column.name] + '' : '';
+                    var val = utils.isDefined(data[column.name]) ? data[column.name] + '' : '';
                     if (opt.maxLength && utils.isNumber(opt.maxLength)) {
                         if (val.length > opt.maxLength) {
                             val = val.substr(0, opt.maxLength) + '...';
                         }
                     }
-                    dataRes = _formatText.call(this,val, opt.format);
+                    dataRes = _formatText.call(this, val, opt.format);
                     break;
             }
         }
         dataRes += "";
         //childOpt
-     /*   if (p.tree && p.tree.columnID == column.id) {
-            if (g._treeDepth > 0) {
-                var treeSpace = '';
-                for (var i = 0; i <= g._treeDepth; i++) {
-                    treeSpace += '<span class="standing_position"></span>';
-                }
-                dataRes = treeSpace + dataRes;
+        /*   if (p.tree && p.tree.columnID == column.id) {
+         if (g._treeDepth > 0) {
+         var treeSpace = '';
+         for (var i = 0; i <= g._treeDepth; i++) {
+         treeSpace += '<span class="standing_position"></span>';
+         }
+         dataRes = treeSpace + dataRes;
 
-            } else {
-                if (typeof data[p.tree.name] != "undefined" && data[p.tree.name].length > 0) {
-                    dataRes = ' <span class="classification_name childLink ' + (p.tree.expand ? 'childOpen' : 'childClose') + '">' + (p.tree.expand ? '-' : '+') + '</span>' + dataRes;
-                }
-            }
-        }
-        if (opt.enableEdit) {
-            dataRes = '<span data-role="display">' + dataRes + '</span>';
-        }*/
+         } else {
+         if (typeof data[p.tree.name] != "undefined" && data[p.tree.name].length > 0) {
+         dataRes = ' <span class="classification_name childLink ' + (p.tree.expand ? 'childOpen' : 'childClose') + '">' + (p.tree.expand ? '-' : '+') + '</span>' + dataRes;
+         }
+         }
+         }
+         if (opt.enableEdit) {
+         dataRes = '<span data-role="display">' + dataRes + '</span>';
+         }*/
         dataRes = '<td data-role="' + opt.role + '" data-columnindex="' + colIndex + '">' + dataRes + '</td>';
         var $ret = $(dataRes);
         if (opt.align) {
@@ -1059,230 +1058,134 @@
     };
     var _bindEvent = function () {
         var g = this, p = this.options;
-        var rowsData = g.getData();
-        $(':checkbox[tag="bcgrid_checkbox"]', g.gridHead).unbind();
-        $(':checkbox[tag="bcgrid_checkbox"]', g.gridHead).on('click', function (e) {
+        var rowsData =  p.data[p.rows];
+        //全选
+        $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).unbind();
+        $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).on('click', function (e) {
             var isChecked = false;
             if ($(this).is(':checked')) {
                 isChecked = true;
                 $(":checkbox[tag='bcgrid_checkbox']", g.gridContent).prop('checked', true);
-                //
-                if (g.checkedTool) {
-                    $("a[data-action='cancelChecked']", g.checkedTool).parent().show();
-                }
             }
             else {
                 isChecked = false;
                 $(":checkbox[tag='bcgrid_checkbox']", g.gridContent).prop('checked', false);
-                if (g.checkedTool) {
-                    $("a[data-action='cancelChecked']", g.checkedTool).parent().hide();
-                }
-                g.isCheckedAll = false;
-
             }
-            if (p.onCheckAllClick && $.isFunction(p.onCheckAllClick)) {
+            if (p.onCheckAllClick && utils.isFunction(p.onCheckAllClick)) {
                 p.onCheckAllClick.call(g, isChecked);
-            }
-            if (p.onCheckRow && $.isFunction(p.onCheckRow)) {
-                p.onCheckRow.call(g, isChecked);
             }
         });
         $('th span[data-col]', g.gridHead).unbind();
-        if (p.enableSort && p.dataSource == 'server') {
+        //排序
+        if (p.enableSort) {
             $('th span[data-col]', g.gridHead).on('click', function () {
-                var el = $(this);
-                var columnIndex = parseInt(el.data("columnindex"));
+                var self = $(this);
+                var columnIndex = parseInt(self.data("columnindex"));
                 if (p.columns[columnIndex].enableSort) {
-                    var name = el.data('col') || '';
-                    var sort = el.data('sort') || 'asc';
+                    var name = self.data('col') || '';
+                    var sort = self.data('sort') || 'asc';
                     if (sort == 'asc') {
-                        el.data('sort', 'desc');
+                        self.data('sort', 'desc');
                     } else {
-                        el.data('sort', 'asc');
+                        self.data('sort', 'asc');
                     }
-                    if (name && typeof(name) != 'undefined') {
-                        p.sortname = name;
-                        p.sortorder = sort;
-                        g.loadData(true);
+                    if (utils.is(name)) {
+                        p.sortName = name;
+                        p.sortType = sort;
+                        g.loadData();
                     }
                 }
             });
         }
-        $(':checkbox[tag="bcgrid_checkbox"]', g.gridContent).unbind();
-        $(':checkbox[tag="bcgrid_checkbox"]', g.gridContent).on('click', function (e) {
-            var isChecked = false;
-            if ($(this).is(':checked')) {
+        //checkbox
+        $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridContent).unbind();
+        $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridContent).on('click', function (e) {
+            var isChecked = false, self = $(this);
+            var tr = self.closest('tr');
+            if (self.is(':checked')) {
                 isChecked = true;
-            } else {
-                //g.isCheckedAll = false;
+               tr.addClass("active");
             }
-            var rowIndex = parseInt($(this).data('index'));
-            if (p.onCheckClick && $.isFunction(p.onCheckClick)) {
+            else{
+               tr.removeClass("active");
+            }
+            var rowIndex = parseInt(tr.data('rowindex'));
+            if (p.onCheckClick && utils.isFunction(p.onCheckClick)) {
                 p.onCheckClick.call(g, rowIndex, isChecked, p.data[p.rows][rowIndex]);
             }
-            if (p.onCheckRow && $.isFunction(p.onCheckRow)) {
-                p.onCheckRow.call(g, isChecked);
-            }
-
             //
-            if (g.checkedTool) {
-                var checkedRows = g.getCheckedRows();
-                if (checkedRows.length > 0) {
-                    $("a[data-action='cancelChecked']", g.checkedTool).parent().show();
-                }
-                else {
-                    $("a[data-action='cancelChecked']", g.checkedTool).parent().hide();
-                }
-            }
-            // e.stopPropagation();
+            e.stopPropagation();
         });
-        //checkTool
-        if (g.checkedTool) {
-            $("a", g.checkedTool).unbind();
-            $("a", g.checkedTool).on('click', function () {
-                var self = $(this);
-                var action = self.data("action");
-                switch (action) {
-                    case 'checkedCurrentShow':
-                        g.isCheckedAll = false;
-                        $(':checkbox[tag="bcgrid_checkbox"]', g.grid).prop('checked', true);
-                        $("a[data-action='cancelChecked']", g.checkedTool).parent().show();
-                        if (p.onCheckRow && $.isFunction(p.onCheckRow)) {
-                            p.onCheckRow.call(g, true);
-                        }
-                        break;
-                    case 'checkedAll':
-                        g.isCheckedAll = true;
-                        $(':checkbox[tag="bcgrid_checkbox"]', g.grid).prop('checked', true);
-                        $("a[data-action='cancelChecked']", g.checkedTool).parent().show();
-                        if (p.onCheckRow && $.isFunction(p.onCheckRow)) {
-                            p.onCheckRow.call(g, true);
-                        }
-                        break;
-                    case 'cancelChecked':
-                        g.isCheckedAll = false;
-                        $(':checkbox[tag="bcgrid_checkbox"]', g.grid).prop('checked', false);
-                        $("a[data-action='cancelChecked']", g.checkedTool).parent().hide();
-                        if (p.onCheckRow && $.isFunction(p.onCheckRow)) {
-                            p.onCheckRow.call(g, false);
-                        }
-                        break;
-                }
-
-            });
-        }
         //行选择
-        $('td[data-role="data"]', 'tr[role="row"]:not(.no_data)', g.gridContent).unbind();
-        if (p.selectRow) {
-            $('td[data-role="data"]', 'tr[role="row"]:not(.no_data)', g.gridContent).on("click", function (e) {
-                var self = $(this);
-                var row = self.parent('tr');
-                /* if (row.hasClass("success")) {
-                 //    $(this).removeClass("success") ;
-                 }
-                 else {*/
-                // row.addClass("success");
-                // row.siblings().removeClass("success");
-                if (p.onSelectRow && $.isFunction(p.onSelectRow)) {
-                    var rowIndex = parseInt(row.data('rowindex'));
-                    p.onSelectRow.call(g, rowIndex, p.data[p.rows][rowIndex]);
-                }
-                //}
-            });
-        }
-        $('select.row-select', g.gridContent).unbind();
-        //tree
-        if (g.treeOpt) {
-            $('.childLink', g.gridContent).on("click", function () {
-                var self = $(this);
-                var row = self.closest("tr");
-                var rowIndex = row.data("rowindex");
-                var isExpand = false;
-                if (self.hasClass("childClose")) {
-                    self.removeClass("childClose").addClass("childOpen").html("-");
-                    //打开
-                    row.nextAll('tr[data-parentrowindex="' + rowIndex + '"]').show();
-                    isExpand = true;
+        $('tr[role="row"]:not(.no_data)', g.gridContent).unbind();
 
-                }
-                else {
-                    self.removeClass("childOpen").addClass("childClose").html("+");
-                    //关闭
-                    row.nextAll('tr[data-parentrowindex="' + rowIndex + '"]').hide();
-                    isExpand = false;
-                }
-                if (p.onTreeExpandOrCollapse && $.isFunction(p.onTreeExpandOrCollapse)) {
-                    p.onTreeExpandOrCollapse.call(g, isExpand, rowIndex);
-                }
-            });
-
-        }
-        //edit:
-        $('th a.grid_head_btn_edit', g.gridHead).unbind();
-        $('th a.grid_head_btn_edit', g.gridHead).on("click", function () {
+        $('tr[role="row"]:not(.no_data)', g.gridContent).on("click", function (e) {
+            if(utils.isEditTarget(e.target)){
+                return;
+            }
             var self = $(this);
-            var action = self.data("action") || 'edit';
-            var editType = self.data("edittype");
-            var columnIndex = self.data("columnindex");
-            var column = p.columns[columnIndex];
-
-            if (action == 'edit') {
-                self.data("action", "save");
-                self.html("[保存]");
-                var cells = $('td[data-columnindex="' + columnIndex + '"]', g.gridContent);
-                cells.each(function () {
-                    var targetCell = $(this);
-                    var rowIndex = targetCell.parent().data("rowindex") || 0;
-                    var data = g.getRowData(rowIndex);
-                    var input = "";
-                    switch (editType) {
-                        case 'checkbox':
-                            input = g._checkboxItem(rowIndex, column, data, columnIndex);
-                            break;
-                        case 'textField':
-                            input = g._inputItem(rowIndex, column, data, columnIndex);
-                            break;
-                        case 'select':
-                            input = g._selectItem(rowIndex, column, data, columnIndex);
-                            break;
+            var rowIndex = parseInt(self.data('rowindex'));
+            if (p.enableSelectRow) {
+                var isSelected = false;
+                if (self.hasClass("selected")) {
+                    isSelected = false;
+                    self.removeClass("selected");
+                } else {
+                    isSelected = true;
+                    self.addClass("selected");
+                    if (p.enableMultiSelectRow == false) {
+                        self.siblings().removeClass("selected");
                     }
-                    targetCell.append(input);
-                    $('span[data-role="display"]', targetCell).hide();
-                });
-            }
-            else {
-                //
-                self.data("action", "edit");
-                self.html("[编辑]");
-                g.updateColumn(columnIndex);
-                if (column.action && $.isFunction(column.action)) {
-                    column.action.call(g, column, g.getData());
+                }
+                if (p.onSelectedRow && isSelected && utils.isFunction(p.onSelectedRow)) {
+                    p.onSelectedRow.call(g, rowIndex,rowsData[rowIndex]);
                 }
             }
-            g._bindChangeEvent();
+            if(p.onRowClick && utils.isFunction(p.onRowClick)){
+                p.onRowClick.call(g, rowIndex,rowsData[rowIndex]);
+            }
 
         });
+        //tree
+        /*   if (g.treeOpt) {
+         $('.childLink', g.gridContent).on("click", function () {
+         var self = $(this);
+         var row = self.closest("tr");
+         var rowIndex = row.data("rowindex");
+         var isExpand = false;
+         if (self.hasClass("childClose")) {
+         self.removeClass("childClose").addClass("childOpen").html("-");
+         //打开
+         row.nextAll('tr[data-parentrowindex="' + rowIndex + '"]').show();
+         isExpand = true;
+
+         }
+         else {
+         self.removeClass("childOpen").addClass("childClose").html("+");
+         //关闭
+         row.nextAll('tr[data-parentrowindex="' + rowIndex + '"]').hide();
+         isExpand = false;
+         }
+         if (p.onTreeExpandOrCollapse && $.isFunction(p.onTreeExpandOrCollapse)) {
+         p.onTreeExpandOrCollapse.call(g, isExpand, rowIndex);
+         }
+         });
+
+         }*/
         //
         if (rowsData.length == 0) {
-            $('th a.grid_head_btn_edit', g.gridHead).hide();
-            $(':checkbox[tag="bcgrid_checkbox"]', g.gridHead).attr("disabled", "disabled");
-            if (g.checkedTool) {
-                g.checkedTool.hide();
-            }
-        } else {
-            $('th a.grid_head_btn_edit', g.gridHead).show();
-            $(':checkbox[tag="bcgrid_checkbox"]', g.gridHead).removeAttr("disabled");
-            if (g.checkedTool) {
-                g.checkedTool.show();
-            }
+            $('input.checkbox[tag="bcgrid_checkbox"]', g.gridHead).attr("disabled", "disabled");
 
+        } else {
+            $('input.checkbox[tag="bcgrid_checkbox"]', g.gridHead).removeAttr("disabled");
         }
+        _bindChangeEvent.call(g);
 
     };
     var _bindChangeEvent = function () {
         var g = this, p = this.options;
-        $('input.columnEdit,select.columnSelect,input.columnCheckBox', g.gridContent).unbind();
-        $('input.columnEdit,select.columnSelect,input.columnCheckBox', g.gridContent).on("change", function () {
+        $('input.edit[data-rowindex],select.select[data-rowindex]', g.gridContent).unbind();
+        $('input.edit[data-rowindex],select.select[data-rowindex]', g.gridContent).on("change", function () {
             var self = $(this);
             var name = self.attr("name");
             var rowIndex = parseInt(self.data('rowindex'));
@@ -1290,7 +1193,24 @@
             var value = self.val();
             p.data[p.rows][rowIndex][name] = value;
             //内容改变
-            if (p.onDataChange && $.isFunction(p.onDataChange)) {
+            if (p.onDataChange && utils.isFunction(p.onDataChange)) {
+                p.onDataChange.call(g, p.data[p.rows][rowIndex], name, value, rowIndex, colIndex);
+
+            }
+        });
+        $('input[type="checkbox"][data-rowindex]', g.gridContent).unbind();
+        $('input[type="checkbox"][data-rowindex]', g.gridContent).on("click", function () {
+            var self = $(this);
+            var name = self.attr("name");
+            var rowIndex = parseInt(self.data('rowindex'));
+            var colIndex = parseInt(self.data('colindex'));
+            var value = "";
+            if(self.is("checked")){
+              value = self.val();
+            }
+            p.data[p.rows][rowIndex][name] = value;
+            //内容改变
+            if (p.onDataChange && utils.isFunction(p.onDataChange)) {
                 p.onDataChange.call(g, p.data[p.rows][rowIndex], name, value, rowIndex, colIndex);
 
             }
@@ -1304,6 +1224,15 @@
         isFirefox: /Firefox/.test(userAgent),
         getID: function () {
             return Number(Math.random().toString().substr(3, 6) + Date.now()).toString(36);
+        },
+        isEditTarget:function (target) {
+            if(!utils.isDefined(target)) return false;
+           var $target = $(target);
+            if($target.is("span.lbl")) return true;
+            if($target.is("input") > 0) return true;
+            if($target.is("select") > 0) return true;
+            if($target.is("textarea") > 0) return true;
+            return false;
         },
         parseInt: function (s, mag) {
             return parseInt(s, mag || 10);
@@ -1391,7 +1320,7 @@
             }
             return result[1];
         },
-        getUrlParam: function (url,name) {
+        getUrlParam: function (url, name) {
             var match = RegExp('[?&]' + name + '=([^&]*)')
                 .exec(url);
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
@@ -1510,7 +1439,7 @@
                 type: p.type,
                 beforeSend: function () {
                     if (p.showLoading) {
-                        utils.showLoading({style:p.loadingStyle,text:p.loadingTip});
+                        utils.showLoading({style: p.loadingStyle, text: p.loadingTip});
                     }
                     if (p.beforeSend) {
                         p.beforeSend();
@@ -1524,10 +1453,8 @@
                     if (p.complete) {
                         p.complete();
                     }
-
                 },
                 success: function (result) {
-                    console.log(result);
                     if (!result) return;
                     if (p.success) {
                         p.success(result);

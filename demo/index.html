@@ -18,17 +18,26 @@
             columns: [
                 {name: 'id', display: 'ID', align: 'center'},
                 {name: 'name', display: 'Name'},
-                {name: 'gender', display: 'Gender', render: function (item, index) {
-
-                }},
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                    if (item.gender == 1) {
+                        return "Boy";
+                    }
+                    if (item.gender == 2) {
+                        return "Girl";
+                    }
+                }
+                },
                 {name: 'age', display: 'Age'},
                 {name: 'email', display: 'Email'},
                 {name: 'mobile', display: 'Mobile'}
 
             ],
-            showCheckbox: true,
-            /*autoLoadData:false,*/
-            url:'handler/data.json'
+            showCheckbox: false,
+            showSerialNum:false,
+            autoLoadData:true,
+            url: 'handler/data.json',
+            enableMultiSelectRow:false
 
         });
 
