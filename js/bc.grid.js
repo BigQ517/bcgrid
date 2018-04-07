@@ -24,6 +24,7 @@
         this.checkedTool = null;
         this.defaults = {
             varsion: 'version 1.0.0',
+            id:'',
             width: 'auto',                          //宽度值
             height: 'auto',                          //宽度值
             csrfVaildate: true,
@@ -359,8 +360,7 @@
     //初始化
     var _init = function () {
         var g = this, p = this.options;
-
-        this.ID = utils.getID();
+        this.ID = utils.isEmptyObject(p.id)? utils.getID():p.id;
         //csrf
         if (p.csrfVaildate && utils.isEmptyObject(p.csrf)) {
             p.csrf = $("input[name='" + p.csrfName + "']").val();
