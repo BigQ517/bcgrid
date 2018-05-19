@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BC Gird</title>
+    <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid-1.0.0.min.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../dist/bc.grid-1.0.0.min.js"></script>
+</head>
+<body>
+<div>
+    <div id="table"></div>
+    <br/> <br/>
+    <div id="table1"></div>
+    <br/> <br/>
+    <div id="table2"></div>
+</div>
+<script>
+    $(function () {
+        var grid=BCGrid.create("#table",{
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                    return item.name;
+                }
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                    if (item.gender == 1) {
+                        return "Boy";
+                    }
+                    if (item.gender == 2) {
+                        return "Girl";
+                    }
+                }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
+                {name: 'email', display: 'Email', enableSort: true},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'sign', display: 'Sign',maxLength:10},
+                {name: 'time', display: 'Time',type:'dateTime',format:'MM/dd yyyy hh:mm:ss'}
+
+            ],
+            title:'BC Grid',
+            showTitle:true,
+            showCheckbox: true,
+            showSerialNum: true,
+            url: 'handler/data.json'
+
+
+        });
+        var grid1=BCGrid.create("#table1",{
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                    return item.name;
+                }
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                    if (item.gender == 1) {
+                        return "Boy";
+                    }
+                    if (item.gender == 2) {
+                        return "Girl";
+                    }
+                }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
+                {name: 'email', display: 'Email', enableSort: true},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'sign', display: 'Sign',maxLength:10},
+                {name: 'time', display: 'Time',type:'dateTime',format:'MM/dd yyyy hh:mm:ss'}
+
+            ],
+            title:'No border,no head ',
+            showTitle:true,
+            showBorder:false,
+            showHead:false,
+            url: 'handler/data.json'
+
+
+        });
+        var grid2=BCGrid.create("#table2",{
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                    return item.name;
+                }
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                    if (item.gender == 1) {
+                        return "Boy";
+                    }
+                    if (item.gender == 2) {
+                        return "Girl";
+                    }
+                }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
+                {name: 'email', display: 'Email', enableSort: true},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'sign', display: 'Sign',maxLength:10},
+                {name: 'time', display: 'Time',type:'dateTime',format:'MM/dd yyyy hh:mm:ss'}
+
+            ],
+            title:'No stripe,no Hover ',
+            showTitle:true,
+            showStripe:false,
+            showHover:false,
+            url: 'handler/data.json'
+
+
+        });
+        ///
+
+
+    });
+</script>
+</body>
+</html>

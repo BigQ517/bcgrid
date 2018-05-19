@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BC Gird</title>
+    <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid-1.0.0.min.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../dist/bc.grid-1.0.0.min.js"></script>
+</head>
+<body>
+<div>
+
+    <div id="table"></div>
+</div>
+<script>
+    $(function () {
+        var grid = BCGrid.create("#table", {
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                    return item.name;
+                }
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                    if (item.gender == 1) {
+                        return "Boy";
+                    }
+                    if (item.gender == 2) {
+                        return "Girl";
+                    }
+                }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
+                {name: 'email', display: 'Email', enableSort: true},
+                {name: 'mobile', display: 'Mobile'}
+
+            ],
+            url: 'handler/data.json',
+            tree: {
+                displayID: 'name',
+                key: 'id',
+                parentKey: 'pid',
+                expand: false
+            }
+        });
+    });
+</script>
+</body>
+</html>

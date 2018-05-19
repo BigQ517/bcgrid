@@ -1,3 +1,3 @@
 # bcgrid
-12
-a grid plugin for jquery
+A grid plugin for jquery.
+Flexible, convenient and free!

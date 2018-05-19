@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BC Gird</title>
+    <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid-1.0.0.min.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../dist/bc.grid-1.0.0.min.js"></script>
+</head>
+<body>
+<div>
+    <div id="table"></div>
+
+</div>
+<script>
+    $(function () {
+        var grid = BCGrid.create("#table", {
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name'
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                    if (item.gender == 1) {
+                        return "Boy";
+                    }
+                    if (item.gender == 2) {
+                        return "Girl";
+                    }
+                }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
+                {name: 'email', display: 'Email', enableSort: true},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
+
+            ],
+            showCheckbox: true,
+            url: 'handler/data.json',
+            onCheckClick: function (rowIndex, isChecked, rowData) { //选择事件(复选框)
+                console.log(this);
+                alert("Row index:" + rowIndex + ",checked is:" + isChecked);
+
+            },
+            onCheckAllClick: function (isChecked) { //选择点击数据（全选/全不选）
+
+                alert("" + isChecked);
+            },
+            onError: function (message) {//错误事件
+                alert(message);
+            },
+            onCompleted: function () {      //加载完函数
+                alert("grid completed");
+            },
+            onLoadData: function () {   //加载数据前事件
+                alert("before load data");
+                return true;//if false no load data
+            },
+            onLoadedData: function (data) {    //加载完数据事件 
+                console.log(data);
+            },
+            onSelectedRow: function (rowIndex, rowData) { //选择行事件
+                alert("Row index:" + rowIndex+" is selected");
+            },
+            onRowClick: function (rowIndex, rowData) { //行点击事件
+                alert("Row index:" + rowIndex+"  clicked");
+            },
+            onTreeExpandOrCollapse: function (isExpand, rowIndex) {//树展开/收缩事件
+                
+            }
+
+
+        });
+
+
+    });
+</script>
+</body>
+</html>
