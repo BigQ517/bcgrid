@@ -1,7 +1,7 @@
-## BCGrid
+# BCGrid
 A grid plugin for jquery.
 Flexible, convenient and free!
-##How to use:
+# How to use:
 ```js
  var grid=BCGrid.create("#table",{
             columns: [
@@ -30,7 +30,7 @@ Flexible, convenient and free!
             url: 'handler/data.php'
         });
  ```
- ##Options:
+ # Options:
   ```js
    id: '',
       width: '', //宽度值
