@@ -102,8 +102,8 @@ Flexible, convenient and free!
       onTreeExpandOrCollapse: null,//树展开/收缩事件
       tree: null
   ```
-   # ColumnOptions:
-    ```js
+# ColumnOptions:
+ ```js
     var defaultOpt = {
               display: '',//标题显示
               id: '',//id
@@ -123,13 +123,13 @@ Flexible, convenient and free!
               saveUrl: ''
 
           };
-     ```
-    # TreeOptions:
-    ```js
+```
+# TreeOptions:
+```js
      var defaultOpt = {
              displayID: '',
              key: 'id',
              parentKey: 'parentid',
              expand: false
           };
-        ```
+```
