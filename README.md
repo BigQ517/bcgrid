@@ -117,11 +117,6 @@ Flexible, convenient and free!
               format: null,//显示数据格式(date)
               role: 'data',
               enableSort: false,//是否可以排序
-              enableEdit: false,
-              editType: 'textField',
-              action: null,
-              saveUrl: ''
-
           };
 ```
 # TreeOptions:
