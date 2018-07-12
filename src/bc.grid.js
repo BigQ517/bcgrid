@@ -29,7 +29,7 @@
             isFirefox = /Firefox/.test(userAgent);
         var scriptsPath = function () {
             var jsPath = doc.currentScript ? doc.currentScript.src : function () {
-                var js = doc.scripts,last = js.length - 1,src;
+                var js = doc.scripts, last = js.length - 1, src;
                 for (var i = last; i > 0; i--) {
                     if (js[i].readyState === 'interactive') {
                         src = js[i].src;
@@ -42,7 +42,7 @@
         }();
         var BCGrid = {
             product: 'BC Grid',
-            version: '0.0.1',
+            version: '1.0.1',
             doc: doc,
             isIE: /msie/i.test(userAgent),
             isMoz: /gecko/.test(userAgent),
@@ -71,7 +71,7 @@
          * @returns {*}
          */
         B.getLangText = function (lang, en) {
-            if (B.isEmptyObject(lang) || lang.toLowerCase() === 'en' || B.isUnDefined(langMaps[lang]))return en;
+            if (B.isEmptyObject(lang) || lang.toLowerCase() === 'en' || B.isUnDefined(langMaps[lang])) return en;
             var langObject = langMaps[lang];
             return B.isDefined(langObject[en]) ? langObject[en] : en;
         };
@@ -146,11 +146,11 @@
         };
         B.isEmptyObject = function (obj) {
             return !B.isDefined(obj) || obj === "" || obj === null || obj === false || function () {
-                    var t;
-                    for (t in obj)
-                        return !1;
-                    return !0;
-                }();
+                var t;
+                for (t in obj)
+                    return !1;
+                return !0;
+            }();
         };
         /**
          * in Array
@@ -235,7 +235,7 @@
          * @returns {Array}
          */
         B.arrayObjectFilter = function (arrayList, key, value) {
-            if (!BCGrid.isArray(arrayList) || arrayList.length == 0)return [];
+            if (!BCGrid.isArray(arrayList) || arrayList.length == 0) return [];
             if (BCGrid.isUnDefined(key) || (!BCGrid.isArray(key) && BCGrid.isUnDefined(value))) return [];
             return arrayList.filter(function (item) {
                 var validate = true;
@@ -275,7 +275,7 @@
             return result[1];
         };
         B.getUrlParam = function (url, name) {
-            var match =new RegExp('[?&]' + name + '=([^&]*)')
+            var match = new RegExp('[?&]' + name + '=([^&]*)')
                 .exec(url);
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
         };
@@ -486,9 +486,6 @@
             }
         };
     }(BCGrid));
-
-    //
-
     /**
      * grid
      * @param ele
@@ -537,7 +534,8 @@
             showHead: true,
             showTitle: false,
             title: "",
-            noDataText: '<div class="center">暂无任何记录</div>',
+            titleAlign: null,//标题对齐方向
+            noDataHtml: '<div class="center">暂无任何记录</div>',
             dateFormat: 'yyyy-MM-dd hh:mm:ss',              //默认时间显示格式
             wrapCssClass: '',                    //类名
             cssClass: 'bc-table',                    //类名
@@ -564,7 +562,7 @@
             toolBtns: [],
             tree: null
         };
-        this.options = $.extend({}, this.defaults, opt);
+        this.options = $.extend(true, {}, this.defaults, opt);
         this._rowIndex = 0;
         this._showColumnLength = 0;
         this._treeChildKey = '';
@@ -926,17 +924,18 @@
     var _preRenderColumnOpt = function () {
         var g = this, p = this.options;
         var defaultOpt = {
-            display: '',
-            id: '',
-            name: 'name',
-            type: 'text',
-            render: null,
-            hide: false,
-            align: null,
-            maxLength: null,
-            format: null,
+            display: '',//标题显示
+            id: '',//id
+            name: 'name',//数据name
+            type: 'text',//数据类型
+            render: null,//执行行数
+            hide: false,//是否隐藏
+            align: null,//数据对齐方式
+            headAlign: null,//标题对齐方式
+            maxLength: null,//显示的最大长度
+            format: null,//显示数据格式(date)
             role: 'data',
-            enableSort: false,
+            enableSort: false,//是否可以排序
             enableEdit: false,
             editType: 'textField',
             action: null,
@@ -966,7 +965,7 @@
         headAttr.push('<thead>');
         if (p.showTitle) {
             headAttr.push('<tr role="row" class="head-title">');
-            headAttr.push('<th class="center" colspan="' + g._showColumnLength + '" id="bcgrid_' + g.ID + '_title">' + p.title + '</th>');
+            headAttr.push('<th' + (BCGrid.isDefined(p.titleAlign) ? ' class="' + p.titleAlign + '"' : '') + ' colspan="' + g._showColumnLength + '" id="bcgrid_' + g.ID + '_title">' + p.title + '</th>');
             headAttr.push('</tr>');
         }
         if (p.showHead) {
@@ -997,6 +996,9 @@
                 }
             }
             var $th = $('<th data-col="' + item.name + '" data-columnindex="' + index + '"></th>');
+            if (BCGrid.isDefined(item.headAlign)) {
+                $th.addClass(item.headAlign);
+            }
             if (!BCGrid.isEmptyObject(item.width)) {
                 if (!isNaN(item.width)) {
                     $th.addClass("width-" + item.width);
@@ -1029,6 +1031,7 @@
         g.gridContent.empty();
         g._rowIndex = 0;
         var tempData = p.tree ? BCGrid.arrayToTree(BCGrid.objectDeepCopy(data), p.tree.key, p.tree.parentKey, g._treeChildKey) : data;
+        console.log(tempData);
         g.gridContent.html(_displayListData.call(g, tempData, 0));
         if (tempData.length == 0) {
             $('input:checkbox[tag="bcgrid_checkbox"]', g.gridHead).attr("disabled", "disabled");
@@ -1059,6 +1062,7 @@
                         appendAttr += 'data-parentrowindex="' + parentRowIndex + '"';
                         if (!p.tree.expand) appendAttr += ' style="display:none;"';
                     }
+
                 }
                 trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '" role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
                 trArr.push(_preRenderColumn.call(g));
@@ -1071,7 +1075,7 @@
                 if (p.tree && hasChild) {
                     trArr.push(_displayListData.call(g, subData, depth + 1, g._rowIndex));
                 } else {
-                    depth = 0;
+                   // depth = 0;
                 }
             });
         }
@@ -1087,7 +1091,7 @@
         if (p.showSerialNum) {
             var serial = 0;
             if ((p.pageSize + '').toLowerCase() == 'all') {
-                serial = (  g._rowIndex + 1);
+                serial = (g._rowIndex + 1);
             }
             else {
                 serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
@@ -1104,14 +1108,14 @@
                 recordCount: p.data[p.total],
                 pageSizeOptions: p.pageSizeOptions,          //范围
                 currentPage: p.page,                             //当前页
-                lang:p.lang,
+                lang: p.lang,
                 turnPageEvent: function (page, pageSize) {
                     p.page = page;
                     p.pageSize = pageSize;
                     g.loadData(false, page);
                 }
             };
-            pageOpt = $.extend(true,p.pagerOption || {}, pageOpt);
+            pageOpt = $.extend(true, p.pagerOption || {}, pageOpt);
             if (BCGrid.isEmptyObject(p.pagerElement)) {
                 p.pagerElement = $("<div></div>");
                 p.pagerElement.insertAfter(g.grid);
@@ -1136,7 +1140,7 @@
     var _renderColumnData = function (column, data, colIndex, rowIndex, treeDepth, hasChild) {
         var g = this, p = this.options;
         var opt = column;
-        var dataRes = '';
+        var dataRes = '',noPadding = false;
         treeDepth = BCGrid.isDefined(treeDepth) ? treeDepth : 0;
         hasChild = BCGrid.isDefined(hasChild) ? hasChild : false;
         if (BCGrid.isString(opt.render)) {
@@ -1158,10 +1162,11 @@
         }
         else {
             switch (opt.type) {
-                /* case 'grid':
-                 case 'table':
-                 dataRes = _tableItem.call(g, rowIndex + 0, column, data, colIndex);
-                 break;*/
+                case 'grid':
+                case 'table':
+                    noPadding=true;
+                    dataRes = _gridItem.call(g, rowIndex + 0, column, data, colIndex);
+                    break;
                 case 'dateTime':
                 case 'date':
                     dataRes = _formatDate.call(g, data[column.name], opt.format);
@@ -1210,7 +1215,7 @@
         if (opt.align) {
             $ret.addClass(opt.align);
         }
-        if (opt.type == "table") {
+        if (noPadding) {
             $ret.addClass("none-padding");
         }
         if (opt.hide) {
@@ -1226,13 +1231,55 @@
      * @param colIndex
      * @private
      */
-    /*  var _tableItem = function (rowIndex, column, data, colIndex) {
-     var g = this;
-     column.tableDataName = typeof column.tableDataName != 'undefined' ? column.tableDataName : 'data';
-     var tableData = typeof  data[column.tableDataName] != 'undefined' ? data[column.tableDataName] : {};
-
-     return g._subTable.render(g, column.table, tableData).prop('outerHTML');
-     };*/
+    var _gridItem = function (rowIndex, column, data, colIndex) {
+        var g = this, p = g.options;
+        if (BCGrid.isUnDefined(column.grid)) {
+            return "";
+        }
+        column.grid.dataName = column.grid.dataName || "data";
+        var tableData = BCGrid.isUnDefined(data[column.grid.dataName]) ? [] : data[column.grid.dataName];
+        var subTabelDom = $("<div></div>");
+        //var subGrid =
+        var subOpt = {
+            enabledCsrf: false,
+            lang: p.lang,
+            localData: tableData,
+            autoLoadData: true,
+            showLoading: false,               //是否显示加载状态提示
+            loadingTip: 'Loading',//加载提示信息
+            loadingStyle: 3,//加载样式
+            enablePager: false,
+            columns: [],                          //数据源
+            dataSource: 'local',                     //数据源：本地(local)或(server),本地是将读取p.data。不需要配置，取决于设置了data或是url
+            cssClass: 'bc-table-sub',                    //类名
+            showCheckbox: false,                         //是否显示复选框
+            showSerialNum: false,    //是否显示序号
+            showBorder: true, //是否显示边框
+            showStripe: false,//是否显示条纹间隔效果
+            showHover: false,//是否显示hover效果
+            showHead: false,
+            showTitle: false,
+            noDataHtml: p.noDataHtml,
+            enableSelectRow: false, //是否可选择行
+            enableMultiSelectRow: false,//是否允许行多选
+            onCheckClick: null,                       //选择事件(复选框)
+            onCheckAllClick: null,                  //选择点击数据（全选/全不选）
+            onError: null,                         //错误事件
+            onCompleted: null,                          //加载完函数
+            onLoadData: null,                       //加载数据前事件
+            onLoadedData: null,                  //加载完数据事件
+            onSelectedRow: null, //选择行事件
+            onRowClick: null, //选择行事件
+            onTreeExpandOrCollapse: null,//树展开/收缩事件
+            onDataChange: null, //数据改变事件
+            onDataSave: null,
+            tree: null
+        };
+        var subOption = $.extend(true, {}, subOpt, column.grid);
+        var subGrid = BCGrid.create(subTabelDom, subOption);
+       // console.log(subTabelDom.html());
+        return subTabelDom.prop('outerHTML');
+    };
     var _checkboxItem = function (rowIndex, column, data, colIndex) {
         column.elValue = typeof column.elValue != 'undefined' ? column.elValue : 1;
         var $item = $("<label></label>");
@@ -1565,7 +1612,7 @@
         this.defaults = {
             pageSize: 40,                          //分页尺寸
             recordCount: 0,
-            lang:'en',
+            lang: 'en',
             showFirst: true,
             showLast: true,
             showPrev: true,                             //
@@ -1593,11 +1640,11 @@
             linkCssClass: 'page-link',
             optCssClass: 'page-size',
             wrapCssClass: 'bc-page',
-           /* pageInfoTpl: '当前{currentPage}/{pageCount}页，每页{pageSize}条,共{recordCount}条记录',*/
-            pageInfoTpl:'Page {currentPage} of {pageCount},{pageSize} records per page,total {recordCount} records',
+            /* pageInfoTpl: '当前{currentPage}/{pageCount}页，每页{pageSize}条,共{recordCount}条记录',*/
+            pageInfoTpl: 'Page {currentPage} of {pageCount},{pageSize} records per page,total {recordCount} records',
             buttons: []
         };
-        this.options = $.extend({},true, this.defaults, opt);
+        this.options = $.extend({}, true, this.defaults, opt);
     };
     //pager
     Pager.prototype = {
@@ -1676,7 +1723,7 @@
                     html += '<span class="' + p.ellipseCssClass + '">' + p.ellipseText + '</span>';
                     html += '<a  href="javascript:;" data-page="' + (p.currentPage - 1) + '">' + (p.currentPage - 1) + '</a>';
                     html += '<a  href="javascript:;" data-page="' + p.currentPage + '">' + p.currentPage + '</a>';
-                    html += '<a  href="javascript:;" data-page="' + ( p.currentPage + 1) + '">' + (p.currentPage + 1) + '</a>';
+                    html += '<a  href="javascript:;" data-page="' + (p.currentPage + 1) + '">' + (p.currentPage + 1) + '</a>';
                     html += '<span class="' + p.ellipseCssClass + '">' + p.ellipseText + '</span>';
                 } else {
                     html += '<span class="' + p.ellipseCssClass + '">' + p.ellipseText + '</span>';

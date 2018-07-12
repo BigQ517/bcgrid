@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="../dist/css/bc.grid-1.0.0.min.css"/>
     <script src="../lib/jquery-11.1.min.js"></script>
-    <script src="../dist/bc.grid-1.0.0.min.js"></script>
+    <script src="../dist/bc.grid.min.js"></script>
 </head>
 <body>
 <div>
@@ -88,7 +88,7 @@
             columns: [
                 {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
                 {
-                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                    id: 'name', name: 'name',display: function (item, index) {
                     return item.name;
                 }
                 },

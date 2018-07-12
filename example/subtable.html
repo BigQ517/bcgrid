@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BC Gird</title>
+    <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid-1.0.0.min.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../dist/bc.grid.min.js"></script>
+</head>
+<body>
+<div>
+    <div id="table"></div>
+    <br/> <br/>
+
+</div>
+<script>
+    $(function () {
+        var grid = BCGrid.create("#table", {
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                        return item.name;
+                    }
+                },
+                {
+                    id: 'group', name: 'group', display: 'Group', type: 'grid', grid: {
+                        dateName: 'data',
+                        columns: [
+                            {name: 'name', display: 'Name'},
+                            {name: 'mobile', display: 'Mobile'}
+                         ]
+                    }
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
+                    }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', align: 'right', headAlign: 'left'},
+                {name: 'email', display: 'Email'},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'sign', display: 'Sign', maxLength: 10},
+                {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
+
+            ],
+            title: 'BC Grid',
+            showTitle: true,
+            titleAlign: 'left',
+            showCheckbox: true,
+            showSerialNum: true,
+            url: 'handler/subtabledata.json'
+
+
+        });
+
+
+    });
+</script>
+</body>
+</html>

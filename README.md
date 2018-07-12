@@ -77,6 +77,7 @@ Flexible, convenient and free!
       showHead: true,
       showTitle: false,
       title: "",
+      titleAlign: null,//标题对齐方向
       noDataText: '<div class="center">暂无任何记录</div>',
       dateFormat: 'yyyy-MM-dd hh:mm:ss', //默认时间显示格式
       wrapCssClass: '', //类名
@@ -101,3 +102,32 @@ Flexible, convenient and free!
       onTreeExpandOrCollapse: null,//树展开/收缩事件
       tree: null
   ```
+   # ColumnOptions:
+    ```js
+    var defaultOpt = {
+              display: '',//标题显示
+              id: '',//id
+              name: 'name',//数据name
+              type: 'text',//数据类型
+              render: null,//执行行数
+              hide: false,//是否隐藏
+              align: null,//数据对齐方式
+              headAlign:null,//标题对齐方式
+              maxLength: null,//显示的最大长度
+              format: null,//显示数据格式(date)
+              role: 'data',
+              enableSort: false,//是否可以排序
+              enableEdit: false,
+              editType: 'textField',
+              action: null,
+              saveUrl: ''
+
+          };
+    # TreeOptions:
+    ```js
+     var defaultOpt = {
+             displayID: '',
+             key: 'id',
+             parentKey: 'parentid',
+             expand: false
+          };

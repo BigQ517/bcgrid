@@ -24,6 +24,9 @@
 .bc-table.table-bordered {
     border: 1px solid #ddd;
 }
+.bc-table .bc-table-sub.table-bordered {
+
+}
 .bc-table tr.head-title{
     background:transparent !important;
 }
@@ -203,8 +206,6 @@
     border-bottom: none;
     border-top-style: solid;
     border-top-color: #b2b2b2;
-
-
 }
 .bc-table>thead>tr>th .sort[order=desc] .desc{
     border-top-color: #000;
