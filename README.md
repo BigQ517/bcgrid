@@ -123,6 +123,7 @@ Flexible, convenient and free!
               saveUrl: ''
 
           };
+     ```
     # TreeOptions:
     ```js
      var defaultOpt = {
@@ -131,3 +132,4 @@ Flexible, convenient and free!
              parentKey: 'parentid',
              expand: false
           };
+        ```
