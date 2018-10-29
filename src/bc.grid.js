@@ -1031,7 +1031,6 @@
         g.gridContent.empty();
         g._rowIndex = 0;
         var tempData = p.tree ? BCGrid.arrayToTree(BCGrid.objectDeepCopy(data), p.tree.key, p.tree.parentKey, g._treeChildKey) : data;
-        console.log(tempData);
         g.gridContent.html(_displayListData.call(g, tempData, 0));
         if (tempData.length == 0) {
             $('input:checkbox[tag="bcgrid_checkbox"]', g.gridHead).attr("disabled", "disabled");
@@ -1459,7 +1458,8 @@
             }
             var rowIndex = parseInt(tr.data('rowindex'));
             if (p.onCheckClick && BCGrid.isFunction(p.onCheckClick)) {
-                p.onCheckClick.call(g, rowIndex, isChecked, p.data[p.rows][rowIndex]);
+                var index = Number((p.page-1)*p.pageSize+rowIndex);
+                p.onCheckClick.call(g, rowIndex, isChecked, p.data[p.rows][index]);
             }
             //
             e.stopPropagation();
@@ -1472,6 +1472,7 @@
             }
             var self = $(this);
             var rowIndex = parseInt(self.data('rowindex'));
+            var index = Number((p.page-1)*p.pageSize+rowIndex);
             if (p.enableSelectRow) {
                 var isSelected = false;
                 if (self.hasClass("selected")) {
@@ -1485,11 +1486,12 @@
                     }
                 }
                 if (p.onSelectedRow && isSelected && BCGrid.isFunction(p.onSelectedRow)) {
-                    p.onSelectedRow.call(g, rowIndex, rowsData[rowIndex]);
+                    //
+                    p.onSelectedRow.call(g, rowIndex, rowsData[index]);
                 }
             }
             if (p.onRowClick && BCGrid.isFunction(p.onRowClick)) {
-                p.onRowClick.call(g, rowIndex, rowsData[rowIndex]);
+                p.onRowClick.call(g, rowIndex, rowsData[index]);
             }
 
         });
