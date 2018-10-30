@@ -485,6 +485,15 @@
                 };
             }
         };
+        B.buildParams = function (selector) {
+            var arrayObj = [];
+            var sf = $(selector);
+            sf.find("input, select, textarea")
+                .not(":submit, :button,:reset, :image, [disabled]").each(function () {
+                arrayObj.push({"name": "" + $(this).attr("name") + "", "value": "" + $(this).val() + ""});
+            });
+            return arrayObj;
+        };
     }(BCGrid));
     /**
      * grid
@@ -526,6 +535,7 @@
             columns: [],                          //数据源
             dataSource: 'server',                     //数据源：本地(local)或(server),本地是将读取p.data。不需要配置，取决于设置了data或是url
             pageSourceType: 'ajax',                    //分页的方式：本地(local)或(server),选择本地方式时将在客服端分页、排序。
+            ajaxType:'post', //ajax数据提交方式 get/post
             showCheckbox: false,                         //是否显示复选框
             showSerialNum: true,    //是否显示序号
             showBorder: true, //是否显示边框
@@ -639,6 +649,7 @@
                     showLoading: p.showLoading,
                     loadingTip: BCGrid.getLangText(p.lang, p.loadingTip),
                     data: $.param(dataParam),
+                    type:p.ajaxType,
                     dataType: 'json',
                     success: function (data) {
                         p.data = data;
@@ -676,6 +687,8 @@
                     var start = BCGrid.parseInt((p.page - 1) * p.pageSize);
                     tempData = tempData.slice(start, start + BCGrid.parseInt(p.pageSize));
                 }
+                //
+                _localCurrentTempData = tempData;
                 _displayData.call(g, tempData);
                 if (isReloadPage && p.enablePager) {
                     _displayPage.call(g);
@@ -855,6 +868,7 @@
     };
     // private function and variable
     //初始化
+    var _localCurrentTempData = [];
     var _init = function () {
         var g = this, p = this.options;
         if (BCGrid.isEmptyObject(p.data) && !BCGrid.isEmptyObject(p.localData)) {
@@ -1403,7 +1417,7 @@
     };
     var _bindEvent = function () {
         var g = this, p = this.options;
-        var rowsData = p.data[p.rows];
+        var rowsData =  p.dataSource == 'local'?_localCurrentTempData: p.data[p.rows];
         //全选
         $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).unbind();
         $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).on('click', function (e) {
@@ -1458,8 +1472,7 @@
             }
             var rowIndex = parseInt(tr.data('rowindex'));
             if (p.onCheckClick && BCGrid.isFunction(p.onCheckClick)) {
-                var index = Number((p.page-1)*p.pageSize+rowIndex);
-                p.onCheckClick.call(g, rowIndex, isChecked, p.data[p.rows][index]);
+                p.onCheckClick.call(g, rowIndex, isChecked, rowsData[rowIndex]);
             }
             //
             e.stopPropagation();
@@ -1472,7 +1485,6 @@
             }
             var self = $(this);
             var rowIndex = parseInt(self.data('rowindex'));
-            var index = Number((p.page-1)*p.pageSize+rowIndex);
             if (p.enableSelectRow) {
                 var isSelected = false;
                 if (self.hasClass("selected")) {
@@ -1487,11 +1499,11 @@
                 }
                 if (p.onSelectedRow && isSelected && BCGrid.isFunction(p.onSelectedRow)) {
                     //
-                    p.onSelectedRow.call(g, rowIndex, rowsData[index]);
+                    p.onSelectedRow.call(g, rowIndex, rowsData[rowIndex]);
                 }
             }
             if (p.onRowClick && BCGrid.isFunction(p.onRowClick)) {
-                p.onRowClick.call(g, rowIndex, rowsData[index]);
+                p.onRowClick.call(g, rowIndex, rowsData[rowIndex]);
             }
 
         });
@@ -1700,7 +1712,7 @@
         },
         _getPageInfo: function () {
             var g = this, p = this.options;
-            var info = p.pageInfoTpl.replace(/\{currentPage\}/g, p.currentPage);
+            var info =BCGrid.getLangText(p.lang, p.pageInfoTpl).replace(/\{currentPage\}/g, p.currentPage);
             info = info.replace(/\{pageCount\}/g, g.pageCount);
             info = info.replace(/\{recordCount\}/g, p.recordCount);
             info = info.replace(/\{pageSize\}/g, p.pageSize);
@@ -1710,10 +1722,10 @@
             var html = '';
             var g = this, p = this.options;
             if (p.showFirst) {
-                html += '<a href="javascript:;" class="' + p.firstCssClass + '" >' + p.firstText + '</a>';
+                html += '<a href="javascript:;" class="' + p.firstCssClass + '" >' +BCGrid.getLangText(p.lang, p.firstText) + '</a>';
             }
             if (p.showPrev) {
-                html += '<a href="javascript:;" class="' + p.prevCssClass + '">' + p.prevText + '</a>';
+                html += '<a href="javascript:;" class="' + p.prevCssClass + '">' +BCGrid.getLangText(p.lang,p.prevText) + '</a>';
             }
             if (g.pageCount > 6) {
                 html += '<a href="javascript:;" data-page="1" >1</a>';
@@ -1740,10 +1752,10 @@
                 }
             }
             if (p.showNext) {
-                html += '<a href="javascript:;" class="' + p.nextCssClass + '" >' + p.nextText + '</a>';
+                html += '<a href="javascript:;" class="' + p.nextCssClass + '" >' +BCGrid.getLangText(p.lang,p.nextText)+ '</a>';
             }
             if (p.showLast) {
-                html += '<a href="javascript:;" class="' + p.lastCssClass + '" >' + p.lastText + '</a>';
+                html += '<a href="javascript:;" class="' + p.lastCssClass + '" >' + BCGrid.getLangText(p.lang,p.lastText) + '</a>';
             }
             this.pageLinkWrap.html(html);
             if (p.currentPage == 1) {
