@@ -1,7 +1,7 @@
 # BCGrid
 A grid plugin for jquery.
 Flexible, convenient and free!
-#PS:
+# PS:
 本人能力有限，并非专业前端，搞此插件纯属自娱自乐，感谢那些胆子不小，敢使用本插件的猿媛员。
 # How to use:
 ```js
