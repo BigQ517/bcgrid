@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>BC Gird</title>
     <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="../dist/css/bc.grid.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid-1.0.3.min.css"/>
     <script src="../lib/jquery-11.1.min.js"></script>
-    <script src="../dist/bc.grid.min.js"></script>
+    <script src="../dist/bc.grid-1.0.3.min.js"></script>
 </head>
 <body>
 <div>
@@ -39,15 +39,12 @@
             ],
             enablePager:true,
             url: 'handler/data.json',
-            page:2,
             lang:'zh',
-            pageSizeOptions: [1,2,10, 20, 30, 40, 50, 100],
-            pageSize:1,
             pagerOption:{
-                firstText: '首页',                          //首页
-                lastText: '末页',                         //末页
-                prevText: '上一页',                          //上一页
-                nextText: '下一页',                          //下一页
+                firstText: '<<',                          //首页
+                lastText: '>>',                         //末页
+                prevText: '<',                          //上一页
+                nextText: '>',                          //下一页
                 pageInfoTpl: '当前{currentPage}/{pageCount}页，每页{pageSize}条,共{recordCount}条记录'
             }
 

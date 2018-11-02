@@ -6,6 +6,10 @@ function generateData($page,$pageSzie,$sortNameParamName,$sortOrderParamName,$fi
         $item = [
             'id'=>($page -1) *$pageSzie+$i,
             'num'=>'BQ_'.date("YmdHi",time()),
+            'gender'=> rand(1,2),
+             'age'=> rand(20,35),
+            'email'=>'bigq517@qq.com',
+            'mobile'=>'139*****517',
             'name'=> isset($filterMap['name'])?$filterMap['name'].($i+1):'老王_'.($i+1),
             'datetime'=>time() - $i * 60 * 60 *24
         ];
@@ -15,7 +19,7 @@ function generateData($page,$pageSzie,$sortNameParamName,$sortOrderParamName,$fi
 }
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $page =  isset($_POST["page"])?$_POST["page"]:1;
-    $pageSize =  isset($_POST["pageszie"])?$_POST["pageszie"]:40;
+    $pageSize =  isset($_POST["pagesize"])?$_POST["pagesize"]:40;
     $sortNameParamName=isset($_POST["sortname"])?$_POST["sortname"]:'';
     $sortOrderParamName=isset($_POST["sortorder"])?$_POST["sortorder"]:'';
     $name = isset($_POST["name"])?$_POST["name"]:'';
