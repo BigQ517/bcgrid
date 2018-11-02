@@ -32,7 +32,7 @@ module.exports = function (grunt) {
             },
             build: {
                 src: 'src/bc.grid.js',//压缩
-                dest: 'dist/bc.grid.min.js' //dest 是目的地输出
+                dest: 'dist/bc.grid-<%= pkg.version %>.min.js' //dest 是目的地输出
             }
 
         },

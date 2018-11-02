@@ -178,7 +178,7 @@
     position: relative;
     display: inline-block;
 }
-.bc-table>thead>tr>th .sort .asc{
+.bc-table>thead>tr>th .sort .desc{
     display: inline-block;
     position: absolute;
     left: 5px;
@@ -191,10 +191,10 @@
     border-bottom-style: solid;
     border-bottom-color: #b2b2b2;
 }
-.bc-table>thead>tr>th .sort[order=asc] .asc{
+.bc-table>thead>tr>th .sort[order=desc] .desc{
     border-bottom-color: #000;
 }
-.bc-table>thead>tr>th .sort .desc{
+.bc-table>thead>tr>th .sort .asc{
     display: inline-block;
     position: absolute;
     left: 5px;
@@ -207,7 +207,7 @@
     border-top-style: solid;
     border-top-color: #b2b2b2;
 }
-.bc-table>thead>tr>th .sort[order=desc] .desc{
+.bc-table>thead>tr>th .sort[order=asc] .asc{
     border-top-color: #000;
 }
 .bc-table .cursor-pointer{
