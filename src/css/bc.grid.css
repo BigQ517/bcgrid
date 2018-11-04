@@ -477,3 +477,50 @@
     padding: 0 10px;
     cursor: pointer;
 }
+/***rowDetail begin ****/
+.bc-table td .row-detail-expander {
+    width: 16px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+.bc-table td .row-detail-expanded::before{
+    font-family: fontAwesome;
+    font-size: 18px;
+    color:#919191;
+    content:"\f103" ;
+}
+.bc-table td .row-detail-collapsed::before{
+    font-family: fontAwesome;
+    font-size: 18px;
+    color:#919191;
+    content:"\f101" ;
+}
+.bc-table td .row-detail-expanded-sg::before{
+    font-family: fontAwesome;
+    font-size: 18px;
+    color:#919191;
+    content:"\f107" ;
+}
+.bc-table td .row-detail-collapsed-sg::before{
+    font-family: fontAwesome;
+    font-size: 18px;
+    color:#919191;
+    content:"\f105" ;
+}
+.bc-table td .row-detail-expanded-pm::before{
+    font-family: fontAwesome;
+    font-size: 18px;
+    color:#919191;
+    content:"\f068" ;
+}
+.bc-table td .row-detail-collapsed-pm::before{
+    font-family: fontAwesome;
+    font-size: 18px;
+    color:#919191;
+    content:"\f067" ;
+}
+.bc-table th.col-ctrl,.bc-table td.col-ctrl{
+    width: 30px;
+}
+/***rowDetail end ****/

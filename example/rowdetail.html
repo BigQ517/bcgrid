@@ -29,13 +29,13 @@
                 },
                 {
                     name: 'gender', display: 'Gender', render: function (item, index) {
-                    if (item.gender == 1) {
-                        return "Boy";
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
                     }
-                    if (item.gender == 2) {
-                        return "Girl";
-                    }
-                }
                 },
                 {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
                 {name: 'email', display: 'Email', enableSort: true},
@@ -45,9 +45,29 @@
             enablePager:true,
             dataSource:'local',
             localData:data,
-            onSelectedRow: function (rowIndex, rowData) { //选择行事件
-                console.log(rowData);
+            showCheckbox:true,
+            enablePager:false,
+            rowDetail:{
+                content:function (rowIndex,rowData) {
+                    if(rowIndex  !=2){
+                      return '<div style="color: #0000ff">row index:'+rowIndex+'<p>name:'+rowData.name+'</p><p>sign:'+rowData.sign+'</p></div>';
+                    }
+                    else{
+                        return false;
+                    }
+                },
+                expand:false,// true /false
+                ctrlStyle:'db', //db/sg/pm
+                align:'left' //center/ left / right
             },
+            onRowDetailExpandOrCollapse:function(isExpand, rowIndex,rowData){
+                console.log(isExpand);
+                console.log(rowIndex);
+                console.log(rowData);
+            }/*,
+            onRowClick: function (rowIndex, rowData) { //行点击事件 可选
+              this.toggleRowDetail(rowIndex);
+            },*/
         });
 
 
