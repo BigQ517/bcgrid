@@ -1,9 +1,25 @@
-# BCGrid
+BCGrid
+------------
 A grid plugin for jquery.
+
+
 Flexible, convenient and free!
-# PS:
+
+
+PS:
+------------
 本人能力有限，并非专业前端，搞此插件纯属自娱自乐，感谢那些胆子不小，敢使用本插件的猿媛员。
-# How to use:
+
+
+Change Log(V1.0.4):
+------------
+* Add row detail
+* small fixed example
+* ....
+
+
+How to use:
+------------
 ```js
  var grid=BCGrid.create("#table",{
             columns: [
@@ -32,7 +48,10 @@ Flexible, convenient and free!
             url: 'handler/data.php'
         });
  ```
- # Options:
+
+
+ Options:
+ ------------
   ```js
    id: '',
       width: '', //宽度值
@@ -102,10 +121,15 @@ Flexible, convenient and free!
       onLoadedData: null, //加载完数据事件
       onSelectedRow: null, //选择行事件
       onRowClick: null, //选择行事件
+      rowDetail: null,
+      onRowDetailExpandOrCollapse:null,//行明细 展开/收缩事件
       onTreeExpandOrCollapse: null,//树展开/收缩事件
       tree: null
   ```
-# ColumnOptions:
+
+
+ColumnOptions:
+------------
  ```js
     var defaultOpt = {
               display: '',//标题显示
@@ -122,7 +146,10 @@ Flexible, convenient and free!
               enableSort: false,//是否可以排序
           };
 ```
-# TreeOptions:
+
+
+TreeOptions:
+------------
 ```js
      var defaultOpt = {
              displayID: '',
@@ -130,4 +157,18 @@ Flexible, convenient and free!
              parentKey: 'parentid',
              expand: false
           };
+```
+
+
+RowDetailOption:
+------------
+```js
+   var defaultOpt = {
+              content: function (rowIndex, rowData) {
+                       return "";
+               },//明细内容string / function(rowIndex,rowData){return string/false;}
+               ctrlStyle: 'db',//控制图标样式 db/sg/pm
+               align: null, // null/center/left/right
+               expand: false
+  };
 ```
