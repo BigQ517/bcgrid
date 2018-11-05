@@ -20,6 +20,12 @@ Change Log(V1.0.4):
 
 How to use:
 ------------
+```html
+    <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid-[last version].min.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../dist/bc.grid-[last version].min.js"></script>
+
 ```js
  var grid=BCGrid.create("#table",{
             columns: [
@@ -51,9 +57,9 @@ How to use:
 
 
  Options:
- ------------
+------------
   ```js
-   id: '',
+      id: '',
       width: '', //宽度值
       height: '', //宽度值
       enabledCsrf: false,
@@ -61,7 +67,6 @@ How to use:
       lang: 'en',
       csrf: '',
       url: '', //ajax url
-      data: {}, //初始化数据
       localData: [],
       autoLoadData: true,
       showLoading: true, //是否显示加载状态提示
@@ -89,7 +94,7 @@ How to use:
       sortOrder: "", //排序方向
       params: [], //提交到服务器的参数
       columns: [], //数据源
-      dataSource: 'server', //数据源：本地(local)或(server),本地是将读取p.data。不需要配置，取决于设置了data或是url
+      dataSource: 'server', //数据源：本地(local)或(server),推荐使用默认值(server)
       ajaxType:'post', //ajax数据提交方式 get/post
       showCheckbox: false, //是否显示复选框
       showSerialNum: true, //是否显示序号
@@ -98,9 +103,9 @@ How to use:
       showHover: true,//是否显示hover效果
       showHead: true,
       showTitle: false,
-      title: "",
+      title: "",//标题文字
       titleAlign: null,//标题对齐方向
-      noDataText: '<div class="center">暂无任何记录</div>',
+      noDataText: '<div class="center">暂无任何记录</div>',//没有数据的提示内容
       dateFormat: 'yyyy-MM-dd hh:mm:ss', //默认时间显示格式
       wrapCssClass: '', //类名
       cssClass: 'bc-table', //类名
