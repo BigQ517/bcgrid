@@ -27,7 +27,7 @@
 .bc-table .bc-table-sub.table-bordered {
 
 }
-.bc-table tr.head-title{
+.bc-table tr.head-title,.bc-table  tr.footer{
     background:transparent !important;
 }
 .bc-table > thead > tr {

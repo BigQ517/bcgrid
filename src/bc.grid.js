@@ -504,6 +504,7 @@
         this.gridWrap = this.element = $(ele);
         this.grid = null;
         this.gridHead = null;
+        this.gridFoot = null;
         this.gridContent = null;
         this.pager = null;
         this.ID = "";
@@ -533,8 +534,8 @@
             sortOrder: "",                      //排序方向
             params: [],                         //提交到服务器的参数
             columns: [],                          //数据源
-            dataSource: 'server',                     //数据源：本地(local)或(server),本地是将读取p.data。不需要配置，取决于设置了data或是url
-            pageSourceType: 'ajax',                    //分页的方式：本地(local)或(server),选择本地方式时将在客服端分页、排序。
+            dataSource: 'server',                     //数据源：本地(local)或(server)
+            //pageSourceType: 'ajax',                    //分页的方式：本地(local)或(server),选择本地方式时将在客服端分页、排序。
             ajaxType: 'post', //ajax数据提交方式 get/post
             showCheckbox: false,                         //是否显示复选框
             showSerialNum: true,    //是否显示序号
@@ -886,6 +887,11 @@
             p.title = title;
             $("#bcgrid_" + g.ID + "_title").html(title);
         },
+        setFoot: function (foot) {
+            var g = this, p = this.options;
+            p.foot = foot;
+            $("#bcgrid_" + g.ID + "_foot").html(foot);
+        },
         addColumn: function (column, index) {
             var g = this, p = this.options;
             var pos = index || p.columns.length - 1;
@@ -959,6 +965,9 @@
         _preRenderColumnOpt.call(g);
         if (p.showHead || p.showTitle) {
             _setHead.call(g);
+        }
+        if(p.showFoot){
+            _setFoot.call(g);
         }
         _setGridContent.call(g);
         if ($("#" + g.ID, tableWrap).length == 0) {
@@ -1045,6 +1054,20 @@
         headAttr.push('</thead>');
         g.gridHead = $(headAttr.join(''));
         g.grid.html(g.gridHead);
+    };
+    //foot
+    var _setFoot = function () {
+        var g = this, p = this.options;
+        var footAttr = [];
+        footAttr.push('<tfoot>');
+        if (p.showFoot) {
+            footAttr.push('<tr role="row" class="footer">');
+            footAttr.push('<td' + (BCGrid.isDefined(p.footAlign) ? ' class="' + p.footAlign + '"' : '') + ' colspan="' + g._showColumnLength + '" id="bcgrid_' + g.ID + '_foot">' + p.foot + '</td>');
+            footAttr.push('</tr>');
+        }
+        footAttr.push('</tfoot>');
+        g.gridFoot = $(footAttr.join(''));
+        g.grid.append(g.gridFoot);
     };
     var _getHeadColumn = function () {
         var g = this, p = this.options;
