@@ -25,6 +25,8 @@ How to use:
     <link rel="stylesheet" href="../dist/css/bc.grid-[last version].min.css"/>
     <script src="../lib/jquery-11.1.min.js"></script>
     <script src="../dist/bc.grid-[last version].min.js"></script>
+```
+
 
 ```js
  var grid=BCGrid.create("#table",{
