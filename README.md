@@ -106,6 +106,9 @@ How to use:
       showHead: true,
       showTitle: false,
       title: "",//标题文字
+      showFoot: false,//显示foot true/false
+      foot: "",//foot 内容
+      footAlign: null,//foot内容对齐方向 null/left/right/center
       titleAlign: null,//标题对齐方向
       noDataText: '<div class="center">暂无任何记录</div>',//没有数据的提示内容
       dateFormat: 'yyyy-MM-dd hh:mm:ss', //默认时间显示格式
