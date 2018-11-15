@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BC Gird</title>
+    <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../src/css/bc.grid.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../src/bc.grid.js"></script>
+    <style type="text/css">
+
+
+        .layui-form-switch input[type=checkbox]{
+            display: none;
+            outline: 0;
+        }
+        .layui-form-switch {
+            position: relative;
+            height: 22px;
+            line-height: 22px;
+            min-width: 35px;
+            padding: 0 5px;
+            border: 1px solid #d2d2d2;
+            border-radius: 20px;
+            cursor: pointer;
+            background-color: #fff;
+            -webkit-transition: .1s linear;
+            transition: .1s linear;
+            display: inline-block;
+            vertical-align: middle;
+            margin-top: 3px;
+        }
+        .layui-form-onswitch {
+            border-color: #5FB878;
+            background-color: #5FB878;
+        }
+
+    </style>
+</head>
+<body>
+<div>
+    <div id="table"></div>
+    <br/> <br/>
+</div>
+<script>
+   function test(){
+        console.log("111");
+    }
+    $(function () {
+        var grid=BCGrid.create("#table",{
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                    return item.name;
+                }
+                },
+                {  name: 'gender', display: 'Gender', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
+                }
+                },
+                {  name: 'gender', display: 'Boy?',type:'switch', elOpt:{onValue:1,offValue:2,onText:'是',offText:'否'}},
+                {name: 'direction', display: 'Direction',type:'select',elOpt:{name:'se',itemsKey:'directionList'}},
+                {name: 'age', display: 'Age', format: '{value}Years'},
+                {name: 'email', display: 'Email',type:'textField'},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'sign', display: 'Sign',maxLength:10},
+                {name: 'time', display: 'Time',type:'dateTime',format:'MM/dd yyyy hh:mm:ss'},
+                {name: 'id', display: 'operate',render:function (rowItem,rowIndex) {
+                    //
+                        return BCGrid.getTableAction([
+                            {type: "text",title:'详情', href: "edit?id=" + rowItem.id,target:true},
+                            {type: "text",color:'blue',title:'详情', href: "edit?id=" + rowItem.id},
+                            {type: "edit", href: "edit?id=" + rowItem.id},
+                            {type: "info", href: "edit?id=" + rowItem.id,target:true},
+                            {type: "set", href: "edit?id=" + rowItem.id},
+                            {type: "delete",href: "javascript:deleteRow(" + rowItem.id + "," + rowItem + ");"}]);
+
+                    }},
+
+            ],
+            title:'BC Grid',
+            showTitle:true,
+            showFoot:true,
+            foot:'Foot<br>hello！',
+            showCheckbox: true,
+            showSerialNum: true,
+            url: 'handler/data.json',
+            onTextFieldChange:function(rowIndex,name, value, rowsData){
+            console.log(rowIndex);
+            },
+            onSwitchChange:function(rowIndex,isChecked,name, value, rowsData){
+                console.log(isChecked);
+            },
+            onSelectChange:function(rowIndex,name, value, rowsData){
+                console.log(rowIndex);
+            },
+            onDataChange:function (rowIndex,name, value, rowsData,colIndex,target) {
+                console.log(target);
+            }
+
+
+        }); 
+        ///
+
+
+    });
+</script>
+</body>
+</html>

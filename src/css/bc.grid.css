@@ -435,7 +435,7 @@
     border-color: #6faed9;
     color: #fff;
 }
-.bc-page button, .bc-page input, .bc-page select {
+.bc-page select, .bc-page button, .bc-page input, .bc-page select {
     border: 1px solid #e2e2e2;
     outline: 0;
 }
@@ -455,13 +455,13 @@
     margin: 0 5px;
 }
 .bc-page input,.bc-page button{
-    height: 30px;
-    line-height: 30px;
-    border-radius: 2px;
-    vertical-align: top;
-    background-color: #fff;
-    box-sizing: border-box;
-}
+     height: 30px;
+     line-height: 30px;
+     border-radius: 2px;
+     vertical-align: top;
+     background-color: #fff;
+     box-sizing: border-box;
+ }
 .bc-page input:hover {
     border-color: #D2D2D2!important;
 }
@@ -477,7 +477,123 @@
     padding: 0 10px;
     cursor: pointer;
 }
+/** text **/
+.bc-table input.column-text {
+    line-height: 22px;
+    width: 95%;
+    padding: 3px;
+    border-radius: 2px;
+    margin-top: 3px;
+    font-size: 16px;
+    border:1px solid #d1d5da;
+    background-color: #fafbfc;
+    outline: 0;
+}
+.bc-table input.column-text:focus,.bc-table select.column-select:focus,.bc-page select:focus {
+    background-color: #fff;
+    border-color: #2188ff;
+}
+/** select **/
+.bc-table select.column-select {
+    height: 22px;
+    width: 90%;
+    padding: 3px;
+    border-radius: 2px;
+    cursor: pointer;
+    box-sizing: content-box;
+    font-size: 16px;
+    margin-top: 3px;
+    border:1px solid #d1d5da;
+    background-color: #fafbfc;
+    outline: 0;
+}
+/** checkBox switch**/
+.bc-table label.checkbox-switch {
+    position: relative;
+    height: 22px;
+    line-height: 22px;
+    min-width: 35px;
+    padding: 0 5px;
+    border: 1px solid #d2d2d2;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #fff;
+    -webkit-transition: .1s linear;
+    transition: .1s linear;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 3px;
+}
+.bc-table label.checkbox-switch {
+    position: relative;
+    height: 22px;
+    line-height: 22px;
+    min-width: 50px;
+    padding: 3px 5px;
+    border: 1px solid #d2d2d2;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #fff;
+    -webkit-transition: .1s linear;
+    transition: .1s linear;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 3px;
+}
+.bc-table label.checkbox-switch input.column-checkbox{
+    display: none;
+    outline: 0;
+}
+.bc-table label.checkbox-switch-on {
+    border-color: #5FB878;
+    background-color: #5FB878;
+}
+.bc-table label.checkbox-switch em {
+    position: relative;
+    top: 0;
+    width: 25px;
+    margin-left: 25px;
+    padding: 0!important;
+    text-align: center!important;
+    color: #999!important;
+    font-style: normal!important;
+    font-size: 14px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+.bc-table label.checkbox-switch i {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    border-radius: 20px;
+    background-color: #d2d2d2;
+    -webkit-transition: .1s linear;
+    transition: .1s linear;
+}
+.bc-table label.checkbox-switch-on i {
+    left: 100%;
+    margin-left: -21px;
+    background-color: #fff;
+}
+.bc-table label.checkbox-switch-on em {
+    margin-left: 5px;
+    margin-right: 25px;
+    color: #fff!important;
+}
 /***rowDetail begin ****/
+/***actions begin**/
+.bc-table td .actions a {
+     margin: 0px 5px 0px 5px;
+    color: #000;
+    text-decoration: none;
+ }
+.bc-table td .actions a i{
+    font-size: 18px;
+}
+/***actions end **/
 .bc-table td .row-detail-expander {
     width: 16px;
     display: inline-block;
@@ -524,3 +640,36 @@
     width: 30px;
 }
 /***rowDetail end ****/
+
+/** Color begin**/
+.bc-table .green {
+    color: #69aa46!important;
+}
+.bc-table .blue {
+    color: #478fca!important;
+}
+.bc-table .red {
+    color: #dd5a43!important;
+}
+.bc-table .yellow {
+    color: #ffb752!important;
+}
+.bc-table .orange {
+    color: #ff892a!important;
+}
+.bc-table .black{
+    color: #333333 !important;
+}
+.bc-table .pink{
+    color: #d6487e!important;
+}
+.bc-table .purple{
+    color: #7461aa!important;
+}
+.bc-table .grey{
+    color: #888!important;
+}
+.bc-table.light{
+    color: #d9d9d9!important;
+}
+/** Color end**/
