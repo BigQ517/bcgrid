@@ -11,10 +11,10 @@ PS:
 本人能力有限，并非专业前端，搞此插件纯属自娱自乐，感谢那些胆子不小，敢使用本插件的猿媛员。
 
 
-Change Log(V1.0.4):
+Change Log(V1.0.5):
 ------------
-* Add row detail
-* small fixed example
+* Add row edit
+* Add C#/Java/Php example
 * ....
 
 
