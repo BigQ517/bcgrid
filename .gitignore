@@ -1,3 +1,6 @@
 .idea/
 package-lock.json
 node_modules/
+*.sln
+*.suo
+.vs/

@@ -1866,6 +1866,7 @@
         if ($target.is("select")) return true;
         if ($target.is("textarea")) return true;
         if ($target.is("a")) return true;
+        if ($target.is("a i")) return true;
         return false;
     };
     /**page**/
