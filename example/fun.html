@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>BC Gird</title>
     <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="../dist/css/bc.grid-1.0.4.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid-1.0.5.min.css"/>
     <script src="../lib/jquery-11.1.min.js"></script>
-    <script src="../dist/bc.grid-1.0.4.min.js"></script>
+    <script src="../dist/bc.grid-1.0.5.min.js"></script>
 </head>
 <body>
 <div>
@@ -24,6 +24,7 @@
         <button type="button" id="reloadData">reloadData</button>
         <button type="button" id="refresh">refresh</button>
         <button type="button" id="setTitle">setTitle</button>
+        <button type="button" id="setFoot">setFoot</button>
         <button type="button" id="get">get</button>
         <button type="button" id="set">set</button>
 
@@ -60,6 +61,9 @@
             ],
             title:'BC Grid',
             showTitle:true,
+            foot:'BC Grid Foot',
+            footAlign:'center',
+            showFoot:true,
             showCheckbox: true,
             showSerialNum: true,
             url: 'handler/data.json',
@@ -121,6 +125,9 @@
                 case "setTitle":
                     grid.setTitle('U like me?');
                     break;
+                case "setFoot":
+                    grid.setFoot('I like u!');
+                    break;
                 case "deleteRows":
                     grid.deleteRows([1,2,3]);
                     break;
@@ -133,6 +140,7 @@
         });
 
     });
+    console.log("%c\n找对地方了！ ", "font-size:41px;color:red;font-weight:bold;");
 </script>
 </body>
 </html>

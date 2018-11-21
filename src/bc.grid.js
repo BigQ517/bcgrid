@@ -20,7 +20,7 @@
     } else {
         root.BCGrid = factory(root);
     }
-}(typeof window !== 'undefined' ? window : this, function (win) {
+}(typeof window !== 'undefined' ? window : this, function (win){
     var BCGrid = (function () {
         var win = window,
             doc = win.document;
@@ -494,6 +494,57 @@
             });
             return arrayObj;
         };
+        B.getTableAction = function (actionArr) {
+            var btnsHtml = $('<div class="actions"></div>');
+            $.each(actionArr, function (index, item) {
+                var itemBtn = $('<a></a>');
+                if (item.type) {
+                    switch (item.type) {
+                        case "edit":
+                            item.color = item.color || "green";
+                            item.icon = item.icon || "fa fa-pencil";
+                            break;
+                        case "delete":
+                            item.color = item.color || "red";
+                            item.icon = item.icon || "fa fa-trash-o";
+                            break;
+                        case "conf":
+                        case "set":
+                            item.color = item.color || "grey";
+                            item.icon = item.icon || "fa fa-cog";
+                            break;
+                        case "list":
+                        case "info":
+                        case "detail":
+                            item.color = item.color || "blue";
+                            item.icon = item.icon || "fa fa-th";
+                            break;
+                        case "lock":
+                            item.color = item.color || "grey";
+                            item.icon = item.icon || "fa fa-lock";
+                            break;
+                        case "unlock":
+                            item.color = item.color || "blue";
+                            item.icon = item.icon || "fa fa-unlock";
+                            break;
+                    }
+                }
+                itemBtn.addClass(item.color || "");
+                if (typeof item.type == 'undefined' || item.type == "text") {
+                    itemBtn.html(item.title || "");
+                }
+                else {
+                    itemBtn.append('<i class="' + (item.icon || "") + '"></i>');
+                }
+                itemBtn.attr("href", item.href || "javascript:void(0);");
+                if (item.target) {
+                    itemBtn.attr("target", item.target);
+                }
+                btnsHtml.append(itemBtn);
+            });
+            return btnsHtml.get(0).outerHTML;
+
+        };
     }(BCGrid));
     /**
      * grid
@@ -504,6 +555,7 @@
         this.gridWrap = this.element = $(ele);
         this.grid = null;
         this.gridHead = null;
+        this.gridFoot = null;
         this.gridContent = null;
         this.pager = null;
         this.ID = "";
@@ -533,8 +585,8 @@
             sortOrder: "",                      //排序方向
             params: [],                         //提交到服务器的参数
             columns: [],                          //数据源
-            dataSource: 'server',                     //数据源：本地(local)或(server),本地是将读取p.data。不需要配置，取决于设置了data或是url
-            pageSourceType: 'ajax',                    //分页的方式：本地(local)或(server),选择本地方式时将在客服端分页、排序。
+            dataSource: 'server',                     //数据源：本地(local)或(server)
+            //pageSourceType: 'ajax',                    //分页的方式：本地(local)或(server),选择本地方式时将在客服端分页、排序。
             ajaxType: 'post', //ajax数据提交方式 get/post
             showCheckbox: false,                         //是否显示复选框
             showSerialNum: true,    //是否显示序号
@@ -572,6 +624,9 @@
             onRowDetailExpandOrCollapse: null,//row 明细展开/收缩事件
             onTreeExpandOrCollapse: null,//树展开/收缩事件
             onDataChange: null, //数据改变事件
+            onSelectChange:null,//下拉改变事件
+            onSwitchChange:null,//开关改变事件
+            onTextFieldChange:null,//文本输入改变事件
             onDataSave: null,
             toolBtns: [],
             rowDetail: null,
@@ -886,6 +941,11 @@
             p.title = title;
             $("#bcgrid_" + g.ID + "_title").html(title);
         },
+        setFoot: function (foot) {
+            var g = this, p = this.options;
+            p.foot = foot;
+            $("#bcgrid_" + g.ID + "_foot").html(foot);
+        },
         addColumn: function (column, index) {
             var g = this, p = this.options;
             var pos = index || p.columns.length - 1;
@@ -897,8 +957,8 @@
             p.data[p.rows] = rows;
             p.data[p.total] = rows.length;
         },
-        toggleRowDetail:function (rowIndex) {
-            var g= this,p=this.options;
+        toggleRowDetail: function (rowIndex) {
+            var g = this, p = this.options;
             var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
             var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
             var isExpand = _toggleDetail.call(g, row);
@@ -960,6 +1020,9 @@
         if (p.showHead || p.showTitle) {
             _setHead.call(g);
         }
+        if (p.showFoot) {
+            _setFoot.call(g);
+        }
         _setGridContent.call(g);
         if ($("#" + g.ID, tableWrap).length == 0) {
             tableWrap.html(g.grid);
@@ -991,10 +1054,7 @@
             format: null,//显示数据格式(date)
             role: 'data',
             enableSort: false,//是否可以排序
-            enableEdit: false,
-            editType: 'textField',
-            action: null,
-            saveUrl: ''
+            elOpt:null
 
         };
         g._showColumnLength = p.columns.length;
@@ -1045,6 +1105,20 @@
         headAttr.push('</thead>');
         g.gridHead = $(headAttr.join(''));
         g.grid.html(g.gridHead);
+    };
+    //foot
+    var _setFoot = function () {
+        var g = this, p = this.options;
+        var footAttr = [];
+        footAttr.push('<tfoot>');
+        if (p.showFoot) {
+            footAttr.push('<tr role="row" class="footer">');
+            footAttr.push('<td' + (BCGrid.isDefined(p.footAlign) ? ' class="' + p.footAlign + '"' : '') + ' colspan="' + g._showColumnLength + '" id="bcgrid_' + g.ID + '_foot">' + p.foot + '</td>');
+            footAttr.push('</tr>');
+        }
+        footAttr.push('</tfoot>');
+        g.gridFoot = $(footAttr.join(''));
+        g.grid.append(g.gridFoot);
     };
     var _getHeadColumn = function () {
         var g = this, p = this.options;
@@ -1278,14 +1352,28 @@
                 case 'date':
                     dataRes = _formatDate.call(g, data[column.name], opt.format);
                     break;
+                case 'switch':
                 case 'checkbox':
+                    noPadding = true;
                     dataRes = _checkboxItem.call(g, rowIndex + 0, column, data, colIndex);
+                    if(BCGrid.isUnDefined(opt.align)){
+                        opt.align = "center";
+                    }
                     break;
                 case 'textField':
-                    dataRes = _inputItem.call(g, rowIndex + 0, column, data, colIndex);
+                case 'inputField':
+                    noPadding = true;
+                    dataRes = _inputFieldItem.call(g, rowIndex + 0, column, data, colIndex);
+                    if(BCGrid.isUnDefined(opt.align)){
+                        opt.align = "center";
+                    }
                     break;
                 case 'select':
+                    noPadding = true;
                     dataRes = _selectItem.call(g, rowIndex + 0, column, data, colIndex);
+                    if(BCGrid.isUnDefined(opt.align)){
+                        opt.align = "center";
+                    }
                     break;
                 default:
                     var val = BCGrid.isDefined(data[column.name]) ? data[column.name] + '' : '';
@@ -1387,37 +1475,44 @@
         // console.log(subTabelDom.html());
         return subTabelDom.prop('outerHTML');
     };
-    var _checkboxItem = function (rowIndex, column, data, colIndex) {
-        column.elValue = typeof column.elValue != 'undefined' ? column.elValue : 1;
-        var $item = $("<label></label>");
-        var $check = $('<input class="columnCheckBox"   type="checkbox" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" >');
-        if (column.elName) {
-            $check.attr('name', column.elName);
-        } else {
-            $check.attr('name', column.name);
-        }
-        $check.attr('value', column.elValue);
-        if (column.name && data[column.name] == column.elValue) {
+   var _checkboxItem = function (rowIndex, column, data, colIndex) {
+       var p=this.options;
+       var elopt = {name:column.name,onValue:1,offValue:0,onText:'ON',offText:'OFF'};
+       elopt.onText = BCGrid.getLangText(p.lang,elopt.onText);
+       elopt.offText = BCGrid.getLangText(p.lang,elopt.offText);
+        if(BCGrid.isDefined(column.elOpt)){
+           elopt = $.extend({},elopt,column.elOpt);
+         }
+        var $item = $('<label class="checkbox-switch"></label>');
+        var $check = $('<input type="checkbox"  class="column-checkbox" data-colname="'+column.name+'" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" data-onvalue="'+elopt.onValue+'" data-offvalue="'+elopt.offValue+'" data-ontext="'+elopt.onText+'" data-offtext="'+elopt.offText+'" />');
+         $check.attr('name', elopt.name);
+         $check.attr('value', elopt.value);
+         var emStr='<em>';
+        if (column.name && (BCGrid.isDefined(data[column.name]) ? data[column.name] : '') == elopt.onValue) {
             $check.attr('checked', 'checked');
+            $item.addClass("checkbox-switch-on");
+            emStr =emStr+elopt.onText;
         }
+        else{
+            emStr = emStr + elopt.offText;
+        }
+        emStr = emStr+'</em>';
         $item.append($check);
-        $item.append('<span class="lbl"></span>');
+        $item.append(emStr);
+        $item.append('<i></i>');
         return $item.prop('outerHTML');
     };
     var _selectItem = function (rowIndex, column, data, colIndex) {
-        column.items = column.items || [];
-        var $item = $('<select class="columnSelect" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" ></select>');
-        if (column.elName) {
-            $item.attr('name', column.elName);
-        } else {
-            $item.attr('name', column.name);
+        var opt = {name:column.name,itemsKey:'items'};
+        if(BCGrid.isDefined(column.elOpt)){
+            opt = $.extend(true,{},opt,column.elOpt);
         }
-        if (column.itemsName) {
-            column.items = data[column.itemsName];
-        }
-        $.each(column.items, function (i, item) {
+        var $item = $('<select class="column-select"  data-colname="'+column.name+'" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" ></select>');
+        $item.attr('name', opt.name);
+        var items = BCGrid.isDefined(data[opt.itemsKey])?data[opt.itemsKey]:[];
+        $.each(items, function (i, item) {
             //
-            if (column.name && (typeof data[column.name] != 'undefined' ? data[column.name] : '') == item.value) {
+            if (column.name &&(BCGrid.isDefined(data[column.name]) ? data[column.name] : '') == item.value) {
                 $item.append('<option value="' + item.value + '" selected="selected">' + item.text + '</option>');
             }
             else {
@@ -1425,17 +1520,16 @@
             }
 
         });
-
         return $item.prop('outerHTML');
     };
-    var _inputItem = function (rowIndex, column, data, colIndex) {
-        var $item = $('<input class="width_90 columnEdit" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" />');
-        if (column.elName) {
-            $item.attr('name', column.elName);
-        } else {
-            $item.attr('name', column.name);
+    var _inputFieldItem = function (rowIndex, column, data, colIndex) {
+        var opt = {name:column.name};
+        if(BCGrid.isDefined(column.elOpt)){
+            opt = $.extend({},opt,column.elOpt);
         }
-        $item.attr('value', typeof data[column.name] != 'undefined' ? data[column.name] : '');
+        var $item = $('<input class="column-text" data-colname="'+column.name+'" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" />');
+        $item.attr('name', opt.name);
+        $item.attr('value', BCGrid.isDefined(data[column.name]) ? data[column.name] : '');
         return $item.prop('outerHTML');
     };
     var _formatText = function (value, format) {
@@ -1633,44 +1727,70 @@
         }
         //
 
-        //_bindChangeEvent.call(g);
+        _bindDataChangeEvent.call(g);
 
     };
-    /* var _bindChangeEvent = function () {
+   var _bindDataChangeEvent = function () {
          var g = this, p = this.options;
-         $('input.edit[data-rowindex],select.select[data-rowindex]', g.gridContent).unbind();
-         $('input.edit[data-rowindex],select.select[data-rowindex]', g.gridContent).on("change", function () {
+          var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+         $('input.column-text[data-rowindex],select.column-select[data-rowindex]', g.gridContent).unbind();
+         $('input.column-text[data-rowindex],select.column-select[data-rowindex]', g.gridContent).on("change", function () {
              var self = $(this);
              var name = self.attr("name");
+             var colName = self.data("colname");
              var rowIndex = parseInt(self.data('rowindex'));
              var colIndex = parseInt(self.data('colindex'));
              var value = self.val();
-             p.data[p.rows][rowIndex][name] = value;
+             rowsData[rowIndex][colName] = value;
+             //
+             var changeTarget = '';
+             if(self.is("select")){
+                 changeTarget = "selectChange";
+                 if (p.onSelectChange && BCGrid.isFunction(p.onSelectChange)) {
+                     p.onSelectChange.call(g,rowIndex,name, value,  rowsData[rowIndex]);
+                 }
+             }
+              if(self.is("input")){
+                 changeTarget = "textFieldChange";
+                 if (p.onTextFieldChange && BCGrid.isFunction(p.onTextFieldChange)) {
+                     p.onTextFieldChange.call(g,rowIndex,name, value,  rowsData[rowIndex]);
+                 }
+             }
              //内容改变
              if (p.onDataChange && BCGrid.isFunction(p.onDataChange)) {
-                 p.onDataChange.call(g, p.data[p.rows][rowIndex], name, value, rowIndex, colIndex);
-
+                 p.onDataChange.call(g, name, value,rowIndex,rowsData[rowIndex],colIndex,changeTarget);
              }
          });
-         $('input[type="checkbox"][data-rowindex]', g.gridContent).unbind();
-         $('input[type="checkbox"][data-rowindex]', g.gridContent).on("click", function () {
+         $('input.column-checkbox[data-rowindex]', g.gridContent).unbind();
+         $('input.column-checkbox[data-rowindex]', g.gridContent).on("click", function () {
              var self = $(this);
              var name = self.attr("name");
+             var colName = self.data("colname");
              var rowIndex = parseInt(self.data('rowindex'));
              var colIndex = parseInt(self.data('colindex'));
              var value = "";
-             if (self.is("checked")) {
-                 value = self.val();
+             var label =   self.parent("label.checkbox-switch");
+             if (self.is(":checked")) {
+                 value = self.data("onvalue");
+                 label.addClass("checkbox-switch-on");
+                 $("em",label).html(self.data("ontext"));
              }
-             p.data[p.rows][rowIndex][name] = value;
+             else{
+                 value = self.data("offvalue");
+                 label.removeClass("checkbox-switch-on");
+                 $("em",label).html(self.data("offtext"));
+             }
+             rowsData[rowIndex][colName] = value;
+             if (p.onSwitchChange && BCGrid.isFunction(p.onSwitchChange)) {
+                 p.onSwitchChange.call(g,rowIndex,self.is(":checked"), name, value,  rowsData[rowIndex]);
+             }
              //内容改变
              if (p.onDataChange && BCGrid.isFunction(p.onDataChange)) {
-                 p.onDataChange.call(g, p.data[p.rows][rowIndex], name, value, rowIndex, colIndex);
-
+                 p.onDataChange.call(g, rowIndex,name, value,  rowsData[rowIndex], colIndex,"switchChange");
              }
          });
 
-     };*/
+     };
     var _toggleDetail = function (row) {
         var g = this, p = g.options, isExpand = false;
         var rowIndex = row.data("rowindex");
@@ -1737,13 +1857,16 @@
         if (!BCGrid.isDefined(target)) return false;
         var $target = $(target);
         if ($target.is("span.tree-expander")) return true;
-        if ($target.is("span.lbl")) return true;
+        if ($target.is("label.checkbox-switch")) return true;
+        if ($target.is("label.checkbox-switch em")) return true;
+        if ($target.is("label.checkbox-switch i")) return true;
         if ($target.is("span.row-detail-expander")) return true;
         if ($target.is("button")) return true;
         if ($target.is("input")) return true;
         if ($target.is("select")) return true;
         if ($target.is("textarea")) return true;
         if ($target.is("a")) return true;
+        if ($target.is("a i")) return true;
         return false;
     };
     /**page**/

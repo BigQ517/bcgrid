@@ -5,8 +5,10 @@
     <title>BC Gird</title>
 </head>
 <body>
+<p>
+Options:
+<hr/>
 <xmp>
-    defaults = {
     id: '',
     width: '', //宽度值
     height: '', //宽度值
@@ -15,7 +17,6 @@
     lang: 'en',
     csrf: '',
     url: '', //ajax url
-    data: {}, //初始化数据
     localData: [],
     autoLoadData: true,
     showLoading: true, //是否显示加载状态提示
@@ -43,7 +44,7 @@
     sortOrder: "", //排序方向
     params: [], //提交到服务器的参数
     columns: [], //数据源
-    dataSource: 'server', //数据源：本地(local)或(server),本地是将读取p.data。不需要配置，取决于设置了data或是url
+    dataSource: 'server', //数据源：本地(local)或(server),推荐使用默认值(server)
     ajaxType:'post', //ajax数据提交方式 get/post
     showCheckbox: false, //是否显示复选框
     showSerialNum: true, //是否显示序号
@@ -52,8 +53,12 @@
     showHover: true,//是否显示hover效果
     showHead: true,
     showTitle: false,
-    title: "",
-    noDataText: '<div class="center">暂无任何记录</div>',
+    title: "",//标题文字
+    titleAlign: null,//标题对齐方向
+    showFoot: false,//显示foot true/false
+    foot: "",//foot 内容
+    footAlign: null,//foot内容对齐方向 null/left/right/center
+    noDataText: '<div class="center">暂无任何记录</div>',//没有数据的提示内容
     dateFormat: 'yyyy-MM-dd hh:mm:ss', //默认时间显示格式
     wrapCssClass: '', //类名
     cssClass: 'bc-table', //类名
@@ -74,11 +79,61 @@
     onLoadedData: null, //加载完数据事件
     onSelectedRow: null, //选择行事件
     onRowClick: null, //选择行事件
-    rowDetail:null,
+    rowDetail: null,
     onRowDetailExpandOrCollapse:null,//行明细 展开/收缩事件
     onTreeExpandOrCollapse: null,//树展开/收缩事件
     tree: null
-    }
 </xmp>
+</p>
+
+<p>
+    ColumnOptions:
+<hr/>
+    <xmp>
+        var defaultOpt = {
+        display: '',//标题显示
+        id: '',//id
+        name: 'name',//数据name
+        type: 'text',//数据类型
+        render: null,//执行行数
+        hide: false,//是否隐藏
+        align: null,//数据对齐方式
+        headAlign:null,//标题对齐方式
+        maxLength: null,//显示的最大长度
+        format: null,//显示数据格式(date)
+        role: 'data',
+        enableSort: false,//是否可以排序
+        };
+
+    </xmp>
+
+</p>
+<p>
+    TreeOptions:
+<hr/>
+    <xmp>
+        var defaultOpt = {
+        displayID: '',
+        key: 'id',
+        parentKey: 'parentid',
+        expand: false
+        };
+    </xmp>
+</p>
+
+<p>
+    RowDetailOption:
+<hr/>
+    <xmp>
+        var defaultOpt = {
+        content: function (rowIndex, rowData) {
+        return "";
+        },//明细内容string / function(rowIndex,rowData){return string/false;}
+        ctrlStyle: 'db',//控制图标样式 db/sg/pm
+        align: null, // null/center/left/right
+        expand: false
+        };
+    </xmp>
+</p>
 </body>
 </html>
