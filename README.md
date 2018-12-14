@@ -11,11 +11,9 @@ PS:
 本人能力有限，并非专业前端，搞此插件纯属自娱自乐，感谢那些胆子不小，敢使用本插件的猿媛员。
 
 
-Change Log(V1.0.5):
+Change Log(V1.0.6):
 ------------
-* Add row edit
-* Add C#/Java/Php example
-* ....
+* Add row double click event
 
 
 How to use:
@@ -130,7 +128,8 @@ How to use:
       onLoadData: null, //加载数据前事件
       onLoadedData: null, //加载完数据事件
       onSelectedRow: null, //选择行事件
-      onRowClick: null, //选择行事件
+      onRowClick: null, //单击行事件
+      onRowDbClick: null, //双击行事件
       rowDetail: null,
       onRowDetailExpandOrCollapse:null,//行明细 展开/收缩事件
       onTreeExpandOrCollapse: null,//树展开/收缩事件
