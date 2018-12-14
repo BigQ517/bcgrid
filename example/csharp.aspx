@@ -5,9 +5,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
    <title>BC Gird</title>
     <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
-   <link rel="stylesheet" href="../dist/css/bc.grid-1.0.5.min.css"/>
-      <script src="../lib/jquery-11.1.min.js"></script>
-      <script src="../dist/bc.grid-1.0.5.min.js"></script>
+    <link rel="stylesheet" href="../dist/css/bc.grid.min.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../dist/bc.grid.min.js"></script>
 </head>
 <body>
     <form id="form1" runat="server">

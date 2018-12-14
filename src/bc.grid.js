@@ -42,7 +42,7 @@
         }();
         var BCGrid = {
             product: 'BC Grid',
-            version: '1.0.1',
+            version: '1.0.6',
             doc: doc,
             isIE: /msie/i.test(userAgent),
             isMoz: /gecko/.test(userAgent),
@@ -1697,7 +1697,7 @@
                 if (p.onRowClick && BCGrid.isFunction(p.onRowClick)) {
                     p.onRowClick.call(g, rowIndex, rowsData[rowIndex]);
                 }
-            }, 300);
+            }, 200);
         });
         //行双击
         $('tr[role="row"]:not(.no_data)', g.gridContent).on("dblclick", function (e) {
