@@ -563,7 +563,7 @@
             id: '',
             width: '',                          //宽度值
             height: '',                          //宽度值
-            enabledCsrf: false,
+            enableCsrf: false,
             csrfName: '_csrf',
             lang: 'en',
             theme: '',
@@ -621,7 +621,7 @@
             onLoadedData: null,                  //加载完数据事件
             onSelectedRow: null, //选择行事件
             onRowClick: null, //单击行事件
-            onRowDbClick:null,//双击行事件
+            onRowDbClick: null,//双击行事件
             onRowDetailExpandOrCollapse: null,//row 明细展开/收缩事件
             onTreeExpandOrCollapse: null,//树展开/收缩事件
             onDataChange: null, //数据改变事件
@@ -1701,13 +1701,14 @@
         });
         //行双击
         $('tr[role="row"]:not(.no_data)', g.gridContent).on("dblclick", function (e) {
-            clearTimeout(_timeFn);
-            if (_isEditTarget(e.target)) {
-                return;
-            }
-            var self = $(this);
-            var rowIndex = parseInt(self.data('rowindex'));
             if (p.onRowDbClick && BCGrid.isFunction(p.onRowDbClick)) {
+                clearTimeout(_timeFn);
+                if (_isEditTarget(e.target)) {
+                    return;
+                }
+                var self = $(this);
+                var rowIndex = parseInt(self.data('rowindex'));
+
                 p.onRowDbClick.call(g, rowIndex, rowsData[rowIndex]);
             }
         });
