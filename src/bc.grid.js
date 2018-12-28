@@ -714,7 +714,7 @@
                 }
                 dataParam.push({name: p.pageParamName, value: p.page});
                 dataParam.push({name: p.pageSizeParamName, value: p.pageSize});
-                if (p.enabledCsrf) {
+                if (p.enableCsrf) {
                     dataParam.push({name: p.csrfName, value: p.csrf});
                 }
                 BCGrid.ajax({
@@ -985,7 +985,7 @@
             g.ID = "bc_" + BCGrid.getID();
         }
         //csrf
-        if (p.enabledCsrf && BCGrid.isEmptyObject(p.csrf)) {
+        if (p.enableCsrf && BCGrid.isEmptyObject(p.csrf)) {
             p.csrf = $("input[name='" + p.csrfName + "']").val();
         }
         if (!g.gridWrap.hasClass(p.wrapCssClass)) {
@@ -1438,7 +1438,7 @@
         var subTabelDom = $("<div></div>");
         //var subGrid =
         var subOpt = {
-            enabledCsrf: false,
+            enableCsrf: false,
             lang: p.lang,
             localData: tableData,
             autoLoadData: true,
