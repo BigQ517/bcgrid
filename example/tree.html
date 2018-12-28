@@ -43,6 +43,9 @@
                 key: 'id',
                 parentKey: 'pid',
                 expand: false
+            },
+            onTreeExpandOrCollapse:function (isExpand, rowIndex, item) {
+                console.log(isExpand);
             }
         });
     });
