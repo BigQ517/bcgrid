@@ -188,7 +188,7 @@
             paramsData.push({"name": "num", "value": "" + $("#num").val() + ""});
          */
         $grid.set({params:paramsData});
-        $grid.loadData(true);
+        $grid.reload();
 
     }
   function deleteRow(id,index){

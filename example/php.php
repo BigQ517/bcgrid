@@ -92,7 +92,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
          paramsData.push({"name": "num", "value": "" + $("#num").val() + ""});
          */
         grid.set({params:paramsData});
-        grid.loadData(true);
+        grid.reload();
 
     }
 </script>

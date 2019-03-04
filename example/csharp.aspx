@@ -51,7 +51,7 @@
             paramsData.push({"name": "num", "value": "" + $("#num").val() + ""});
          */
       grid.set({ params: paramsData });
-      grid.loadData(true);
+      grid.reload();
 
     }
 </script>

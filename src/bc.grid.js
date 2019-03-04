@@ -42,7 +42,7 @@
         }();
         var BCGrid = {
             product: 'BC Grid',
-            version: '1.0.6',
+            version: '1.1.0',
             doc: doc,
             isIE: /msie/i.test(userAgent),
             isMoz: /gecko/.test(userAgent),
@@ -89,7 +89,7 @@
     }(BCGrid));
     (function (B) {
         B.getID = function () {
-            return Number(Math.random().toString().substr(3, 6) + Date.now()).toString(36);
+            return Number(Math.random().toString().substr(3, 4) + Date.now()).toString(36);
         };
         B.parseInt = function (s, mag) {
             return parseInt(s, mag || 10);

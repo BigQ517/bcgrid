@@ -6,23 +6,18 @@ A grid plugin for jquery.
 Flexible, convenient and free!
 
 
-PS:
+Change Log(V1.1.0):
 ------------
-本人能力有限，并非专业前端，搞此插件纯属自娱自乐，感谢那些胆子不小，敢使用本插件的猿媛员。
-
-
-Change Log(V1.0.6):
-------------
-* Add row double click event
+* Fixed bug
 
 
 How to use:
 ------------
 ```html
     <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="../dist/css/bc.grid-[last version].min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid.min.css"/>
     <script src="../lib/jquery-11.1.min.js"></script>
-    <script src="../dist/bc.grid-[last version].min.js"></script>
+    <script src="../dist/bc.grid.min.js"></script>
 ```
 
 
