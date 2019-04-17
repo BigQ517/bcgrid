@@ -34,10 +34,9 @@
     color: #707070;
     font-weight: 400;
 }
-.bc-table.table-striped > thead > tr {
+
+.bc-table.table-head-color > thead > tr{
     background: #F2F2F2;
-    background-image: -o-linear-gradient(top, #f8f8f8 0, #ececec 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff8f8f8', endColorstr='#ffececec', GradientType=0);
 }
 
 .bc-table.table-bordered > thead > tr > th:first-child {
@@ -56,6 +55,11 @@
 }
 .bc-table td,.bc-table th{
     white-space: nowrap;
+}
+.bc-table td.allow-newline, .bc-table th.allow-newline {
+    white-space: normal !important;
+    word-break: break-all;
+    word-wrap:break-word;
 }
 .bc-table > thead > tr > th:first-child {
     border-left-color: #F1F1F1;

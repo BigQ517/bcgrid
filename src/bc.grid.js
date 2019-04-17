@@ -7,6 +7,13 @@
  */
 //
 'use strict';
+window.console = window.console || (function () {
+        var c = {};
+        c.log = c.warn = c.debug = c.info = c.error = c.time = c.dir = c.profile
+            = c.clear = c.exception = c.trace = c.assert = function () {
+        };
+        return c;
+    })();
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD
@@ -42,7 +49,7 @@
         }();
         var BCGrid = {
             product: 'BC Grid',
-            version: '1.1.0',
+            version: '1.2.0',
             doc: doc,
             isIE: /msie/i.test(userAgent),
             isMoz: /gecko/.test(userAgent),
@@ -147,9 +154,11 @@
         B.isEmptyObject = function (obj) {
             return !B.isDefined(obj) || obj === "" || obj === null || obj === false || function () {
                 var t;
-                for (t in obj)
-                    return !1;
-                return !0;
+                if(B.isNumber(obj))return false;
+                for (t in obj){
+                    return false;
+                }
+                return true;
             }();
         };
         /**
@@ -592,10 +601,12 @@
             showSerialNum: true,    //是否显示序号
             showBorder: true, //是否显示边框
             showStripe: true,//是否显示条纹间隔效果
+            showHeadColor: true,//是否表头显示背景色
             showHover: true,//是否显示hover效果
             showHead: true,
             showTitle: false,//显示标题 true/false
             showFoot: false,//显示foot true/false
+            serialNumWidth:null,//serialNumWidth
             title: "",
             foot: "",
             titleAlign: null,//标题对齐方向
@@ -648,6 +659,7 @@
                 expand: false
             }, this.options.rowDetail);
             this.options.tree = null;
+            this.options.showStripe = false;
         }
         if (this.options.tree) {
             this.options.tree = $.extend({}, {
@@ -707,13 +719,18 @@
             if (beforeRes == false) {
                 return;
             }
+            if (isReloadPage) {
+                p.page = 1;
+            }
             if (p.dataSource == 'server') {
                 if (!BCGrid.isEmptyObject(p.sortName)) {
                     dataParam.push({name: p.sortNameParamName, value: p.sortName});
                     dataParam.push({name: p.sortOrderParamName, value: p.sortOrder});
                 }
-                dataParam.push({name: p.pageParamName, value: p.page});
-                dataParam.push({name: p.pageSizeParamName, value: p.pageSize});
+                if(p.enablePager) {
+                    dataParam.push({name: p.pageParamName, value: p.page});
+                    dataParam.push({name: p.pageSizeParamName, value: p.pageSize});
+                }
                 if (p.enableCsrf) {
                     dataParam.push({name: p.csrfName, value: p.csrf});
                 }
@@ -726,6 +743,7 @@
                     dataType: 'json',
                     success: function (data) {
                         p.data = data;
+                        _rawData =  g.getData();
                         _displayData.call(g);
                         if (isReloadPage && p.enablePager) {
                             _displayPage.call(g);
@@ -761,8 +779,9 @@
                     tempData = tempData.slice(start, start + BCGrid.parseInt(p.pageSize));
                 }
                 //
-                _localCurrentTempData = tempData;
-                _displayData.call(g, tempData);
+               _rawData = tempData;
+              //  _localCurrentTempData = tempData;
+                _displayData.call(g,tempData);
                 if (isReloadPage && p.enablePager) {
                     _displayPage.call(g);
                 }
@@ -836,6 +855,9 @@
             return [];
 
         },
+        getRawData: function () {
+            return _rawData;
+        },
         getRowData: function (rowindex) {
             return this.options.data[this.options.rows][rowindex];
         },
@@ -877,6 +899,7 @@
             if (p.showCheckbox) {
                 $('input[tag="bcgrid_checkbox"]', g.gridContent).each(function () {
                     if ($(this).is(':checked')) {
+                        //
                         rows.push(p.data[p.rows][parseInt($(this).closest("tr").data('rowindex'))]);
                     }
                 });
@@ -953,26 +976,39 @@
             p.columns.splice(pos, 0, column || {});
             g.refresh();
         },
-        setData: function (rows) {
+      /*  setData: function (rows) {
             var g = this, p = this.options;
             p.data[p.rows] = rows;
             p.data[p.total] = rows.length;
-        },
+        },*/
         toggleRowDetail: function (rowIndex) {
             var g = this, p = this.options;
-            var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+           // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+            var rowsData = g.getData();
             var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
             var isExpand = _toggleDetail.call(g, row);
             if (p.onRowDetailExpandOrCollapse && BCGrid.isFunction(p.onRowDetailExpandOrCollapse)) {
                 p.onRowDetailExpandOrCollapse.call(g, isExpand, rowIndex, rowsData[rowIndex]);
             }
+        },
+        /**
+         * 筛选数据
+         * @param formSelector
+         */
+        filterData:function (formSelector) {
+            var g = this, p = this.options;
+            var paramsData =(BCGrid.isObject(formSelector) || BCGrid.isArray(formSelector))?formSelector: BCGrid.buildParams(formSelector);
+            g .set({params:paramsData});
+            g .reload();
         }
     };
     // private function and variable
     //初始化
     var _localCurrentTempData = [];
+    var _rawData=[];//原始数据
     var _timeFn = null;
     var _init = function () {
+        _rawData=[];
         var g = this, p = this.options;
         if (BCGrid.isEmptyObject(p.data) && !BCGrid.isEmptyObject(p.localData)) {
             p.data[p.rows] = p.localData;
@@ -982,7 +1018,7 @@
             g.ID = p.id;
         }
         if (BCGrid.isEmptyObject(g.ID)) {
-            g.ID = "bc_" + BCGrid.getID();
+            g.ID = "bc_" +  BCGrid.getID();
         }
         //csrf
         if (p.enableCsrf && BCGrid.isEmptyObject(p.csrf)) {
@@ -1012,6 +1048,10 @@
         if (p.showHover) {
             g.grid.addClass("table-hover");
         }
+        if (p.showHeadColor) {
+            g.grid.addClass("table-head-color");
+        }
+
         if (!BCGrid.isEmptyObject(p.width)) {
             tableWrap.css("width", p.width);
         }
@@ -1050,12 +1090,14 @@
             type: 'text',//数据类型
             render: null,//执行行数
             hide: false,//是否隐藏
+            width:null,//列宽
             align: null,//数据对齐方式
             headAlign: null,//标题对齐方式
             maxLength: null,//显示的最大长度
             format: null,//显示数据格式(date)
             role: 'data',
             enableSort: false,//是否可以排序
+            allowNewline:false,//是否允许自动换行
             elOpt: null
 
         };
@@ -1098,7 +1140,20 @@
                 headAttr.push('<th class="center col-ctrl"> <label><input type="checkbox" id="bcgrid_' + g.ID + '_checkbox_all" tag="bcgrid_checkbox"/><span class="lbl"></span></label></th>');
             }
             if (p.showSerialNum) {
-                headAttr.push('<th class="center">' + BCGrid.getLangText(p.lang, "Serial") + '</th>');
+                //width
+                var serialNumStyle = 'class="center';
+                if (!BCGrid.isEmptyObject(p.serialNumWidth)) {
+                    if (!isNaN(p.serialNumWidth)){
+                        serialNumStyle = serialNumStyle+' width-'+p.serialNumWidth+'"';
+                    }
+                    else {
+
+                        serialNumStyle = serialNumStyle+'" width="'+ p.serialNumWidth+'"';
+                    }
+                }else{
+                    serialNumStyle = serialNumStyle+'"';
+                }
+                headAttr.push('<th '+serialNumStyle+'>' + BCGrid.getLangText(p.lang, "Serial") + '</th>');
             }
             //标题
             headAttr.push(_getHeadColumn.call(g));
@@ -1122,6 +1177,7 @@
         g.gridFoot = $(footAttr.join(''));
         g.grid.append(g.gridFoot);
     };
+    //th
     var _getHeadColumn = function () {
         var g = this, p = this.options;
         var headAttr = [];
@@ -1164,6 +1220,7 @@
         this.grid.append(this.gridContent);
     };
     var _displayData = function (data) {
+        _localCurrentTempData = [];
         var g = this, p = g.options;
         data = data || g.getData();
         g.gridContent.empty();
@@ -1176,6 +1233,8 @@
         } else {
             $('input:checkbox[tag="bcgrid_checkbox"]', g.gridHead).removeAttr("disabled");
         }
+        //
+        _setData.call(g,_localCurrentTempData);
         _bindEvent.call(g);
     };
     var _displayListData = function (data, depth, parentRowIndex) {
@@ -1199,15 +1258,19 @@
                         showDetail = true;
                     }
                 }
+                _localCurrentTempData.push(rowItem);
                 if (p.tree) {
                     subData = BCGrid.isDefined(rowItem[g._treeChildKey]) ? rowItem[g._treeChildKey] : [];
-                    if (subData.length > 0) hasChild = true;
+                    if (subData.length > 0) {
+                        hasChild = true;
+                    }
                     if (depth > 0) {
                         appendAttr += 'data-parentrowindex="' + parentRowIndex + '"';
                         if (!p.tree.expand) appendAttr += ' style="display:none;"';
                     }
-
+                    //
                 }
+
                 trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '" role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
                 trArr.push(_preRenderColumn.call(g, showDetail));
                 $.each(p.columns, function (index, item) {
@@ -1221,10 +1284,13 @@
                 //tree
                 g._rowIndex++;
                 if (p.tree && hasChild) {
+                    //
+                    delete  _localCurrentTempData[_localCurrentTempData.length-1][g._treeChildKey];
                     trArr.push(_displayListData.call(g, subData, depth + 1, g._rowIndex));
-                } else {
-                    // depth = 0;
+                    delete rowItem[g._treeChildKey];
                 }
+
+
             });
         }
         return trArr.join('');
@@ -1418,6 +1484,9 @@
         if (opt.hide) {
             $ret.hide();
         }
+        if(opt.allowNewline){
+            $ret.addClass("allow-newline");
+        }
         return $ret.prop('outerHTML');
     };
     /**
@@ -1474,7 +1543,6 @@
         };
         var subOption = $.extend(true, {}, subOpt, column.grid);
         var subGrid = BCGrid.create(subTabelDom, subOption);
-        // console.log(subTabelDom.html());
         return subTabelDom.prop('outerHTML');
     };
     var _checkboxItem = function (rowIndex, column, data, colIndex) {
@@ -1588,6 +1656,10 @@
             return value.toString();
         }
     };
+    var _setData = function (data) {
+        var g = this, p = this.options;
+        p.data[p.rows] = data;
+    };
     var _initToolBtn = function () {
         var self = this, p = this.options;
         var toolArr = [];
@@ -1607,7 +1679,8 @@
     };
     var _bindEvent = function () {
         var g = this, p = this.options;
-        var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+       // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+        var rowsData  = g.getData();
         //全选
         $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).unbind();
         $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).on('click', function (e) {
@@ -1749,7 +1822,8 @@
     };
     var _bindDataChangeEvent = function () {
         var g = this, p = this.options;
-        var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+       // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+        var rowsData = g.getData();
         $('input.column-text[data-rowindex],select.column-select[data-rowindex]', g.gridContent).unbind();
         $('input.column-text[data-rowindex],select.column-select[data-rowindex]', g.gridContent).on("change", function () {
             var self = $(this);

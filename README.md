@@ -57,7 +57,7 @@ How to use:
       id: '',
       width: '', //宽度值
       height: '', //宽度值
-      enabledCsrf: false,
+      enableCsrf: false,
       csrfName: '_csrf',
       lang: 'en',
       csrf: '',
@@ -96,8 +96,10 @@ How to use:
       showBorder: true, //是否显示边框
       showStripe: true,//是否显示条纹间隔效果
       showHover: true,//是否显示hover效果
+      showHeadColor: true,//是否表头显示背景色
       showHead: true,
       showTitle: false,
+      serialNumWidth:null,//序号列宽
       title: "",//标题文字
       showFoot: false,//显示foot true/false
       foot: "",//foot 内容
@@ -142,12 +144,13 @@ ColumnOptions:
               type: 'text',//数据类型
               render: null,//执行行数
               hide: false,//是否隐藏
+              width:null,//列宽
               align: null,//数据对齐方式
               headAlign:null,//标题对齐方式
               maxLength: null,//显示的最大长度
               format: null,//显示数据格式(date)
-              role: 'data',
-              enableSort: false,//是否可以排序
+              enableSort: false,//是否可以排序,
+              allowNewline:false,//是否允许自动换行
           };
 ```
 
