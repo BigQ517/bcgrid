@@ -75,7 +75,7 @@ How to use:
       pageSize: 40, //每页默认的结果数 all全部
       pageSizeOptions: [10, 20, 30, 40, 50, 100], //可选择设定的每页结果数 支持 all
       pagerOption: {
-      showFirst: true,
+      showFirst: true,//显示首页
       showLast: true,
       showPrev: true, //
       showNext: true, //
