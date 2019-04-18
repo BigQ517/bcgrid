@@ -130,7 +130,7 @@ How to use:
       onSelectedRow: null, //选择行事件
       onRowClick: null, //单击行事件
       onRowDbClick: null, //双击行事件
-      rowDetail: null,行明细
+      rowDetail: null,//行明细
       rowStyle:null,//行样式function
       onRowDetailExpandOrCollapse:null,//行明细 展开/收缩事件
       onTreeExpandOrCollapse: null,//树展开/收缩事件
