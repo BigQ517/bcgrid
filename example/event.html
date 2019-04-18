@@ -58,7 +58,12 @@
                 alert("before load data");
                 return true;//if false no load data
             },
-            onLoadedData: function (data) {    //加载完数据事件 
+            onLoadedData: function (data) {    //加载完数据事件
+                for(var i=0;i<data.rows.length;i++){
+                    if(i%2 == 0){
+                       $("tr",this.gridContent).eq(i).css("background-color","#ff0000");
+                    }
+                }
                 console.log(data);
             },
             onSelectedRow: function (rowIndex, rowData) { //选择行事件
