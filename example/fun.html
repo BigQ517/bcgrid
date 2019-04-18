@@ -19,6 +19,8 @@
         <button type="button" id="deleteRows">deleteRows([1,2,3])</button>
         <button type="button" id="toggleRowDetail">toggleRowDetail(4)</button>
         <button type="button" id="getRowData">getRowData(1)</button>
+        <button type="button" id="getData">getData()</button>
+        <button type="button" id="getRawData">getRawData()</button>
         <button type="button" id="getCurrentPage">getCurrentPage</button>
         <button type="button" id="reload">reload</button>
         <button type="button" id="reloadData">reloadData</button>
@@ -135,6 +137,12 @@
                     break;
                 case "toggleRowDetail":
                     grid.toggleRowDetail(4);
+                    break;
+                case "getData":
+                    console.log( grid.getData());
+                    break;
+                case "getRawData":
+                 console.log(grid.getRawData());
                     break;
 
 

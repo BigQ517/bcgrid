@@ -1589,7 +1589,7 @@ window.console = window.console || (function () {
         elopt.offText = BCGrid.getLangText(p.lang, elopt.offText);
         if (BCGrid.isDefined(column.elOpt)) {
             elopt = $.extend({}, elopt, column.elOpt);
-        }
+        } 
         var $item = $('<label class="checkbox-switch"></label>');
         var $check = $('<input type="checkbox"  class="column-checkbox" data-colname="' + column.name + '" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" data-onvalue="' + elopt.onValue + '" data-offvalue="' + elopt.offValue + '" data-ontext="' + elopt.onText + '" data-offtext="' + elopt.offText + '" />');
         $check.attr('name', elopt.name);
@@ -1781,6 +1781,7 @@ window.console = window.console || (function () {
         //行单击
         $('tr[role="row"]:not(.no_data)', g.gridContent).on("click", function (e) {
             clearTimeout(_timeFn);
+            var timeSpan =  (p.onRowDbClick && BCGrid.isFunction(p.onRowDbClick))?200:0;
             var self = $(this);
             _timeFn = setTimeout(function () {
                 if (_isEditTarget(e.target)) {
@@ -1807,7 +1808,7 @@ window.console = window.console || (function () {
                 if (p.onRowClick && BCGrid.isFunction(p.onRowClick)) {
                     p.onRowClick.call(g, rowIndex, rowsData[rowIndex]);
                 }
-            }, 100);
+            }, timeSpan);
         });
         //行双击
         $('tr[role="row"]:not(.no_data)', g.gridContent).on("dblclick", function (e) {
@@ -1818,7 +1819,6 @@ window.console = window.console || (function () {
                 }
                 var self = $(this);
                 var rowIndex = parseInt(self.data('rowindex'));
-
                 p.onRowDbClick.call(g, rowIndex, rowsData[rowIndex]);
             }
         });

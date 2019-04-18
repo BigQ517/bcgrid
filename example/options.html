@@ -27,7 +27,7 @@ Options:
     pageSize: 40, //每页默认的结果数 all全部
     pageSizeOptions: [10, 20, 30, 40, 50, 100], //可选择设定的每页结果数 支持 all
     pagerOption: {
-    showFirst: true,
+    showFirst: true,//显示首页
     showLast: true,
     showPrev: true, //
     showNext: true, //
@@ -51,13 +51,15 @@ Options:
     showBorder: true, //是否显示边框
     showStripe: true,//是否显示条纹间隔效果
     showHover: true,//是否显示hover效果
+    showHeadColor: true,//是否表头显示背景色
     showHead: true,
     showTitle: false,
+    serialNumWidth:null,//序号列宽
     title: "",//标题文字
-    titleAlign: null,//标题对齐方向
     showFoot: false,//显示foot true/false
     foot: "",//foot 内容
     footAlign: null,//foot内容对齐方向 null/left/right/center
+    titleAlign: null,//标题对齐方向
     noDataText: '<div class="center">暂无任何记录</div>',//没有数据的提示内容
     dateFormat: 'yyyy-MM-dd hh:mm:ss', //默认时间显示格式
     wrapCssClass: '', //类名
@@ -80,7 +82,8 @@ Options:
     onSelectedRow: null, //选择行事件
     onRowClick: null, //单击行事件
     onRowDbClick: null, //双击行事件
-    rowDetail: null,
+    rowDetail: null,//行明细
+    rowStyle:null,//行样式string / function(rowIndex,rowData){return string/object;}
     onRowDetailExpandOrCollapse:null,//行明细 展开/收缩事件
     onTreeExpandOrCollapse: null,//树展开/收缩事件
     tree: null
@@ -92,18 +95,19 @@ Options:
 <hr/>
     <xmp>
         var defaultOpt = {
-        display: '',//标题显示
-        id: '',//id
-        name: 'name',//数据name
-        type: 'text',//数据类型
-        render: null,//执行行数
-        hide: false,//是否隐藏
-        align: null,//数据对齐方式
-        headAlign:null,//标题对齐方式
-        maxLength: null,//显示的最大长度
-        format: null,//显示数据格式(date)
-        role: 'data',
-        enableSort: false,//是否可以排序
+            display: '',//标题显示
+            id: '',//id
+            name: 'name',//数据name
+            type: 'text',//数据类型
+            render: null,//执行行数
+            hide: false,//是否隐藏
+            width:null,//列宽
+            align: null,//数据对齐方式
+            headAlign:null,//标题对齐方式
+            maxLength: null,//显示的最大长度
+            format: null,//显示数据格式(date)
+            enableSort: false,//是否可以排序,
+            allowNewline:false,//是否允许自动换行
         };
 
     </xmp>
@@ -114,10 +118,10 @@ Options:
 <hr/>
     <xmp>
         var defaultOpt = {
-        displayID: '',
-        key: 'id',
-        parentKey: 'parentid',
-        expand: false
+            displayID: '',
+            key: 'id',
+            parentKey: 'parentid',
+            expand: false
         };
     </xmp>
 </p>
@@ -127,12 +131,12 @@ Options:
 <hr/>
     <xmp>
         var defaultOpt = {
-        content: function (rowIndex, rowData) {
-        return "";
-        },//明细内容string / function(rowIndex,rowData){return string/false;}
-        ctrlStyle: 'db',//控制图标样式 db/sg/pm
-        align: null, // null/center/left/right
-        expand: false
+            content: function (rowIndex, rowData) {
+            return "";
+            },//明细内容string / function(rowIndex,rowData){return string/false;}
+            ctrlStyle: 'db',//控制图标样式 db/sg/pm
+            align: null, // null/center/left/right
+            expand: false
         };
     </xmp>
 </p>
