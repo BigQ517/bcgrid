@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <title>BC Gird</title>
     <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="../src/css/bc.grid.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid.min.css"/>
     <script src="../lib/jquery-11.1.min.js"></script>
-    <script src="../src/bc.grid.js"></script>
+    <script src="../dist/bc.grid.min.js"></script>
 </head>
 <body>
 <div>
-    <div id="table"></div>
+    <div id="table"></div><br/>
+    <div id="table1"></div><br/>
+    <div id="table2"></div>
 </div>
 <script>
     var data = [{"id":1,"pid":0,"name":"Li","age":1,"gender":1,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
@@ -71,8 +73,105 @@
             },*/
         });
 
+        var grid1=BCGrid.create("#table1",{
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name'
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
+                    }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
+                {name: 'email', display: 'Email', enableSort: true,align:'right',width:'10px'},
+                {name: 'mobile', display: 'Mobile'}
 
+            ],
+            enablePager:true,
+            dataSource:'local',
+            localData:data,
+            showCheckbox:true,
+            enablePager:false,
+            serialNumWidth:5,
+            rowDetail:{
+                content:function (rowIndex,rowData) {
+                    if(rowIndex  !=2){
+                        return '<div style="color: #0000ff">row index:'+rowIndex+'<p>name:'+rowData.name+'</p><p>sign:'+rowData.sign+'</p></div>';
+                    }
+                    else{
+                        return false;
+                    }
+                },
+                expand:false,// true /false
+                ctrlStyle:'sg', //db/sg/pm
+                align:'left' //center/ left / right
+            },
+            onRowDetailExpandOrCollapse:function(isExpand, rowIndex,rowData){
+                console.log(isExpand);
+                console.log(rowIndex);
+                console.log(rowData);
+            }/*,
+            onRowClick: function (rowIndex, rowData) { //行点击事件 可选
+              this.toggleRowDetail(rowIndex);
+            },*/
+        });
 
+        var grid2=BCGrid.create("#table2",{
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name'
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
+                    }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
+                {name: 'email', display: 'Email', enableSort: true,align:'right'},
+                {name: 'mobile', display: 'Mobile'}
+
+            ],
+            enablePager:true,
+            dataSource:'local',
+            localData:data,
+            showCheckbox:true,
+            enablePager:false,
+            serialNumWidth:5,
+            rowDetail:{
+                content:function (rowIndex,rowData) {
+                    if(rowIndex  !=2){
+                        return '<div style="color: #0000ff">row index:'+rowIndex+'<p>name:'+rowData.name+'</p><p>sign:'+rowData.sign+'</p></div>';
+                    }
+                    else{
+                        return false;
+                    }
+                },
+                expand:false,// true /false
+                ctrlStyle:'pm', //db/sg/pm
+                align:'left' //center/ left / right
+            },
+            onRowDetailExpandOrCollapse:function(isExpand, rowIndex,rowData){
+                console.log(isExpand);
+                console.log(rowIndex);
+                console.log(rowData);
+            }/*,
+            onRowClick: function (rowIndex, rowData) { //行点击事件 可选
+              this.toggleRowDetail(rowIndex);
+            },*/
+        });
     });
 </script>
 </body>

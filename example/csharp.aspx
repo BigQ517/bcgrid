@@ -43,17 +43,24 @@
         });
 
     });
-    function  filterData() {
-      var paramsData = BCGrid.buildParams("#form1");
-        /**  或者
-            var paramsData =[];
-            paramsData.push({"name": "name", "value": "" + $("#name").val() + ""});
-            paramsData.push({"name": "num", "value": "" + $("#num").val() + ""});
-         */
-      grid.set({ params: paramsData });
-      grid.reload();
+     function  filterData() {
+            grid.filterData("#form1");
+             /** 或者
+               var paramsData = BCGrid.buildParams("#form1");
+                  grid.filterData(paramsData);
+              */
+        }
+         function  filterData_other() {
+                var paramsData = BCGrid.buildParams("#form1");
+                /**  或者
+                 var paramsData =[];
+                 paramsData.push({"name": "name", "value": "" + $("#name").val() + ""});
+                 paramsData.push({"name": "num", "value": "" + $("#num").val() + ""});
+                 */
+                grid.set({params:paramsData});
+                grid.reload();
 
-    }
+            }
 </script>
 </body>
 </html>

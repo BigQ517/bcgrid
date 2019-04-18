@@ -17,113 +17,210 @@
     <div id="table2"></div>
     <br/> <br/>
     <div id="table3"></div>
+    <br/> <br/>
+    <div id="table4"></div>
 </div>
 <script>
     $(function () {
-        var grid=BCGrid.create("#table",{
+        var grid = BCGrid.create("#table", {
             columns: [
                 {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
                 {
                     id: 'name', name: 'name', display: 'Name', display: function (item, index) {
-                    return item.name;
-                }
+                        return item.name;
+                    }
                 },
-                {  name: 'gender', display: 'Gender',width:'20', render: function (item, index) {
+                {
+                    name: 'gender', display: 'Gender', width: '20', render: function (item, index) {
                         if (item.gender == 1) {
                             return "Boy";
                         }
                         if (item.gender == 2) {
                             return "Girl";
                         }
-                }
+                    }
                 },
                 {name: 'age', display: 'Age', format: '{value}Years'},
                 {name: 'email', display: 'Email'},
                 {name: 'mobile', display: 'Mobile'},
-                {name: 'sign', display: 'Sign',maxLength:10},
-                {name: 'time', display: 'Time',type:'dateTime',format:'MM/dd yyyy hh:mm:ss'}
+                {name: 'sign', display: 'Sign', maxLength: 10},
+                {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
 
             ],
-            title:'BC Grid',
-            showTitle:true,
-            showFoot:true,
-            foot:'Foot<br>hello！',
+            title: 'BC Grid',
+            showTitle: true,
+            showFoot: true,
+            foot: 'Foot<br>hello！',
             showCheckbox: true,
             showSerialNum: true,
             url: 'handler/data.json'
 
 
         });
-        var grid1=BCGrid.create("#table1",{
+        var grid1 = BCGrid.create("#table1", {
             columns: [
                 {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
                 {
                     id: 'name', name: 'name', display: 'Name', display: function (item, index) {
-                    return item.name;
-                }
+                        return item.name;
+                    }
                 },
                 {
                     name: 'gender', display: 'Gender', render: function (item, index) {
-                    if (item.gender == 1) {
-                        return "Boy";
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
                     }
-                    if (item.gender == 2) {
-                        return "Girl";
-                    }
-                }
                 },
                 {name: 'age', display: 'Age', format: '{value}Years'},
                 {name: 'email', display: 'Email'},
                 {name: 'mobile', display: 'Mobile'},
-                {name: 'sign', display: 'Sign',maxLength:10},
-                {name: 'time', display: 'Time',type:'dateTime',format:'MM/dd yyyy hh:mm:ss'}
+                {name: 'sign', display: 'Sign', maxLength: 10},
+                {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
 
             ],
-            title:'No border,no head ',
-            showTitle:true,
-            showBorder:false,
-            showHead:false,
+            title: 'No border,no head ',
+            showTitle: true,
+            showBorder: false,
+            showHead: false,
             url: 'handler/data.json'
 
 
         });
-        var grid2=BCGrid.create("#table2",{
+        var grid2 = BCGrid.create("#table2", {
             columns: [
                 {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
                 {
-                    id: 'name', name: 'name',display: function (item, index) {
-                    return item.name;
-                }
+                    id: 'name', name: 'name', display: function (item, index) {
+                        return item.name;
+                    }
                 },
                 {
                     name: 'gender', display: 'Gender', render: function (item, index) {
-                    if (item.gender == 1) {
-                        return "Boy";
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
                     }
-                    if (item.gender == 2) {
-                        return "Girl";
-                    }
-                }
                 },
                 {name: 'age', display: 'Age', format: '{value}Years'},
                 {name: 'email', display: 'Email'},
                 {name: 'mobile', display: 'Mobile'},
-                {name: 'sign', display: 'Sign',maxLength:10},
-                {name: 'time', display: 'Time',type:'dateTime',format:'MM/dd yyyy hh:mm:ss'}
+                {name: 'sign', display: 'Sign', maxLength: 10},
+                {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
 
             ],
-            title:'No stripe,no Hover ',
-            showTitle:true,
-            showStripe:false,
-            showHover:false,
+            title: 'No stripe,no Hover ',
+            showTitle: true,
+            showStripe: false,
+            showHover: false,
             url: 'handler/data.json'
 
 
         });
-        ///
+        var grid3 = BCGrid.create("#table3", {
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                        return item.name;
+                    }
+                },
+                {
+                    name: 'gender', display: 'Gender', width: '20', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
+                    }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years'},
+                {name: 'email', display: 'Email', width: 5, allowNewline: true},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'sign', display: 'Sign', maxLength: 10},
+                {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
+
+            ],
+            title: 'Allow Newline',
+            showTitle: true,
+            showFoot: true,
+            foot: 'Foot<br>hello！',
+            showCheckbox: true,
+            showSerialNum: true,
+            url: 'handler/data.json'
 
 
+        });
+        var grid4 = BCGrid.create("#table4", {
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                        return item.name;
+                    }
+                },
+                {
+                    name: 'gender', display: 'Gender', width: '20', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
+                    }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years'},
+                {name: 'email', display: 'Email'},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'sign', display: 'Sign', maxLength: 10},
+                {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
+
+            ],
+            title: 'Row Style',
+            showTitle: true,
+            showFoot: true,
+            foot: 'Foot<br>hello！',
+            showCheckbox: true,
+            showSerialNum: true,
+            url: 'handler/data.json',
+            rowStyle: function (rowIndex, rowData) {
+                if(rowIndex < 2){
+                    return rowIndex == 0?"background-color: #98e45c;font-size: 18px;font-style: italic;color: #ffffff;":null;
+                }
+                else {
+                    var colors = ['#ff0000', '#0000ff', '#ffff00', '#00ffff'];
+                    var fontSizes = ['10px', '12px', '16px', '18px'];
+                    var style = {
+                        backgroudColor: null,
+                        fontSize: null,
+                        fontColor: null
+                    };
+                    if (rowIndex % 2 == 0) {
+                        var key = Math.round(Math.random() * 3 + 1) - 1;
+                        style.backgroudColor = colors[key];
+                        style.fontSize = fontSizes[key];
+                    }
+                    if (rowIndex % 2 == 1) {
+                        var key = Math.round(Math.random() * 3 + 1) - 1;
+                        style.fontColor = colors[key];
+                    }
+                }
+                return style;
+
+            }
     });
+    ///
+
+
+    })
+    ;
 </script>
 </body>
 </html>

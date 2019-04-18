@@ -641,7 +641,8 @@ window.console = window.console || (function () {
             onTextFieldChange: null,//文本输入改变事件
             onDataSave: null,
             toolBtns: [],
-            rowDetail: null,
+            rowDetail: null,//明细
+            rowStyle:null,//行样式
             tree: null
         };
         this.options = $.extend(true, {}, this.defaults, opt);
@@ -1258,6 +1259,13 @@ window.console = window.console || (function () {
                         showDetail = true;
                     }
                 }
+                var style = "";
+                if(p.rowStyle){
+                  var opt =_renderRowStyle.call(g,rowItem);
+                  if(!BCGrid.isEmptyObject(opt)){
+                      style = opt;
+                  }
+                }
                 _localCurrentTempData.push(rowItem);
                 if (p.tree) {
                     subData = BCGrid.isDefined(rowItem[g._treeChildKey]) ? rowItem[g._treeChildKey] : [];
@@ -1270,8 +1278,7 @@ window.console = window.console || (function () {
                     }
                     //
                 }
-
-                trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '" role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
+                trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '"'+style+' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
                 trArr.push(_preRenderColumn.call(g, showDetail));
                 $.each(p.columns, function (index, item) {
                     trArr.push(_renderColumnData.call(g, item, rowItem, index, g._rowIndex, depth, hasChild));
@@ -1302,7 +1309,7 @@ window.console = window.console || (function () {
         if (p.rowDetail) {
             dataHtml.push('<td class="center" data-role="detail-ctrl">');
             if (showDetail) {
-                var ctrlCss = +p.rowDetail.expand ? 'row-detail-expanded' : 'row-detail-collapsed';
+                var ctrlCss = p.rowDetail.expand ? 'row-detail-expanded' : 'row-detail-collapsed';
                 if (p.rowDetail.ctrlStyle) {
                     switch (p.rowDetail.ctrlStyle) {
                         case  'sg':
@@ -1383,7 +1390,37 @@ window.console = window.console || (function () {
             dataRes = '<tr role="detail" data-forrowindex="' + g._rowIndex + '"' + (detailOpt.expand == false ? ' style="display:none;"' : '') + '>' + dataRes + '</tr>';
             return dataRes;
         }
-        return dataRes;
+        return false;
+    };
+    var _renderRowStyle = function (data) {
+        var g = this, p = this.options;
+        var rowStyleOpt = p.rowStyle, dataRes = false;
+        if (BCGrid.isFunction(rowStyleOpt)) {
+            dataRes = rowStyleOpt.call(g, g._rowIndex, data);
+        }
+        else {
+            dataRes = rowStyleOpt;
+        }
+        if (BCGrid.isDefined(dataRes) && dataRes !== false) {
+            if(BCGrid.isString(dataRes)){
+                return ' style="'+dataRes+'"';
+            }
+            var style=[];
+            if(BCGrid.isDefined(dataRes.backgroudColor)){
+                style.push("background-color:"+dataRes.backgroudColor);
+            }
+            if(BCGrid.isDefined(dataRes.fontColor)){
+                style.push("color:"+dataRes.fontColor);
+            }
+            if(BCGrid.isDefined(dataRes.fontSize)){
+                style.push("font-size:"+dataRes.fontSize);
+            }
+            if(style.length > 0){
+                return ' style="'+style.join(";")+'"';
+            }
+            return null;
+        }
+        return false;
     };
     //单元格数据
     var _renderColumnData = function (column, data, colIndex, rowIndex, treeDepth, hasChild) {
@@ -1770,7 +1807,7 @@ window.console = window.console || (function () {
                 if (p.onRowClick && BCGrid.isFunction(p.onRowClick)) {
                     p.onRowClick.call(g, rowIndex, rowsData[rowIndex]);
                 }
-            }, 200);
+            }, 100);
         });
         //行双击
         $('tr[role="row"]:not(.no_data)', g.gridContent).on("dblclick", function (e) {
@@ -1884,14 +1921,21 @@ window.console = window.console || (function () {
     };
     var _toggleDetail = function (row) {
         var g = this, p = g.options, isExpand = false;
+        var rowDetailOpt = p.rowDetail;
         var rowIndex = row.data("rowindex");
         var spanTg = $(".row-detail-expander", row);
-        if (spanTg.hasClass("row-detail-collapsed")) {
-            spanTg.removeClass("row-detail-collapsed").addClass("row-detail-expanded");
+        var collapsedCssBase = 'row-detail-collapsed';
+        var expandedCssBase = 'row-detail-expanded';
+        if(!BCGrid.isEmptyObject(rowDetailOpt.ctrlStyle) && (rowDetailOpt.ctrlStyle ==="sg" || rowDetailOpt.ctrlStyle ==="pm")){
+            collapsedCssBase = collapsedCssBase+"-"+rowDetailOpt.ctrlStyle;
+            expandedCssBase = expandedCssBase+"-"+rowDetailOpt.ctrlStyle;
+        }
+        if (spanTg.hasClass(collapsedCssBase)) {
+            spanTg.removeClass(collapsedCssBase).addClass(expandedCssBase);
             isExpand = true;
         }
         else {
-            spanTg.removeClass("row-detail-expanded").addClass("row-detail-collapsed");
+            spanTg.removeClass(expandedCssBase).addClass(collapsedCssBase);
             isExpand = false;
         }
         var nextDetailRow = row.next('tr[data-forrowindex="' + rowIndex + '"]');
