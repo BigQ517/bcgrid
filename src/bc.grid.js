@@ -720,9 +720,10 @@ window.console = window.console || (function () {
             if (beforeRes == false) {
                 return;
             }
-            if (isReloadPage) {
+           /* if (isReloadPage) {
                 p.page = 1;
             }
+            p.page = page||p.page;*/
             if (p.dataSource == 'server') {
                 if (!BCGrid.isEmptyObject(p.sortName)) {
                     dataParam.push({name: p.sortNameParamName, value: p.sortName});
@@ -765,7 +766,7 @@ window.console = window.console || (function () {
                 });
             }
             else if (p.dataSource == 'local') {
-                var tempData = BCGrid.objectDeepCopy(g.getData());
+                var tempData = BCGrid.objectDeepCopy(p.localData);
                 if (!BCGrid.isEmptyObject(p.sortName) && tempData.length > 0) {
                     tempData.sort(function (a, b) {
                         return p.sortOrder.toLowerCase() == "desc" ? b[p.sortName] - a[p.sortName] : a[p.sortName] - b[p.sortName];
@@ -780,7 +781,10 @@ window.console = window.console || (function () {
                     tempData = tempData.slice(start, start + BCGrid.parseInt(p.pageSize));
                 }
                 //
-               _rawData = tempData;
+
+                p.data[p.rows] =tempData;
+                p.data[p.total] =p.localData.length;
+               _rawData = p.localData;
               //  _localCurrentTempData = tempData;
                 _displayData.call(g,tempData);
                 if (isReloadPage && p.enablePager) {
@@ -1352,7 +1356,7 @@ window.console = window.console || (function () {
                 turnPageEvent: function (page, pageSize) {
                     p.page = page;
                     p.pageSize = pageSize;
-                    g.loadData(false, page);
+                    g.loadData();
                 }
             };
             pageOpt = $.extend(true, p.pagerOption || {}, pageOpt);
@@ -1364,7 +1368,7 @@ window.console = window.console || (function () {
                 pageOpt.turnPageEvent = function (page, pageSize) {
                     p.page = page;
                     p.pageSize = pageSize;
-                    g.loadData(true, page);
+                    g.loadData(true);
                 };
             }
             p.pagerElement.each(function () {

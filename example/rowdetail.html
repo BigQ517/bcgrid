@@ -45,10 +45,10 @@
 
             ],
             enablePager:true,
+            pageSizeOptions: [1,2,10, 20, 30, 40, 50, 100],
             dataSource:'local',
             localData:data,
             showCheckbox:true,
-            enablePager:false,
             serialNumWidth:5,
             rowDetail:{
                 content:function (rowIndex,rowData) {
@@ -67,6 +67,7 @@
                 console.log(isExpand);
                 console.log(rowIndex);
                 console.log(rowData);
+               console.log(this.getRawData());
             }/*,
             onRowClick: function (rowIndex, rowData) { //行点击事件 可选
               this.toggleRowDetail(rowIndex);
@@ -98,7 +99,6 @@
             dataSource:'local',
             localData:data,
             showCheckbox:true,
-            enablePager:false,
             serialNumWidth:5,
             rowDetail:{
                 content:function (rowIndex,rowData) {
@@ -148,7 +148,6 @@
             dataSource:'local',
             localData:data,
             showCheckbox:true,
-            enablePager:false,
             serialNumWidth:5,
             rowDetail:{
                 content:function (rowIndex,rowData) {
