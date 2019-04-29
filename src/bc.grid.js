@@ -8,12 +8,12 @@
 //
 'use strict';
 window.console = window.console || (function () {
-        var c = {};
-        c.log = c.warn = c.debug = c.info = c.error = c.time = c.dir = c.profile
-            = c.clear = c.exception = c.trace = c.assert = function () {
-        };
-        return c;
-    })();
+    var c = {};
+    c.log = c.warn = c.debug = c.info = c.error = c.time = c.dir = c.profile
+        = c.clear = c.exception = c.trace = c.assert = function () {
+    };
+    return c;
+})();
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD
@@ -154,8 +154,8 @@ window.console = window.console || (function () {
         B.isEmptyObject = function (obj) {
             return !B.isDefined(obj) || obj === "" || obj === null || obj === false || function () {
                 var t;
-                if(B.isNumber(obj))return false;
-                for (t in obj){
+                if (B.isNumber(obj)) return false;
+                for (t in obj) {
                     return false;
                 }
                 return true;
@@ -218,6 +218,14 @@ window.console = window.console || (function () {
             }
 
         };
+        /**
+         * arrayToTree
+         * @param arrayList
+         * @param key
+         * @param parentKey
+         * @param children
+         * @returns {Array}
+         */
         B.arrayToTree = function (arrayList, key, parentKey, children) {
             var tree = []; //格式化的树
             var tmpMap = {};  //临时扁平数据
@@ -276,6 +284,74 @@ window.console = window.console || (function () {
             }
             return sourceCopy;
         };
+        /**
+         * arraySortOnGroup
+         * @param source
+         * @param keysArr
+         * @returns {*}
+         */
+        B.arraySortOnGroup = function (source, keysArr) {
+            if (B.isEmptyObject(keysArr) || B.isEmptyObject(source)) {
+                return source;
+            }
+            //去除不存在的key
+            for (var i = keysArr.length - 1; i > 0; i--) {
+                var isExist = false;
+                for (var key in source[0]) {
+                    if (keysArr[i] == key) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    keysArr.splice(i, 1);
+                }
+            }
+            if (B.isEmptyObject(keysArr)) {
+                return source;
+            }
+            var tempData = B.objectDeepCopy(source);
+            //
+            var resArr = [];
+            for(var i =0;i<tempData.length;i++){
+                console.log(tempData.join(""));
+                var currentIndex = i;
+                if(currentIndex == 0){
+                    resArr.push(tempData[currentIndex]);
+                }
+                else{
+                  var lastItem = resArr[resArr.length-1];
+                  for(var k = currentIndex+1;k<source.length;k++){
+                      var isEq = true;
+                      for(var key in keysArr){
+                          if(source[k][key] !==lastItem[key]){
+                              isEq = false;
+                              break;
+                          }
+                      }
+                      if(isEq){
+                          resArr.push(source[k]);
+                          if(i +1 <tempData.length ) {
+                              var remIndex = tempData.join("").indexOf(source[k].join(""), i+1);
+                              console.log(remIndex);
+                              if (remIndex > -1) {
+                                  tempData.splice(remIndex, 1);
+                              }
+                          }
+
+                      }
+                  }
+                }
+
+            }
+            return resArr;
+
+        };
+        /**
+         * getQueryString
+         * @param name
+         * @returns {string}
+         */
         B.getQueryString = function (name) {
             var result = location.search.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
             if (result == null || result.length < 1) {
@@ -283,11 +359,24 @@ window.console = window.console || (function () {
             }
             return result[1];
         };
+        /**
+         * getUrlParam
+         * @param url
+         * @param name
+         * @returns {RegExpExecArray | string}
+         */
         B.getUrlParam = function (url, name) {
             var match = new RegExp('[?&]' + name + '=([^&]*)')
                 .exec(url);
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
         };
+        /**
+         * setUrlParam
+         * @param url
+         * @param name
+         * @param value
+         * @returns {*}
+         */
         B.setUrlParam = function (url, name, value) {
             var r = url;
             if (r != null && r != 'undefined' && r != "") {
@@ -503,6 +592,11 @@ window.console = window.console || (function () {
             });
             return arrayObj;
         };
+        /**
+         * getTableAction
+         * @param actionArr
+         * @returns {string | *}
+         */
         B.getTableAction = function (actionArr) {
             var btnsHtml = $('<div class="actions"></div>');
             $.each(actionArr, function (index, item) {
@@ -606,7 +700,7 @@ window.console = window.console || (function () {
             showHead: true,
             showTitle: false,//显示标题 true/false
             showFoot: false,//显示foot true/false
-            serialNumWidth:null,//serialNumWidth
+            serialNumWidth: null,//serialNumWidth
             title: "",
             foot: "",
             titleAlign: null,//标题对齐方向
@@ -641,9 +735,10 @@ window.console = window.console || (function () {
             onTextFieldChange: null,//文本输入改变事件
             onDataSave: null,
             toolBtns: [],
-            rowDetail: null,//明细
-            rowStyle:null,//行样式
-            tree: null
+            rowDetail: null,//明细 与tree和rowSpanKeys互斥 rowDetail优先，其次tree
+            rowStyle: null,//行样式
+            tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
+            rowSpanKeys: null//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
         };
         this.options = $.extend(true, {}, this.defaults, opt);
         this._rowIndex = 0;
@@ -661,6 +756,7 @@ window.console = window.console || (function () {
             }, this.options.rowDetail);
             this.options.tree = null;
             this.options.showStripe = false;
+            this.options.rowSpanKeys = null;
         }
         if (this.options.tree) {
             this.options.tree = $.extend({}, {
@@ -670,6 +766,7 @@ window.console = window.console || (function () {
                 expand: false
             }, this.options.tree);
             this._treeChildKey = 'bc_t_' + BCGrid.getID();
+            this.options.rowSpanKeys = null;
         }
         this.options.url = BCGrid.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
     };
@@ -720,16 +817,16 @@ window.console = window.console || (function () {
             if (beforeRes == false) {
                 return;
             }
-           /* if (isReloadPage) {
-                p.page = 1;
-            }
-            p.page = page||p.page;*/
+            /* if (isReloadPage) {
+                 p.page = 1;
+             }
+             p.page = page||p.page;*/
             if (p.dataSource == 'server') {
                 if (!BCGrid.isEmptyObject(p.sortName)) {
                     dataParam.push({name: p.sortNameParamName, value: p.sortName});
                     dataParam.push({name: p.sortOrderParamName, value: p.sortOrder});
                 }
-                if(p.enablePager) {
+                if (p.enablePager) {
                     dataParam.push({name: p.pageParamName, value: p.page});
                     dataParam.push({name: p.pageSizeParamName, value: p.pageSize});
                 }
@@ -745,7 +842,7 @@ window.console = window.console || (function () {
                     dataType: 'json',
                     success: function (data) {
                         p.data = data;
-                        _rawData =  g.getData();
+                        _rawData = g.getData();
                         _displayData.call(g);
                         if (isReloadPage && p.enablePager) {
                             _displayPage.call(g);
@@ -782,11 +879,11 @@ window.console = window.console || (function () {
                 }
                 //
 
-                p.data[p.rows] =tempData;
-                p.data[p.total] =p.localData.length;
-               _rawData = p.localData;
-              //  _localCurrentTempData = tempData;
-                _displayData.call(g,tempData);
+                p.data[p.rows] = tempData;
+                p.data[p.total] = p.localData.length;
+                _rawData = p.localData;
+                //  _localCurrentTempData = tempData;
+                _displayData.call(g, tempData);
                 if (isReloadPage && p.enablePager) {
                     _displayPage.call(g);
                 }
@@ -981,14 +1078,14 @@ window.console = window.console || (function () {
             p.columns.splice(pos, 0, column || {});
             g.refresh();
         },
-      /*  setData: function (rows) {
-            var g = this, p = this.options;
-            p.data[p.rows] = rows;
-            p.data[p.total] = rows.length;
-        },*/
+        /*  setData: function (rows) {
+              var g = this, p = this.options;
+              p.data[p.rows] = rows;
+              p.data[p.total] = rows.length;
+          },*/
         toggleRowDetail: function (rowIndex) {
             var g = this, p = this.options;
-           // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+            // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
             var rowsData = g.getData();
             var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
             var isExpand = _toggleDetail.call(g, row);
@@ -1000,20 +1097,20 @@ window.console = window.console || (function () {
          * 筛选数据
          * @param formSelector
          */
-        filterData:function (formSelector) {
+        filterData: function (formSelector) {
             var g = this, p = this.options;
-            var paramsData =(BCGrid.isObject(formSelector) || BCGrid.isArray(formSelector))?formSelector: BCGrid.buildParams(formSelector);
-            g .set({params:paramsData});
-            g .reload();
+            var paramsData = (BCGrid.isObject(formSelector) || BCGrid.isArray(formSelector)) ? formSelector : BCGrid.buildParams(formSelector);
+            g.set({params: paramsData});
+            g.reload();
         }
     };
     // private function and variable
     //初始化
     var _localCurrentTempData = [];
-    var _rawData=[];//原始数据
+    var _rawData = [];//原始数据
     var _timeFn = null;
     var _init = function () {
-        _rawData=[];
+        _rawData = [];
         var g = this, p = this.options;
         if (BCGrid.isEmptyObject(p.data) && !BCGrid.isEmptyObject(p.localData)) {
             p.data[p.rows] = p.localData;
@@ -1023,7 +1120,7 @@ window.console = window.console || (function () {
             g.ID = p.id;
         }
         if (BCGrid.isEmptyObject(g.ID)) {
-            g.ID = "bc_" +  BCGrid.getID();
+            g.ID = "bc_" + BCGrid.getID();
         }
         //csrf
         if (p.enableCsrf && BCGrid.isEmptyObject(p.csrf)) {
@@ -1095,14 +1192,14 @@ window.console = window.console || (function () {
             type: 'text',//数据类型
             render: null,//执行行数
             hide: false,//是否隐藏
-            width:null,//列宽
+            width: null,//列宽
             align: null,//数据对齐方式
             headAlign: null,//标题对齐方式
             maxLength: null,//显示的最大长度
             format: null,//显示数据格式(date)
             role: 'data',
             enableSort: false,//是否可以排序
-            allowNewline:false,//是否允许自动换行
+            allowNewline: false,//是否允许自动换行
             elOpt: null
 
         };
@@ -1148,17 +1245,17 @@ window.console = window.console || (function () {
                 //width
                 var serialNumStyle = 'class="center';
                 if (!BCGrid.isEmptyObject(p.serialNumWidth)) {
-                    if (!isNaN(p.serialNumWidth)){
-                        serialNumStyle = serialNumStyle+' width-'+p.serialNumWidth+'"';
+                    if (!isNaN(p.serialNumWidth)) {
+                        serialNumStyle = serialNumStyle + ' width-' + p.serialNumWidth + '"';
                     }
                     else {
 
-                        serialNumStyle = serialNumStyle+'" width="'+ p.serialNumWidth+'"';
+                        serialNumStyle = serialNumStyle + '" width="' + p.serialNumWidth + '"';
                     }
-                }else{
-                    serialNumStyle = serialNumStyle+'"';
+                } else {
+                    serialNumStyle = serialNumStyle + '"';
                 }
-                headAttr.push('<th '+serialNumStyle+'>' + BCGrid.getLangText(p.lang, "Serial") + '</th>');
+                headAttr.push('<th ' + serialNumStyle + '>' + BCGrid.getLangText(p.lang, "Serial") + '</th>');
             }
             //标题
             headAttr.push(_getHeadColumn.call(g));
@@ -1230,7 +1327,15 @@ window.console = window.console || (function () {
         data = data || g.getData();
         g.gridContent.empty();
         g._rowIndex = 0;
-        var tempData = p.tree ? BCGrid.arrayToTree(BCGrid.objectDeepCopy(data), p.tree.key, p.tree.parentKey, g._treeChildKey) : data;
+        var tempData = BCGrid.objectDeepCopy(data);
+        //tree
+        if (p.tree) {
+            tempData = BCGrid.arrayToTree(tempData, p.tree.key, p.tree.parentKey, g._treeChildKey);
+        }
+        else if (p.rowSpanKeys) {
+            //rowspan
+            tempData = BCGrid.arrayToTree(BCGrid.objectDeepCopy(data), p.tree.key, p.tree.parentKey, g._treeChildKey);
+        }
         g.gridContent.html(_displayListData.call(g, tempData, 0));
         if (tempData.length == 0) {
             $('input:checkbox[tag="bcgrid_checkbox"]', g.gridHead).attr("disabled", "disabled");
@@ -1239,7 +1344,7 @@ window.console = window.console || (function () {
             $('input:checkbox[tag="bcgrid_checkbox"]', g.gridHead).removeAttr("disabled");
         }
         //
-        _setData.call(g,_localCurrentTempData);
+        _setData.call(g, _localCurrentTempData);
         _bindEvent.call(g);
     };
     var _displayListData = function (data, depth, parentRowIndex) {
@@ -1264,11 +1369,11 @@ window.console = window.console || (function () {
                     }
                 }
                 var style = "";
-                if(p.rowStyle){
-                  var opt =_renderRowStyle.call(g,rowItem);
-                  if(!BCGrid.isEmptyObject(opt)){
-                      style = opt;
-                  }
+                if (p.rowStyle) {
+                    var opt = _renderRowStyle.call(g, rowItem);
+                    if (!BCGrid.isEmptyObject(opt)) {
+                        style = opt;
+                    }
                 }
                 _localCurrentTempData.push(rowItem);
                 if (p.tree) {
@@ -1282,7 +1387,7 @@ window.console = window.console || (function () {
                     }
                     //
                 }
-                trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '"'+style+' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
+                trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '"' + style + ' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
                 trArr.push(_preRenderColumn.call(g, showDetail));
                 $.each(p.columns, function (index, item) {
                     trArr.push(_renderColumnData.call(g, item, rowItem, index, g._rowIndex, depth, hasChild));
@@ -1296,7 +1401,7 @@ window.console = window.console || (function () {
                 g._rowIndex++;
                 if (p.tree && hasChild) {
                     //
-                    delete  _localCurrentTempData[_localCurrentTempData.length-1][g._treeChildKey];
+                    delete  _localCurrentTempData[_localCurrentTempData.length - 1][g._treeChildKey];
                     trArr.push(_displayListData.call(g, subData, depth + 1, g._rowIndex));
                     delete rowItem[g._treeChildKey];
                 }
@@ -1406,21 +1511,21 @@ window.console = window.console || (function () {
             dataRes = rowStyleOpt;
         }
         if (BCGrid.isDefined(dataRes) && dataRes !== false) {
-            if(BCGrid.isString(dataRes)){
-                return ' style="'+dataRes+'"';
+            if (BCGrid.isString(dataRes)) {
+                return ' style="' + dataRes + '"';
             }
-            var style=[];
-            if(BCGrid.isDefined(dataRes.backgroudColor)){
-                style.push("background-color:"+dataRes.backgroudColor);
+            var style = [];
+            if (BCGrid.isDefined(dataRes.backgroudColor)) {
+                style.push("background-color:" + dataRes.backgroudColor);
             }
-            if(BCGrid.isDefined(dataRes.fontColor)){
-                style.push("color:"+dataRes.fontColor);
+            if (BCGrid.isDefined(dataRes.fontColor)) {
+                style.push("color:" + dataRes.fontColor);
             }
-            if(BCGrid.isDefined(dataRes.fontSize)){
-                style.push("font-size:"+dataRes.fontSize);
+            if (BCGrid.isDefined(dataRes.fontSize)) {
+                style.push("font-size:" + dataRes.fontSize);
             }
-            if(style.length > 0){
-                return ' style="'+style.join(";")+'"';
+            if (style.length > 0) {
+                return ' style="' + style.join(";") + '"';
             }
             return null;
         }
@@ -1525,7 +1630,7 @@ window.console = window.console || (function () {
         if (opt.hide) {
             $ret.hide();
         }
-        if(opt.allowNewline){
+        if (opt.allowNewline) {
             $ret.addClass("allow-newline");
         }
         return $ret.prop('outerHTML');
@@ -1593,7 +1698,7 @@ window.console = window.console || (function () {
         elopt.offText = BCGrid.getLangText(p.lang, elopt.offText);
         if (BCGrid.isDefined(column.elOpt)) {
             elopt = $.extend({}, elopt, column.elOpt);
-        } 
+        }
         var $item = $('<label class="checkbox-switch"></label>');
         var $check = $('<input type="checkbox"  class="column-checkbox" data-colname="' + column.name + '" data-rowindex="' + rowIndex + '" data-colindex="' + colIndex + '" data-onvalue="' + elopt.onValue + '" data-offvalue="' + elopt.offValue + '" data-ontext="' + elopt.onText + '" data-offtext="' + elopt.offText + '" />');
         $check.attr('name', elopt.name);
@@ -1720,8 +1825,8 @@ window.console = window.console || (function () {
     };
     var _bindEvent = function () {
         var g = this, p = this.options;
-       // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
-        var rowsData  = g.getData();
+        // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+        var rowsData = g.getData();
         //全选
         $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).unbind();
         $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).on('click', function (e) {
@@ -1785,7 +1890,7 @@ window.console = window.console || (function () {
         //行单击
         $('tr[role="row"]:not(.no_data)', g.gridContent).on("click", function (e) {
             clearTimeout(_timeFn);
-            var timeSpan =  (p.onRowDbClick && BCGrid.isFunction(p.onRowDbClick))?200:0;
+            var timeSpan = (p.onRowDbClick && BCGrid.isFunction(p.onRowDbClick)) ? 200 : 0;
             var self = $(this);
             _timeFn = setTimeout(function () {
                 if (_isEditTarget(e.target)) {
@@ -1863,7 +1968,7 @@ window.console = window.console || (function () {
     };
     var _bindDataChangeEvent = function () {
         var g = this, p = this.options;
-       // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+        // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
         var rowsData = g.getData();
         $('input.column-text[data-rowindex],select.column-select[data-rowindex]', g.gridContent).unbind();
         $('input.column-text[data-rowindex],select.column-select[data-rowindex]', g.gridContent).on("change", function () {
@@ -1930,9 +2035,9 @@ window.console = window.console || (function () {
         var spanTg = $(".row-detail-expander", row);
         var collapsedCssBase = 'row-detail-collapsed';
         var expandedCssBase = 'row-detail-expanded';
-        if(!BCGrid.isEmptyObject(rowDetailOpt.ctrlStyle) && (rowDetailOpt.ctrlStyle ==="sg" || rowDetailOpt.ctrlStyle ==="pm")){
-            collapsedCssBase = collapsedCssBase+"-"+rowDetailOpt.ctrlStyle;
-            expandedCssBase = expandedCssBase+"-"+rowDetailOpt.ctrlStyle;
+        if (!BCGrid.isEmptyObject(rowDetailOpt.ctrlStyle) && (rowDetailOpt.ctrlStyle === "sg" || rowDetailOpt.ctrlStyle === "pm")) {
+            collapsedCssBase = collapsedCssBase + "-" + rowDetailOpt.ctrlStyle;
+            expandedCssBase = expandedCssBase + "-" + rowDetailOpt.ctrlStyle;
         }
         if (spanTg.hasClass(collapsedCssBase)) {
             spanTg.removeClass(collapsedCssBase).addClass(expandedCssBase);
