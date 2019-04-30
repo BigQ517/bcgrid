@@ -311,40 +311,86 @@ window.console = window.console || (function () {
                 return source;
             }
             var tempData = B.objectDeepCopy(source);
+            var souData = B.objectDeepCopy(source);
             //
-            var resArr = [];
-            for(var i =0;i<tempData.length;i++){
-                console.log(tempData.join(""));
-                var currentIndex = i;
-                if(currentIndex == 0){
-                    resArr.push(tempData[currentIndex]);
+            var childArr = [];
+            var keyName = "";
+            var hash=[];
+            for (var i = 0; i < tempData.length; i++) {
+                var isExt = false;
+                for(var j=0;j<hash.length;j++){
+                    var isEq = true;
+                    for (var key in keysArr) {
+                        keyName = keysArr[key];
+                        if (tempData[i][keyName] !== hash[j][keyName]) {
+                            isEq = false;
+                            break;
+                        }
+                    }
+                    if (isEq) {
+                        isExt = true;
+                        break;
+                    }
                 }
-                else{
-                  var lastItem = resArr[resArr.length-1];
-                  for(var k = currentIndex+1;k<source.length;k++){
-                      var isEq = true;
-                      for(var key in keysArr){
-                          if(source[k][key] !==lastItem[key]){
-                              isEq = false;
-                              break;
-                          }
-                      }
-                      if(isEq){
-                          resArr.push(source[k]);
-                          if(i +1 <tempData.length ) {
-                              var remIndex = tempData.join("").indexOf(source[k].join(""), i+1);
-                              console.log(remIndex);
-                              if (remIndex > -1) {
-                                  tempData.splice(remIndex, 1);
-                              }
-                          }
+                if(!isExt){
+                    hash.push(tempData[i]);
+                    for(var k=0;k<tempData.length;k++){
+                        if(k ==i){
+                            continue;
+                        }
+                        var isEqs = true;
+                        for (var key in keysArr) {
+                            keyName = keysArr[key];
+                            if (tempData[i][keyName] !== tempData[k][keyName]) {
+                                isEqs = false;
+                                break;
+                            }
+                        }
+                        if (isEqs) {
+                            hash.push(tempData[k]);
+                        }
+                    }
 
-                      }
-                  }
                 }
 
             }
-            return resArr;
+        /*   tempData.reverse();
+            for (var i = 0; i < tempData.length; i++) {
+
+                for (var j = i+1; j < tempData.length; j++) {
+                    var isEq = true;
+                    for (var key in keysArr) {
+                        keyName = keysArr[key];
+                        if (tempData[i][keyName] !== tempData[j][keyName]) {
+                            isEq = false;
+                            break;
+                        }
+                    }
+                    if (isEq) {
+                        ++i;
+                        childArr.push(tempData[i - 1]);
+                    }
+                }
+                for(var k=0;k<tempData.length;k++){
+                    if(k ==i){
+                        continue;
+                    }
+                    var isEqs = true;
+                    for (var key in keysArr) {
+                        keyName = keysArr[key];
+                        if (tempData[i][keyName] !== tempData[k][keyName]) {
+                            isEqs = false;
+                            break;
+                        }
+                    }
+                    if (isEqs) {
+                        hash.push(tempData[k]);
+                    }
+                }
+                hash.push(tempData[i]);
+            }
+              hash.reverse();*/
+            return hash;
 
         };
         /**
