@@ -311,14 +311,12 @@ window.console = window.console || (function () {
                 return source;
             }
             var tempData = B.objectDeepCopy(source);
-            var souData = B.objectDeepCopy(source);
-            //
-            var childArr = [];
             var keyName = "";
-            var hash=[];
+            var hash = [];
+            var rootIndex = 0, spanCount = 0;
             for (var i = 0; i < tempData.length; i++) {
                 var isExt = false;
-                for(var j=0;j<hash.length;j++){
+                for (var j = 0; j < hash.length; j++) {
                     var isEq = true;
                     for (var key in keysArr) {
                         keyName = keysArr[key];
@@ -332,10 +330,13 @@ window.console = window.console || (function () {
                         break;
                     }
                 }
-                if(!isExt){
+                if (!isExt) {
+                    spanCount = 0;
+                    // tempData[i]['_rootSpan']=true;
                     hash.push(tempData[i]);
-                    for(var k=0;k<tempData.length;k++){
-                        if(k ==i){
+                    rootIndex = hash.length - 1;
+                    for (var k = 0; k < tempData.length; k++) {
+                        if (k == i) {
                             continue;
                         }
                         var isEqs = true;
@@ -347,49 +348,15 @@ window.console = window.console || (function () {
                             }
                         }
                         if (isEqs) {
+                            spanCount++;
+                            tempData[k]['_spanCount'] = 0;
                             hash.push(tempData[k]);
                         }
                     }
-
+                    hash[rootIndex]['_spanCount'] = spanCount;
                 }
 
             }
-        /*   tempData.reverse();
-            for (var i = 0; i < tempData.length; i++) {
-
-                for (var j = i+1; j < tempData.length; j++) {
-                    var isEq = true;
-                    for (var key in keysArr) {
-                        keyName = keysArr[key];
-                        if (tempData[i][keyName] !== tempData[j][keyName]) {
-                            isEq = false;
-                            break;
-                        }
-                    }
-                    if (isEq) {
-                        ++i;
-                        childArr.push(tempData[i - 1]);
-                    }
-                }
-                for(var k=0;k<tempData.length;k++){
-                    if(k ==i){
-                        continue;
-                    }
-                    var isEqs = true;
-                    for (var key in keysArr) {
-                        keyName = keysArr[key];
-                        if (tempData[i][keyName] !== tempData[k][keyName]) {
-                            isEqs = false;
-                            break;
-                        }
-                    }
-                    if (isEqs) {
-                        hash.push(tempData[k]);
-                    }
-                }
-                hash.push(tempData[i]);
-            }
-              hash.reverse();*/
             return hash;
 
         };
@@ -1378,9 +1345,9 @@ window.console = window.console || (function () {
         if (p.tree) {
             tempData = BCGrid.arrayToTree(tempData, p.tree.key, p.tree.parentKey, g._treeChildKey);
         }
-        else if (p.rowSpanKeys) {
+        else if (!BCGrid.isEmptyObject(p.rowSpanKeys)) {
             //rowspan
-            tempData = BCGrid.arrayToTree(BCGrid.objectDeepCopy(data), p.tree.key, p.tree.parentKey, g._treeChildKey);
+            tempData = BCGrid.arraySortOnGroup(tempData, p.rowSpanKeys);
         }
         g.gridContent.html(_displayListData.call(g, tempData, 0));
         if (tempData.length == 0) {
@@ -1678,6 +1645,10 @@ window.console = window.console || (function () {
         }
         if (opt.allowNewline) {
             $ret.addClass("allow-newline");
+        }
+        //rowspan
+        if (!BCGrid.isEmptyObject(p.rowSpanKeys) && BCGrid.inArray(p.rowSpanKeys, opt.name) && data['_spanCount'] > 0) {
+            $ret.attr("rowspan",data['_spanCount']+1);
         }
         return $ret.prop('outerHTML');
     };
