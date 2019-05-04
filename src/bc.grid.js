@@ -862,7 +862,11 @@ window.console = window.console || (function () {
                         if (isReloadPage && p.enablePager) {
                             _displayPage.call(g);
                         }
+                        if (p.showCheckbox) {
+                            $('#'+ g.ID + '_checkbox_all').prop('checked', false);
+                        }
                         if (p.onLoadedData) {
+                            //
                             p.onLoadedData.call(g, p.data);
                         }
                     },
@@ -902,7 +906,11 @@ window.console = window.console || (function () {
                 if (isReloadPage && p.enablePager) {
                     _displayPage.call(g);
                 }
+                if (p.showCheckbox) {
+                    $('#'+ g.ID + '_checkbox_all').prop('checked', false);
+                }
                 if (p.onLoadedData) {
+                    // 
                     p.onLoadedData.call(g, p.data);
                 }
             }
@@ -983,7 +991,8 @@ window.console = window.console || (function () {
         },
         deleteRow: function (rowIndex) {
             var g = this, p = this.options;
-            var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
+          //  var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
+            var row = $('tr[data-rowindex="' + rowIndex + '"]', g.gridContent);
             if (p.rowDetail) {
                 row.next('tr[data-forrowindex="' + rowIndex + '"]').remove();
             }
@@ -998,7 +1007,8 @@ window.console = window.console || (function () {
             var g = this, p = this.options;
             var tempDeleteRowCount = 0;
             $.each(rowIndexArr, function () {
-                var row = $('tr[id="bcgrid_' + g.ID + '_list_' + this + '"]', g.gridContent);
+                var row = $('tr[data-rowindex="' + this + '"]', g.gridContent);
+               // var row = $('tr[id="bcgrid_' + g.ID + '_list_' + this + '"]', g.gridContent);
                 if (p.rowDetail) {
                     row.next('tr[data-forrowindex="' + this + '"]').remove();
                 }
@@ -1031,7 +1041,8 @@ window.console = window.console || (function () {
         },
         setCheckedRow: function (rowIndex, isChecked) {
             var g = this, p = this.options;
-            $("#bcgrid_" + g.ID + "_checkbox_list_" + rowIndex, g.gridContent).prop('checked', isChecked);
+            $("#" + g.ID + "_checkbox_" + rowIndex, g.gridContent).prop('checked', isChecked);
+           // $("#bcgrid_" + g.ID + "_checkbox_list_" + rowIndex, g.gridContent).prop('checked', isChecked);
 
         },
         getCheckedRowsIndex: function () {
@@ -1059,7 +1070,8 @@ window.console = window.console || (function () {
             $.each(p.columns, function (index, item) {
                 dataHtml.push(g._renderColumnData(item, rowItem, index));
             });
-            $("#bcgrid_" + g.ID + "_list_" + rowIndex).html(dataHtml.join(''));
+
+         //   $("#bcgrid_" + g.ID + "_list_" + rowIndex).html(dataHtml.join(''));
             _bindEvent.call(g);
         },
         updateColumn: function (columnIndex, columnItem) {
@@ -1080,12 +1092,12 @@ window.console = window.console || (function () {
         setTitle: function (title) {
             var g = this, p = this.options;
             p.title = title;
-            $("#bcgrid_" + g.ID + "_title").html(title);
+            $("#" + g.ID + "_title").html(title);
         },
         setFoot: function (foot) {
             var g = this, p = this.options;
             p.foot = foot;
-            $("#bcgrid_" + g.ID + "_foot").html(foot);
+            $("#" + g.ID + "_foot").html(foot);
         },
         addColumn: function (column, index) {
             var g = this, p = this.options;
@@ -1102,7 +1114,8 @@ window.console = window.console || (function () {
             var g = this, p = this.options;
             // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
             var rowsData = g.getData();
-            var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
+            var row = $('tr[data-rowindex="' + rowIndex + '"]', g.gridContent);
+         //   var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
             var isExpand = _toggleDetail.call(g, row);
             if (p.onRowDetailExpandOrCollapse && BCGrid.isFunction(p.onRowDetailExpandOrCollapse)) {
                 p.onRowDetailExpandOrCollapse.call(g, isExpand, rowIndex, rowsData[rowIndex]);
@@ -1246,7 +1259,7 @@ window.console = window.console || (function () {
         headAttr.push('<thead>');
         if (p.showTitle) {
             headAttr.push('<tr role="row" class="head-title">');
-            headAttr.push('<th' + (BCGrid.isDefined(p.titleAlign) ? ' class="' + p.titleAlign + '"' : '') + ' colspan="' + g._showColumnLength + '" id="bcgrid_' + g.ID + '_title">' + p.title + '</th>');
+            headAttr.push('<th' + (BCGrid.isDefined(p.titleAlign) ? ' class="' + p.titleAlign + '"' : '') + ' colspan="' + g._showColumnLength + '" id="' + g.ID + '_title">' + p.title + '</th>');
             headAttr.push('</tr>');
         }
         if (p.showHead) {
@@ -1255,7 +1268,7 @@ window.console = window.console || (function () {
                 headAttr.push('<th class="center col-ctrl"></th>');
             }
             if (p.showCheckbox) {
-                headAttr.push('<th class="center col-ctrl"> <label><input type="checkbox" id="bcgrid_' + g.ID + '_checkbox_all" tag="bcgrid_checkbox"/><span class="lbl"></span></label></th>');
+                headAttr.push('<th class="center col-ctrl"> <label><input type="checkbox" id="' + g.ID + '_checkbox_all" tag="bcgrid_checkbox"/><span class="lbl"></span></label></th>');
             }
             if (p.showSerialNum) {
                 //width
@@ -1288,7 +1301,7 @@ window.console = window.console || (function () {
         footAttr.push('<tfoot>');
         if (p.showFoot) {
             footAttr.push('<tr role="row" class="footer">');
-            footAttr.push('<td' + (BCGrid.isDefined(p.footAlign) ? ' class="' + p.footAlign + '"' : '') + ' colspan="' + g._showColumnLength + '" id="bcgrid_' + g.ID + '_foot">' + p.foot + '</td>');
+            footAttr.push('<td' + (BCGrid.isDefined(p.footAlign) ? ' class="' + p.footAlign + '"' : '') + ' colspan="' + g._showColumnLength + '" id="' + g.ID + '_foot">' + p.foot + '</td>');
             footAttr.push('</tr>');
         }
         footAttr.push('</tfoot>');
@@ -1370,7 +1383,7 @@ window.console = window.console || (function () {
         if (BCGrid.isUnDefined(parentRowIndex)) parentRowIndex = 0;
         parentRowIndex--;
         if (data.length == 0 && depth == 0) {
-            trArr.push('<tr id="bcgrid_' + g.ID + '_list_nodata" role="row" class="no_data">');
+            trArr.push('<tr id="' + g.ID + '_nodata" role="row" class="no_data">');
             trArr.push('<td colspan="' + g._showColumnLength + '" class="text-center">' + p.noDataHtml + '</td>');
             trArr.push('</tr>');
         }
@@ -1403,7 +1416,8 @@ window.console = window.console || (function () {
                     }
                     //
                 }
-                trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '"' + style + ' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
+               // trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '"' + style + ' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
+                trArr.push('<tr' + style + ' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
                 trArr.push(_preRenderColumn.call(g, showDetail));
                 $.each(p.columns, function (index, item) {
                     trArr.push(_renderColumnData.call(g, item, rowItem, index, g._rowIndex, depth, hasChild));
@@ -1451,7 +1465,7 @@ window.console = window.console || (function () {
         }
         if (p.showCheckbox) {
             var checked = '';
-            dataHtml.push('<td class="center" data-role="checkbox"> <label class="pos-rel"><input type="checkbox" id="bcgrid_' + g.ID + '_checkbox_list_' + g._rowIndex + '" tag="bcgrid_checkbox" ' + checked + '/><span class="lbl"></span></label></td>');
+            dataHtml.push('<td class="center" data-role="checkbox"> <label class="pos-rel"><input type="checkbox" id="' + g.ID + '_checkbox_' + g._rowIndex + '" tag="bcgrid_checkbox" ' + checked + '/><span class="lbl"></span></label></td>');
         }
         if (p.showSerialNum) {
             var serial = 0;
