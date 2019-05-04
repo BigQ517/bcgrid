@@ -677,3 +677,14 @@
     color: #d9d9d9!important;
 }
 /** Color end**/
+/**v-align**/
+.bc-table-wrap .top{
+    vertical-align: top !important;
+}
+.bc-table-wrap .middle{
+    vertical-align: middle !important;
+}
+.bc-table-wrap .bottom{
+    vertical-align: bottom !important;
+}
+/**v-align end**/

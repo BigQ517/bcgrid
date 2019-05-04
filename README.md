@@ -130,11 +130,12 @@ How to use:
       onSelectedRow: null, //选择行事件
       onRowClick: null, //单击行事件
       onRowDbClick: null, //双击行事件
-      rowDetail: null,//行明细
       rowStyle:null,//行样式string / function(rowIndex,rowData){return string/object;}
       onRowDetailExpandOrCollapse:null,//行明细 展开/收缩事件
       onTreeExpandOrCollapse: null,//树展开/收缩事件
-      tree: null
+      rowDetail: null,//明细 与tree和rowSpanKeys互斥 rowDetail优先，其次tree
+      tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
+      rowSpanKeys: null//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
   ```
 
 
@@ -142,19 +143,21 @@ ColumnOptions:
 ------------
  ```js
     var defaultOpt = {
-              display: '',//标题显示
-              id: '',//id
-              name: 'name',//数据name
-              type: 'text',//数据类型
-              render: null,//执行行数
-              hide: false,//是否隐藏
-              width:null,//列宽
-              align: null,//数据对齐方式
-              headAlign:null,//标题对齐方式
-              maxLength: null,//显示的最大长度
-              format: null,//显示数据格式(date)
-              enableSort: false,//是否可以排序,
-              allowNewline:false,//是否允许自动换行
+             display: '',//标题显示
+             id: '',//id
+             name: 'name',//数据name
+             type: 'text',//数据类型
+             render: null,//执行行数
+             hide: false,//是否隐藏
+             width: null,//列宽
+             align: null,//文本水平对齐方式
+             vAlign:null,//文本垂直对齐方式
+             headAlign: null,//标题对齐方式
+             maxLength: null,//显示的最大长度
+             format: null,//显示数据格式(date)
+             enableSort: false,//是否可以排序
+             allowNewline: false,//是否允许自动换行
+             elOpt: null//可编辑控制参数
           };
 ```
 

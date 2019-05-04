@@ -333,6 +333,7 @@ window.console = window.console || (function () {
                 if (!isExt) {
                     spanCount = 0;
                     // tempData[i]['_rootSpan']=true;
+                    tempData[i]['_isroot'] = true;
                     hash.push(tempData[i]);
                     rootIndex = hash.length - 1;
                     for (var k = 0; k < tempData.length; k++) {
@@ -350,6 +351,7 @@ window.console = window.console || (function () {
                         if (isEqs) {
                             spanCount++;
                             tempData[k]['_spanCount'] = 0;
+                            tempData[k]['_isroot'] = false;
                             hash.push(tempData[k]);
                         }
                     }
@@ -1206,14 +1208,15 @@ window.console = window.console || (function () {
             render: null,//执行行数
             hide: false,//是否隐藏
             width: null,//列宽
-            align: null,//数据对齐方式
+            align: null,//文本水平对齐方式
+            vAlign:null,//文本垂直对齐方式
             headAlign: null,//标题对齐方式
             maxLength: null,//显示的最大长度
             format: null,//显示数据格式(date)
             role: 'data',
             enableSort: false,//是否可以排序
             allowNewline: false,//是否允许自动换行
-            elOpt: null
+            elOpt: null//可编辑控制参数
 
         };
         g._showColumnLength = p.columns.length;
@@ -1637,6 +1640,9 @@ window.console = window.console || (function () {
         if (opt.align) {
             $ret.addClass(opt.align);
         }
+        if (opt.vAlign) {
+            $ret.addClass(opt.vAlign);
+        }
         if (noPadding) {
             $ret.addClass("none-padding");
         }
@@ -1647,8 +1653,13 @@ window.console = window.console || (function () {
             $ret.addClass("allow-newline");
         }
         //rowspan
-        if (!BCGrid.isEmptyObject(p.rowSpanKeys) && BCGrid.inArray(p.rowSpanKeys, opt.name) && data['_spanCount'] > 0) {
-            $ret.attr("rowspan",data['_spanCount']+1);
+        if (!BCGrid.isEmptyObject(p.rowSpanKeys) && BCGrid.inArray(p.rowSpanKeys, opt.name)) {
+            if(data['_spanCount'] > 0){
+                $ret.attr("rowspan",data['_spanCount']+1);
+            }
+            else if(data['_isroot'] == false){
+               return "";
+            }
         }
         return $ret.prop('outerHTML');
     };
