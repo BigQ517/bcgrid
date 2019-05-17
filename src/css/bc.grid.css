@@ -765,11 +765,9 @@
 .bc-table .pink {
     color: #d6487e !important;
 }
-
 .bc-table .purple {
     color: #7461aa !important;
 }
-
 .bc-table .grey {
     color: #888 !important;
 }
@@ -777,21 +775,17 @@
 .bc-table.light {
     color: #d9d9d9 !important;
 }
-
 /** Color end**/
 /**v-align**/
 .bc-table-wrap .top {
     vertical-align: top !important;
 }
-
 .bc-table-wrap .middle {
     vertical-align: middle !important;
 }
-
 .bc-table-wrap .bottom {
     vertical-align: bottom !important;
 }
-
 /**v-align end**/
 /** resize column begin**/
 .bc-table-wrap .table-resizer {

@@ -760,7 +760,7 @@ window.console = window.console || (function () {
                 minWidth: 15,
                 headerOnly: false,
                 exColumns: [],
-                onDrag: null, 					//callback function to be fired during the column resizing process if liveDrag is enabled
+                onDrag: null,
                 onResize: null
             }
         };
