@@ -753,7 +753,16 @@ window.console = window.console || (function () {
             rowDetail: null,//明细 与tree和rowSpanKeys互斥 rowDetail优先，其次tree
             rowStyle: null,//行样式
             tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
-            rowSpanKeys: null//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
+            rowSpanKeys: null,//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
+            colResize:{
+                enable:true,
+                live: false,
+                minWidth: 15,
+                headerOnly: false,
+                exColumns: [],
+                onDrag: null, 					//callback function to be fired during the column resizing process if liveDrag is enabled
+                onResize: null
+            }
         };
         this.options = $.extend(true, {}, this.defaults, opt);
         this._rowIndex = 0;
@@ -945,12 +954,51 @@ window.console = window.console || (function () {
          */
         refresh: function () {
             var res = true, g = this;
+            g.options.page = 1;
             if (g.options.onRefresh) {
                 res = g.options.onRefresh.call(this);
             }
             if (res) {
                 _init.call(g);
             }
+        },
+        /**
+         * rebuild
+         */
+        rebuild:function(opt){
+          /*  var   g = this,p=this.options;
+            this.options = $.extend(true, {}, this.defaults, opt);
+            this._rowIndex = 0;
+            this._showColumnLength = 0;
+            this._treeChildKey = '';
+            this._initOption = opt;
+            //行明细
+            if (this.options.rowDetail) {
+                this.options.rowDetail = $.extend({}, {
+                    content: function (rowIndex, rowData) {
+                        return "";
+                    },//明细内容string / function(rowIndex,rowData),return string/false
+                    ctrlStyle: 'db',//控制样式 db/sg/pm
+                    align: null,
+                    expand: false
+                }, this.options.rowDetail);
+                this.options.tree = null;
+                this.options.showStripe = false;
+                this.options.rowSpanKeys = null;
+            }
+            if (this.options.tree) {
+                this.options.tree = $.extend({}, {
+                    displayID: '',
+                    key: 'id',
+                    parentKey: 'parentid',
+                    expand: false
+                }, this.options.tree);
+                this._treeChildKey = 'bc_t_' + BCGrid.getID();
+                this.options.rowSpanKeys = null;
+            }
+            this.options.url = BCGrid.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
+            _init.call(g);*/
+
         },
         /*  /!**
          * 添加按钮
