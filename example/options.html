@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>BC Gird</title>
+    <style type="text/css">
+        .title{
+            margin: 20px;
+        }
+        .title h1{
+            text-align: center;
+        }
+        .title a{
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
+<div class="title"><a class="back" href="/">&#60;Back</a><h1>BCGrid-Options</h1></div>
 <p>
 Options:
 <hr/>
@@ -52,8 +64,8 @@ Options:
     showStripe: true,//是否显示条纹间隔效果
     showHover: true,//是否显示hover效果
     showHeadColor: true,//是否表头显示背景色
-    showHead: true,
-    showTitle: false,
+    showHead: true,//是否显示表头
+    showTitle: false,//显示标题 true/false  与colResize互斥  showTitle优先
     serialNumWidth:null,//序号列宽
     title: "",//标题文字
     showFoot: false,//显示foot true/false
@@ -88,6 +100,10 @@ Options:
     rowDetail: null,//明细 与tree和rowSpanKeys互斥 rowDetail优先，其次tree
     tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
     rowSpanKeys: null//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
+    colResize:{
+       liveDrag: true,
+       minWidth: 20,
+    } // jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
 </xmp>
 </p>
 
@@ -128,7 +144,6 @@ Options:
         };
     </xmp>
 </p>
-
 <p>
     RowDetailOption:
 <hr/>
@@ -143,5 +158,21 @@ Options:
         };
     </xmp>
 </p>
+<p>
+    colResize:
+<hr/>
+<a href="http://www.bacubacu.com/colresizable/" target="_blank">Provided by colResizable</a>
+</p>
+<br/>
+<br/>
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?c52ab154a110409ab03f0649cc213935";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
 </body>
 </html>

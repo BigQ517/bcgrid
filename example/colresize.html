@@ -7,34 +7,40 @@
     <link rel="stylesheet" href="../dist/css/bc.grid.min.css"/>
     <script src="../lib/jquery-11.1.min.js"></script>
     <script src="../dist/bc.grid.min.js"></script>
+    <style type="text/css">
+        .title{
+            margin: 20px;
+        }
+        .power{
+            margin-bottom: 20px;
+        }
+        .title h1, .power{
+            text-align: center;
+        }
+        .power a,.title a{
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
+<div class="title"><a class="back" href="/">&#60;Back</a><h1>BCGrid-Column Resize</h1> </div>
+<div class="power"><a href="http://www.bacubacu.com/colresizable/" target="_blank">Provided by colResizable</a></div>
 <div>
     <div id="table"></div>
-    <br/> <br/>
-
 </div>
 <script>
     $(function () {
         var grid = BCGrid.create("#table", {
             columns: [
-                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {id: 'id', name: 'id', display: 'ID', align: 'center'},
                 {
-                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                    id: 'name', name: 'name', display: 'Name',align:'center',vAlign:'middle',display: function (item, index) {
                         return item.name;
                     }
                 },
+                {name: 'age', display: 'Age', format: '{value}Years',vAlign:'middle'},
                 {
-                    id: 'group', name: 'group', display: 'Group', type: 'grid', grid: {
-                        dateName: 'data',
-                        columns: [
-                            {name: 'name', display: 'Name'},
-                            {name: 'mobile', display: 'Mobile'}
-                         ]
-                    }
-                },
-                {
-                    name: 'gender', display: 'Gender', render: function (item, index) {
+                    name: 'gender', display: 'Gender', width: '20', render: function (item, index) {
                         if (item.gender == 1) {
                             return "Boy";
                         }
@@ -43,24 +49,30 @@
                         }
                     }
                 },
-                {name: 'age', display: 'Age', format: '{value}Years', align: 'right', headAlign: 'left'},
                 {name: 'email', display: 'Email'},
                 {name: 'mobile', display: 'Mobile'},
                 {name: 'sign', display: 'Sign', maxLength: 10},
                 {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
 
             ],
-            title: 'BC Grid',
-            showTitle: true,
-            titleAlign: 'left',
+            showFoot: true,
+            foot: 'Foot<br>hello！',
+            pageSizeOptions: [1,2,10, 20, 30, 40, 50, 100],
             showCheckbox: true,
             showSerialNum: true,
-            url: 'handler/subtabledata.json'
-
-
+            colResize:{
+                liveDrag:true,
+                minWidth:20,
+                disabledColumns: [1,2]
+            },
+            url: 'handler/rowspandata.json',
+            onCompleted:function(){
+                console.log(this.options);
+            },
+            onLoadedData:function (data) {
+                console.log(this.getRawData());
+            }
         });
-
-
     });
 </script>
 <script>

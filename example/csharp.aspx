@@ -8,8 +8,20 @@
     <link rel="stylesheet" href="../dist/css/bc.grid.min.css"/>
     <script src="../lib/jquery-11.1.min.js"></script>
     <script src="../dist/bc.grid.min.js"></script>
+      <style type="text/css">
+            .title{
+                margin: 20px;
+            }
+            .title h1{
+                text-align: center;
+            }
+            .title a{
+                text-decoration: none;
+            }
+        </style>
 </head>
 <body>
+   <div class="title"><a class="back" href="/">&#60;Back</a><h1>BCGrid-C# Server</h1></div>
     <form id="form1" runat="server">
     <div>姓名：<input name="name" id="name"  value=""/>&nbsp;&nbsp;&nbsp;&nbsp;编号：<input name="num" id="num"  value=""/>&nbsp;&nbsp;<button type="button" id="searchBtn">搜索</button></div>
     </form>
@@ -62,5 +74,14 @@
 
             }
 </script>
+<script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?c52ab154a110409ab03f0649cc213935";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
 </body>
 </html>

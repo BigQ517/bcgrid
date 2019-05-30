@@ -49,7 +49,7 @@ window.console = window.console || (function () {
         }();
         var BCGrid = {
             product: 'BC Grid',
-            version: '1.2.0',
+            version: '1.2.1',
             doc: doc,
             isIE: /msie/i.test(userAgent),
             isMoz: /gecko/.test(userAgent),
@@ -713,7 +713,7 @@ window.console = window.console || (function () {
             showHeadColor: true,//是否表头显示背景色
             showHover: true,//是否显示hover效果
             showHead: true,
-            showTitle: false,//显示标题 true/false
+            showTitle: false,//显示标题 true/false  与colResize互斥  showTitle优先
             showFoot: false,//显示foot true/false
             serialNumWidth: null,//serialNumWidth
             title: "",
@@ -755,19 +755,18 @@ window.console = window.console || (function () {
             tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
             rowSpanKeys: null,//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
             colResize:{
-                enable:true,
-                live: false,
-                minWidth: 15,
-                headerOnly: false,
-                exColumns: [],
-                onDrag: null,
-                onResize: null
-            }
+                liveDrag: true,
+                minWidth: 20,
+            } // jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
         };
         this.options = $.extend(true, {}, this.defaults, opt);
         this._rowIndex = 0;
         this._showColumnLength = 0;
         this._treeChildKey = '';
+        //互斥
+        if(this.options.showTitle){
+            this.options.colResize = false;
+        }
         //行明细
         if (this.options.rowDetail) {
             this.options.rowDetail = $.extend({}, {
@@ -804,7 +803,8 @@ window.console = window.console || (function () {
                 });
             }
             else {
-                _init.call(g);
+                 _init.call(g);
+
             }
             return this;
         },
@@ -877,6 +877,7 @@ window.console = window.console || (function () {
                         if (p.onLoadedData) {
                             //
                             p.onLoadedData.call(g, p.data);
+
                         }
                     },
 
@@ -1257,6 +1258,9 @@ window.console = window.console || (function () {
         }
         if (p.autoLoadData) {
             g.loadData(true);
+        }
+        else{
+            _lastHandler.call(g);
         }
     };
     var _preRenderColumnOpt = function () {
@@ -1913,6 +1917,15 @@ window.console = window.console || (function () {
         toolArr.push.apply(toolArr, p.toolBtns);
         self.pager.addToolButton(toolArr);
     };
+    var _colResize = function () {
+        var g = this, p = this.options;
+        if(p.colResize && BCGrid.isObject(p.colResize)){
+            BCGrid.loadJS("bc_plugin_colResizable", "plugin/colResizable.js", function () {
+                var colResizeOpt = p.colResize;
+                $("#"+g.ID+"").colResizable(colResizeOpt);
+            });
+        }
+    };
     var _bindEvent = function () {
         var g = this, p = this.options;
         // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
@@ -2054,6 +2067,7 @@ window.console = window.console || (function () {
         //
 
         _bindDataChangeEvent.call(g);
+        _lastHandler.call(g);
 
     };
     var _bindDataChangeEvent = function () {
@@ -2202,6 +2216,13 @@ window.console = window.console || (function () {
         if ($target.is("a")) return true;
         if ($target.is("a i")) return true;
         return false;
+    };
+    /**
+     * 最后出来，完成所有执行后加载完后的处理
+     * @private
+     */
+    var _lastHandler  =function () {
+        _colResize.call(this);
     };
     /**page**/
     var Pager = function (ele, opt) {

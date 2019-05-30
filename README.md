@@ -6,12 +6,11 @@ A grid plugin for jquery.
 Flexible, convenient and free!
 
 
-Change Log(V1.2.0):
+Change Log(V1.2.1):
 ------------
 * Fixed bug
-* Add rowStyle
-* Add allowNewline
-* Add filterData
+* Add rowspan
+* Support column resize with colResizable
 
 
 How to use:
@@ -101,7 +100,7 @@ How to use:
       showHover: true,//是否显示hover效果
       showHeadColor: true,//是否表头显示背景色
       showHead: true,
-      showTitle: false,
+      showTitle: false,//显示标题 true/false  与colResize互斥  showTitle优先
       serialNumWidth:null,//序号列宽
       title: "",//标题文字
       showFoot: false,//显示foot true/false
@@ -136,6 +135,10 @@ How to use:
       rowDetail: null,//明细 与tree和rowSpanKeys互斥 rowDetail优先，其次tree
       tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
       rowSpanKeys: null//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
+      colResize:{
+             liveDrag: true,
+             minWidth: 20,
+       } // jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
   ```
 
 
