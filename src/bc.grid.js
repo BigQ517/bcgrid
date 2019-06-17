@@ -61,6 +61,7 @@ window.console = window.console || (function () {
         };
         return BCGrid;
     }());
+    var _jsOnloadQueue=[];
     var langMaps = {};
     //public methods
     (function (B) {
@@ -381,8 +382,7 @@ window.console = window.console || (function () {
          * @returns {RegExpExecArray | string}
          */
         B.getUrlParam = function (url, name) {
-            var match = new RegExp('[?&]' + name + '=([^&]*)')
-                .exec(url);
+            var match = new RegExp('[?&]' + name + '=([^&]*)').exec(url);
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
         };
         /**
@@ -417,17 +417,12 @@ window.console = window.console || (function () {
             if (window.innerWidth) {
                 bW = window.innerWidth;
                 bH = window.innerHeight;
-
-
             } else if (document.compatMode === "CSS1Compat") {
                 bW = document.documentElement.clientWidth;
                 bH = document.documentElement.clientHeight;
-
-
             } else {
                 bW = document.body.clientWidth;
                 bH = document.body.clientHeight;
-
             }
             var eleW = ele.outerWidth();
             var eleH = ele.outerHeight();
@@ -542,29 +537,41 @@ window.console = window.console || (function () {
             });
         };
         B.loadJS = function (id, src, onload) {
+            _jsOnloadQueue.push(onload);
+            var _script = null;
             if (!B.isEmptyObject(document.getElementById(id))) {
-                if (BCGrid.isFunction(onload)) {
-                    onload();
-                }
-                return;
+                _script = document.getElementById(id);
             }
-            var _script = document.createElement('script');
-            _script.setAttribute('type', 'text/javascript');
-            _script.setAttribute('src', BCGrid.path + src);
-            _script.id = id;
-            document.getElementsByTagName('head')[0].appendChild(_script);
+            else {
+                _script = document.createElement('script');
+                _script.setAttribute('type', 'text/javascript');
+                _script.setAttribute('src', BCGrid.path + src);
+                _script.id = id;
+                document.getElementsByTagName('head')[0].appendChild(_script);
+            }
             if ('onreadystatechange' in _script) {
                 _script.onreadystatechange = function () {
                     if (/loaded|complete/.test(_script.readyState)) {
-                        if (BCGrid.isFunction(onload)) {
-                            onload();
+                        if(_jsOnloadQueue.length > 0 ){
+                            for(var i =0 ;i <_jsOnloadQueue.length;){
+                                if (BCGrid.isFunction(_jsOnloadQueue[i])) {
+                                    _jsOnloadQueue[i]();
+                                }
+                                _jsOnloadQueue.shift();
+                            }
                         }
+
                     }
                 };
             } else {
                 _script.onload = function () {
-                    if (BCGrid.isFunction(onload)) {
-                        onload();
+                    if(_jsOnloadQueue.length > 0 ){
+                        for(var i =0 ;i <_jsOnloadQueue.length;){
+                            if (BCGrid.isFunction(_jsOnloadQueue[i])) {
+                                _jsOnloadQueue[i]();
+                            }
+                            _jsOnloadQueue.shift();
+                        }
                     }
                 };
             }
@@ -756,7 +763,7 @@ window.console = window.console || (function () {
             rowSpanKeys: null,//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
             colResize:{
                 liveDrag: true,
-                minWidth: 20,
+                minWidth: 20
             } // jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
         };
         this.options = $.extend(true, {}, this.defaults, opt);
@@ -1920,10 +1927,15 @@ window.console = window.console || (function () {
     var _colResize = function () {
         var g = this, p = this.options;
         if(p.colResize && BCGrid.isObject(p.colResize)){
-            BCGrid.loadJS("bc_plugin_colResizable", "plugin/colResizable.js", function () {
-                var colResizeOpt = p.colResize;
+            //
+            var colResizeOpt = p.colResize;
+            if (!BCGrid.isEmptyObject(document.getElementById('bc_plugin_colResizable')) && BCGrid.isFunction($.fn.colResizable)) {
                 $("#"+g.ID+"").colResizable(colResizeOpt);
-            });
+            }else {
+                BCGrid.loadJS("bc_plugin_colResizable", "plugin/colResizable.js", function () {
+                    $("#" + g.ID + "").colResizable(colResizeOpt);
+                });
+            }
         }
     };
     var _bindEvent = function () {
