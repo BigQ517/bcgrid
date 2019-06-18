@@ -274,6 +274,34 @@ window.console = window.console || (function () {
 
         };
         /**
+         * arrayRemoveFilter
+         * @param arrayList
+         * @param key
+         * @param value
+         * @returns {Array}
+         */
+        B.arrayRemoveFilter = function (arrayList, key,value) {
+            if (!BCGrid.isArray(arrayList) || arrayList.length == 0) return [];
+            if (BCGrid.isUnDefined(key) || (!BCGrid.isArray(key) && BCGrid.isUnDefined(value))) return [];
+            return arrayList.filter(function (item) {
+                var validate = true;
+                if (!BCGrid.isArray(key)) {
+                    validate = (item[key] !== value);
+                } else {
+                    for (var i in key) {
+                        if (item[key[i].name] === key[i].value) {
+                            validate = false;
+                            break;
+                        }
+                    }
+
+                }
+                return validate;
+
+            });
+
+        };
+        /**
          * Object Deep Copy
          * @param source
          * @returns {*}
@@ -537,7 +565,7 @@ window.console = window.console || (function () {
             });
         };
         B.loadJS = function (id, src, onload) {
-            _jsOnloadQueue.push(onload);
+            _jsOnloadQueue.push({key:src,callback:onload});
             var _script = null;
             if (!B.isEmptyObject(document.getElementById(id))) {
                 _script = document.getElementById(id);
@@ -552,26 +580,33 @@ window.console = window.console || (function () {
             if ('onreadystatechange' in _script) {
                 _script.onreadystatechange = function () {
                     if (/loaded|complete/.test(_script.readyState)) {
-                        if(_jsOnloadQueue.length > 0 ){
-                            for(var i =0 ;i <_jsOnloadQueue.length;){
-                                if (BCGrid.isFunction(_jsOnloadQueue[i])) {
-                                    _jsOnloadQueue[i]();
+                        //
+                        var callbackArr =  B.arrayObjectFilter(_jsOnloadQueue,"key",src);
+                        if(callbackArr.length > 0 ){
+                            for(var i =0 ;i <callbackArr.length;){
+                                if (BCGrid.isFunction(callbackArr[i].callback)) {
+                                    callbackArr[i].callback();
                                 }
-                                _jsOnloadQueue.shift();
+                                callbackArr.shift();
                             }
+                            //
+                            _jsOnloadQueue= B.arrayRemoveFilter(_jsOnloadQueue,"key",src);
                         }
 
                     }
                 };
             } else {
                 _script.onload = function () {
-                    if(_jsOnloadQueue.length > 0 ){
-                        for(var i =0 ;i <_jsOnloadQueue.length;){
-                            if (BCGrid.isFunction(_jsOnloadQueue[i])) {
-                                _jsOnloadQueue[i]();
+                    var callbackArr =  B.arrayObjectFilter(_jsOnloadQueue,"key",src);
+                    if(callbackArr.length > 0 ){
+                        for(var i =0 ;i <callbackArr.length;){
+                            if (BCGrid.isFunction(callbackArr[i].callback)) {
+                                callbackArr[i].callback();
                             }
-                            _jsOnloadQueue.shift();
+                            callbackArr.shift();
                         }
+                        //
+                        _jsOnloadQueue= B.arrayRemoveFilter(_jsOnloadQueue,"key",src);
                     }
                 };
             }

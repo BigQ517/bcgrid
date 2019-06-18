@@ -6,7 +6,7 @@ A grid plugin for jquery.
 Flexible, convenient and free!
 
 
-Change Log(V1.2.1):
+Change Log(v1.2.1):
 ------------
 * Fixed bug
 * Add rowspan
