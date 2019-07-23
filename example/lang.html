@@ -29,24 +29,23 @@
         var grid=BCGrid.create("#table",{
             columns: [
                 {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
-                {
-                    id: 'name', name: 'name', display: 'Name', display: function (item, index) {
+                {  name: 'name',display: '姓名', render: function (item, index) {
                     return item.name;
                 }
                 },
                 {
-                    name: 'gender', display: 'Gender', render: function (item, index) {
+                    name: 'gender', display: '性别', render: function (item, index) {
                     if (item.gender == 1) {
-                        return "Boy";
+                        return "男";
                     }
                     if (item.gender == 2) {
-                        return "Girl";
+                        return "女";
                     }
                 }
                 },
-                {name: 'age', display: 'Age', format: '{value}Years'},
-                {name: 'email', display: 'Email'},
-                {name: 'mobile', display: 'Mobile'}
+                {name: 'age', display: '年龄', format: '{value}岁'},
+                {name: 'email', display: '邮箱'},
+                {name: 'mobile', display: '电话'}
 
             ],
             enablePager:true,

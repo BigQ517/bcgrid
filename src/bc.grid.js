@@ -1124,6 +1124,16 @@ window.console = window.console || (function () {
             }
             return rows;
         },
+        getSelectedRows: function () {
+            var rows = [];
+            var g = this, p = this.options;
+            if (p.enableSelectRow) {
+                $('tr[role="row"].selected', g.gridContent).each(function () {
+                    rows.push(p.data[p.rows][parseInt($(this).data('rowindex'))]);
+                });
+            }
+            return rows;
+        },
         setCheckedRows: function (rowIndexArr, isChecked) {
             var g = this, p = this.options;
             $.each(rowIndexArr, function (index, item) {
@@ -1563,11 +1573,16 @@ window.console = window.console || (function () {
         }
         if (p.showSerialNum) {
             var serial = 0;
-            if ((p.pageSize + '').toLowerCase() == 'all') {
-                serial = (g._rowIndex + 1);
+            if(p.enablePager) {
+                if ((p.pageSize + '').toLowerCase() == 'all') {
+                    serial = (g._rowIndex + 1);
+                }
+                else {
+                    serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
+                }
             }
-            else {
-                serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
+            else{
+                serial = (g._rowIndex + 1);
             }
             dataHtml.push('<td class="center" data-role="data">' + serial + '</td>');
         }
@@ -1712,6 +1727,21 @@ window.console = window.console || (function () {
                     if (BCGrid.isUnDefined(opt.align)) {
                         opt.align = "center";
                     }
+                    break;
+                case 'serial':
+                    var serial="";
+                    if(p.enablePager) {
+                        if ((p.pageSize + '').toLowerCase() == 'all') {
+                            serial = (g._rowIndex + 1);
+                        }
+                        else {
+                            serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
+                        }
+                    }
+                    else{
+                        serial = (g._rowIndex + 1);
+                    }
+                    dataRes = serial;
                     break;
                 default:
                     var val = BCGrid.isDefined(data[column.name]) ? data[column.name] + '' : '';
@@ -2060,7 +2090,6 @@ window.console = window.console || (function () {
                         }
                     }
                     if (p.onSelectedRow && isSelected && BCGrid.isFunction(p.onSelectedRow)) {
-                        //
                         p.onSelectedRow.call(g, rowIndex, rowsData[rowIndex]);
                     }
                 }
