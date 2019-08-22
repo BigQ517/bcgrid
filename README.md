@@ -9,7 +9,7 @@ Flexible, convenient and free!
 Change Log(v1.2.2):
 ------------
 * Fixed bug
-* Add getSelectedRows methon
+* Add getSelectedRows method
 * add column item type "serial"
 
 
