@@ -49,7 +49,7 @@ window.console = window.console || (function () {
         }();
         var BCGrid = {
             product: 'BC Grid',
-            version: '1.2.1',
+            version: '1.2.2',
             doc: doc,
             isIE: /msie/i.test(userAgent),
             isMoz: /gecko/.test(userAgent),

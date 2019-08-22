@@ -74,14 +74,5 @@
 
             }
 </script>
-<script>
-        var _hmt = _hmt || [];
-        (function() {
-            var hm = document.createElement("script");
-            hm.src = "https://hm.baidu.com/hm.js?c52ab154a110409ab03f0649cc213935";
-            var s = document.getElementsByTagName("script")[0];
-            s.parentNode.insertBefore(hm, s);
-        })();
-    </script>
 </body>
 </html>
