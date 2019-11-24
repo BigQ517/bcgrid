@@ -49,7 +49,7 @@ window.console = window.console || (function () {
         }();
         var BCGrid = {
             product: 'BC Grid',
-            version: '1.2.2',
+            version: '1.2.3',
             doc: doc,
             isIE: /msie/i.test(userAgent),
             isMoz: /gecko/.test(userAgent),
@@ -796,10 +796,7 @@ window.console = window.console || (function () {
             rowStyle: null,//行样式
             tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
             rowSpanKeys: null,//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
-            colResize:{
-                liveDrag: true,
-                minWidth: 20
-            } // jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
+            colResize:false// {liveDrag: true, minWidth: 20}  jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
         };
         this.options = $.extend(true, {}, this.defaults, opt);
         this._rowIndex = 0;
@@ -808,6 +805,14 @@ window.console = window.console || (function () {
         //互斥
         if(this.options.showTitle){
             this.options.colResize = false;
+        }
+        //
+        if(this.options.showCheckbox && this.options.colResize){
+            if(BCGrid.isEmptyObject(this.options.colResize.disabledColumns)){
+                this.options.colResize.disabledColumns = [0];
+            }else if(!BCGrid.inArray(this.options.colResize.disabledColumns,0)){
+                this.options.colResize.disabledColumns.unshift(0);
+            }
         }
         //行明细
         if (this.options.rowDetail) {
