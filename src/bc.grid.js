@@ -543,6 +543,7 @@ window.console = window.console || (function () {
         };
         B.loadJS = function (id, src, onload) {
             if (!B.isEmptyObject(document.getElementById(id))) {
+                console.log("sss");
                 if (BCGrid.isFunction(onload)) {
                     onload();
                 }
