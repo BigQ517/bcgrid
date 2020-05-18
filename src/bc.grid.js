@@ -1348,6 +1348,10 @@ window.console = window.console || (function () {
             _lastHandler.call(g);
         }
     };
+    /**
+     * 准备列配置
+     * @private
+     */
     var _preRenderColumnOpt = function () {
         var g = this, p = this.options;
         var defaultOpt = {
@@ -1366,7 +1370,8 @@ window.console = window.console || (function () {
             role: 'data',
             enableSort: false,//是否可以排序
             allowNewline: false,//是否允许自动换行
-            elOpt: null//可编辑控制参数
+            elOpt: null,//可编辑控制参数
+            columns:[] //多表头
 
         };
         g._showColumnLength = p.columns.length;
@@ -1389,6 +1394,14 @@ window.console = window.console || (function () {
         }
 
     };
+    /**
+     * 计算用户设置列数
+     * @private
+     */
+    var _calcUserSetColumnCount = function (cols) {
+        var g = this, p = this.options;
+    };
+
     //head
     var _setHead = function () {
         var g = this, p = this.options;
