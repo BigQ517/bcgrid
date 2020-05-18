@@ -49,7 +49,7 @@ window.console = window.console || (function () {
         }();
         var BCGrid = {
             product: 'BC Grid',
-            version: '1.2.1',
+            version: '1.2.3',
             doc: doc,
             isIE: /msie/i.test(userAgent),
             isMoz: /gecko/.test(userAgent),
@@ -61,6 +61,7 @@ window.console = window.console || (function () {
         };
         return BCGrid;
     }());
+    var _jsOnloadQueue=[];
     var langMaps = {};
     //public methods
     (function (B) {
@@ -273,6 +274,34 @@ window.console = window.console || (function () {
 
         };
         /**
+         * arrayRemoveFilter
+         * @param arrayList
+         * @param key
+         * @param value
+         * @returns {Array}
+         */
+        B.arrayRemoveFilter = function (arrayList, key,value) {
+            if (!BCGrid.isArray(arrayList) || arrayList.length == 0) return [];
+            if (BCGrid.isUnDefined(key) || (!BCGrid.isArray(key) && BCGrid.isUnDefined(value))) return [];
+            return arrayList.filter(function (item) {
+                var validate = true;
+                if (!BCGrid.isArray(key)) {
+                    validate = (item[key] !== value);
+                } else {
+                    for (var i in key) {
+                        if (item[key[i].name] === key[i].value) {
+                            validate = false;
+                            break;
+                        }
+                    }
+
+                }
+                return validate;
+
+            });
+
+        };
+        /**
          * Object Deep Copy
          * @param source
          * @returns {*}
@@ -381,8 +410,7 @@ window.console = window.console || (function () {
          * @returns {RegExpExecArray | string}
          */
         B.getUrlParam = function (url, name) {
-            var match = new RegExp('[?&]' + name + '=([^&]*)')
-                .exec(url);
+            var match = new RegExp('[?&]' + name + '=([^&]*)').exec(url);
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
         };
         /**
@@ -411,23 +439,41 @@ window.console = window.console || (function () {
             }
             return r;
         };
+        /**
+         * removeUrlParam
+         * @param url
+         * @param name
+         * @returns {*}
+         */
+        B.removeUrlParam = function (url,name) {
+            var urlParts = url.split('?');
+            if(urlParts.length >= 2) {
+                //参数名前缀
+                var prefix = encodeURIComponent(name) + '=';
+                var pars = urlParts[1].split(/[&;]/g);
+                //循环查找匹配参数
+                for(var i = pars.length; i-- > 0;) {
+                    if(pars[i].lastIndexOf(prefix, 0) !== -1) {
+                        //存在则删除
+                        pars.splice(i, 1);
+                    }
+                }
+                return urlParts[0] + (pars.length > 0 ? '?' + pars.join('&') : '');
+            }
+            return url;
+        };
         B.setLoadingCenterInBrowser = function () {
             var ele = $(".bc-loading");
             var bH = 0, bW = 0;
             if (window.innerWidth) {
                 bW = window.innerWidth;
                 bH = window.innerHeight;
-
-
             } else if (document.compatMode === "CSS1Compat") {
                 bW = document.documentElement.clientWidth;
                 bH = document.documentElement.clientHeight;
-
-
             } else {
                 bW = document.body.clientWidth;
                 bH = document.body.clientHeight;
-
             }
             var eleW = ele.outerWidth();
             var eleH = ele.outerHeight();
@@ -498,7 +544,7 @@ window.console = window.console || (function () {
             };
             var p = $.extend({}, defaultOpt, options || {});
             if (BCGrid.isEmptyObject(p.url)) {
-                p.url = window.location.href;
+                p.url =  BCGrid.removeUrlParam(window.location.href,p.pageParamName);
             }
             p.url = BCGrid.setUrlParam(p.url, "_tmp", (new Date()).valueOf());
             $.ajax({
@@ -542,30 +588,52 @@ window.console = window.console || (function () {
             });
         };
         B.loadJS = function (id, src, onload) {
+            _jsOnloadQueue.push({key:src,callback:onload});
+            var _script = null;
             if (!B.isEmptyObject(document.getElementById(id))) {
-                console.log("sss");
                 if (BCGrid.isFunction(onload)) {
                     onload();
                 }
                 return;
+               // _script = document.getElementById(id);
             }
-            var _script = document.createElement('script');
-            _script.setAttribute('type', 'text/javascript');
-            _script.setAttribute('src', BCGrid.path + src);
-            _script.id = id;
-            document.getElementsByTagName('head')[0].appendChild(_script);
+            else {
+                _script = document.createElement('script');
+                _script.setAttribute('type', 'text/javascript');
+                _script.setAttribute('src', BCGrid.path + src);
+                _script.id = id;
+                document.getElementsByTagName('head')[0].appendChild(_script);
+            }
             if ('onreadystatechange' in _script) {
                 _script.onreadystatechange = function () {
                     if (/loaded|complete/.test(_script.readyState)) {
-                        if (BCGrid.isFunction(onload)) {
-                            onload();
+                        //
+                        var callbackArr =  B.arrayObjectFilter(_jsOnloadQueue,"key",src);
+                        if(callbackArr.length > 0 ){
+                            for(var i =0 ;i <callbackArr.length;){
+                                if (BCGrid.isFunction(callbackArr[i].callback)) {
+                                    callbackArr[i].callback();
+                                }
+                                callbackArr.shift();
+                            }
+                            //
+                            _jsOnloadQueue= B.arrayRemoveFilter(_jsOnloadQueue,"key",src);
                         }
+
                     }
                 };
             } else {
                 _script.onload = function () {
-                    if (BCGrid.isFunction(onload)) {
-                        onload();
+                    var callbackArr =  B.arrayObjectFilter(_jsOnloadQueue,"key",src);
+                    if(callbackArr.length > 0 ){
+                        for(var i =0 ;i <callbackArr.length;){
+                            if (BCGrid.isFunction(callbackArr[i].callback)) {
+                                callbackArr[i].callback();
+                            }
+                            callbackArr.shift();
+                        }
+                        //
+                        _jsOnloadQueue= B.arrayRemoveFilter(_jsOnloadQueue,"key",src);
                     }
                 };
             }
@@ -755,10 +823,7 @@ window.console = window.console || (function () {
             rowStyle: null,//行样式
             tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
             rowSpanKeys: null,//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
-            colResize:{
-                liveDrag: true,
-                minWidth: 20,
-            } // jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
+            colResize:false// {liveDrag: true, minWidth: 20}  jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
         };
         this.options = $.extend(true, {}, this.defaults, opt);
         this._rowIndex = 0;
@@ -767,6 +832,14 @@ window.console = window.console || (function () {
         //互斥
         if(this.options.showTitle){
             this.options.colResize = false;
+        }
+        //
+        if(this.options.showCheckbox && this.options.colResize){
+            if(BCGrid.isEmptyObject(this.options.colResize.disabledColumns)){
+                this.options.colResize.disabledColumns = [0];
+            }else if(!BCGrid.inArray(this.options.colResize.disabledColumns,0)){
+                this.options.colResize.disabledColumns.unshift(0);
+            }
         }
         //行明细
         if (this.options.rowDetail) {
@@ -793,6 +866,7 @@ window.console = window.console || (function () {
             this.options.rowSpanKeys = null;
         }
         this.options.url = BCGrid.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
+        this.options.url = BCGrid.removeUrlParam(this.options.url,this.options.pageParamName);
     };
     //定义bcGrid的方法
     BcGrid.prototype = {
@@ -1079,6 +1153,16 @@ window.console = window.console || (function () {
                         //
                         rows.push(p.data[p.rows][parseInt($(this).closest("tr").data('rowindex'))]);
                     }
+                });
+            }
+            return rows;
+        },
+        getSelectedRows: function () {
+            var rows = [];
+            var g = this, p = this.options;
+            if (p.enableSelectRow) {
+                $('tr[role="row"].selected', g.gridContent).each(function () {
+                    rows.push(p.data[p.rows][parseInt($(this).data('rowindex'))]);
                 });
             }
             return rows;
@@ -1522,11 +1606,16 @@ window.console = window.console || (function () {
         }
         if (p.showSerialNum) {
             var serial = 0;
-            if ((p.pageSize + '').toLowerCase() == 'all') {
-                serial = (g._rowIndex + 1);
+            if(p.enablePager) {
+                if ((p.pageSize + '').toLowerCase() == 'all') {
+                    serial = (g._rowIndex + 1);
+                }
+                else {
+                    serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
+                }
             }
-            else {
-                serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
+            else{
+                serial = (g._rowIndex + 1);
             }
             dataHtml.push('<td class="center" data-role="data">' + serial + '</td>');
         }
@@ -1671,6 +1760,21 @@ window.console = window.console || (function () {
                     if (BCGrid.isUnDefined(opt.align)) {
                         opt.align = "center";
                     }
+                    break;
+                case 'serial':
+                    var serial="";
+                    if(p.enablePager) {
+                        if ((p.pageSize + '').toLowerCase() == 'all') {
+                            serial = (g._rowIndex + 1);
+                        }
+                        else {
+                            serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
+                        }
+                    }
+                    else{
+                        serial = (g._rowIndex + 1);
+                    }
+                    dataRes = serial;
                     break;
                 default:
                     var val = BCGrid.isDefined(data[column.name]) ? data[column.name] + '' : '';
@@ -1921,10 +2025,15 @@ window.console = window.console || (function () {
     var _colResize = function () {
         var g = this, p = this.options;
         if(p.colResize && BCGrid.isObject(p.colResize)){
-            BCGrid.loadJS("bc_plugin_colResizable", "plugin/colResizable.js", function () {
-                var colResizeOpt = p.colResize;
+            //
+            var colResizeOpt = p.colResize;
+            if (!BCGrid.isEmptyObject(document.getElementById('bc_plugin_colResizable')) && BCGrid.isFunction($.fn.colResizable)) {
                 $("#"+g.ID+"").colResizable(colResizeOpt);
-            });
+            }else {
+                BCGrid.loadJS("bc_plugin_colResizable", "plugin/colResizable.js", function () {
+                    $("#" + g.ID + "").colResizable(colResizeOpt);
+                });
+            }
         }
     };
     var _bindEvent = function () {
@@ -2014,7 +2123,6 @@ window.console = window.console || (function () {
                         }
                     }
                     if (p.onSelectedRow && isSelected && BCGrid.isFunction(p.onSelectedRow)) {
-                        //
                         p.onSelectedRow.call(g, rowIndex, rowsData[rowIndex]);
                     }
                 }

@@ -1,6 +1,6 @@
 {
-  "name": "bcGrid",
-  "version": "1.2.1",
+  "name": "bcgrid",
+  "version": "1.2.3",
   "description": "A grid plugin for jquery",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

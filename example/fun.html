@@ -26,6 +26,7 @@
     <div class="bc-test">
         <button type="button" id="getCheckedRowsIndex">getCheckedRowsIndex</button>
         <button type="button" id="getCheckedRows">getCheckedRows</button>
+        <button type="button" id="getSelectedRows">getSelectedRows</button>
         <button type="button" id="setCheckedRow">setCheckedRow(0)</button>
         <button type="button" id="deleteRow">deleteRow(0)</button>
         <button type="button" id="deleteRows">deleteRows([1,2,3])</button>
@@ -51,6 +52,7 @@
         var grid=BCGrid.create("#table",{
             columns: [
                 {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {id: 'id', name: 'id', display: 'ID', type:'serial'},
                 {
                     id: 'name', name: 'name', display: 'Name', display: function (item, index) {
                     return item.name;
@@ -80,8 +82,9 @@
             showFoot:true,
             showCheckbox: true,
             showSerialNum: true,
-            pageSize: 2, //每页默认的结果数 all全部
-            pageSizeOptions: [2, 20, 30, 40, 50, 100],
+            enableMultiSelectRow:true,
+            enablePager:true,
+            pageSizeOptions: [2, 20, 30, 40, 50, 100], //每页默认的结果数 all全部
             url: 'handler/data.json',
             rowDetail:{
                 content:function (rowIndex,rowData) {
@@ -105,10 +108,13 @@
             var id = e.currentTarget.id;
             switch (id){
                 case "getCheckedRowsIndex":
-                    alert(grid.getCheckedRowsIndex());
+                    console.log(grid.getCheckedRowsIndex());
                     break;
                 case "getCheckedRows":
                     console.log(grid.getCheckedRows());
+                    break;
+                case "getSelectedRows":
+                    console.log(grid.getSelectedRows());
                     break;
                 case "setCheckedRow":
                     grid.setCheckedRow(0,true);
@@ -163,15 +169,6 @@
 
     });
     console.log("%c\n找对地方了！ ", "font-size:41px;color:red;font-weight:bold;");
-</script>
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?c52ab154a110409ab03f0649cc213935";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
 </script>
 </body>
 </html>

@@ -4,3 +4,4 @@ node_modules/
 *.sln
 *.suo
 .vs/
+test/

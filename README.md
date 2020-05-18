@@ -6,11 +6,11 @@ A grid plugin for jquery.
 Flexible, convenient and free!
 
 
-Change Log(V1.2.1):
+Change Log(v1.2.2):
 ------------
 * Fixed bug
-* Add rowspan
-* Support column resize with colResizable
+* Add getSelectedRows method
+* add column item type "serial"
 
 
 How to use:
