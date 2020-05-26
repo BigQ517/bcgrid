@@ -61,7 +61,7 @@ window.console = window.console || (function () {
         };
         return BCGrid;
     }());
-    var _jsOnloadQueue=[];
+    var _jsOnloadQueue = [];
     var langMaps = {};
     //public methods
     (function (B) {
@@ -280,7 +280,7 @@ window.console = window.console || (function () {
          * @param value
          * @returns {Array}
          */
-        B.arrayRemoveFilter = function (arrayList, key,value) {
+        B.arrayRemoveFilter = function (arrayList, key, value) {
             if (!BCGrid.isArray(arrayList) || arrayList.length == 0) return [];
             if (BCGrid.isUnDefined(key) || (!BCGrid.isArray(key) && BCGrid.isUnDefined(value))) return [];
             return arrayList.filter(function (item) {
@@ -445,15 +445,15 @@ window.console = window.console || (function () {
          * @param name
          * @returns {*}
          */
-        B.removeUrlParam = function (url,name) {
+        B.removeUrlParam = function (url, name) {
             var urlParts = url.split('?');
-            if(urlParts.length >= 2) {
+            if (urlParts.length >= 2) {
                 //参数名前缀
                 var prefix = encodeURIComponent(name) + '=';
                 var pars = urlParts[1].split(/[&;]/g);
                 //循环查找匹配参数
-                for(var i = pars.length; i-- > 0;) {
-                    if(pars[i].lastIndexOf(prefix, 0) !== -1) {
+                for (var i = pars.length; i-- > 0;) {
+                    if (pars[i].lastIndexOf(prefix, 0) !== -1) {
                         //存在则删除
                         pars.splice(i, 1);
                     }
@@ -544,7 +544,7 @@ window.console = window.console || (function () {
             };
             var p = $.extend({}, defaultOpt, options || {});
             if (BCGrid.isEmptyObject(p.url)) {
-                p.url =  BCGrid.removeUrlParam(window.location.href,p.pageParamName);
+                p.url = BCGrid.removeUrlParam(window.location.href, p.pageParamName);
             }
             p.url = BCGrid.setUrlParam(p.url, "_tmp", (new Date()).valueOf());
             $.ajax({
@@ -588,14 +588,14 @@ window.console = window.console || (function () {
             });
         };
         B.loadJS = function (id, src, onload) {
-            _jsOnloadQueue.push({key:src,callback:onload});
+            _jsOnloadQueue.push({key: src, callback: onload});
             var _script = null;
             if (!B.isEmptyObject(document.getElementById(id))) {
                 if (BCGrid.isFunction(onload)) {
                     onload();
                 }
                 return;
-               // _script = document.getElementById(id);
+                // _script = document.getElementById(id);
             }
             else {
                 _script = document.createElement('script');
@@ -608,32 +608,32 @@ window.console = window.console || (function () {
                 _script.onreadystatechange = function () {
                     if (/loaded|complete/.test(_script.readyState)) {
                         //
-                        var callbackArr =  B.arrayObjectFilter(_jsOnloadQueue,"key",src);
-                        if(callbackArr.length > 0 ){
-                            for(var i =0 ;i <callbackArr.length;){
+                        var callbackArr = B.arrayObjectFilter(_jsOnloadQueue, "key", src);
+                        if (callbackArr.length > 0) {
+                            for (var i = 0; i < callbackArr.length;) {
                                 if (BCGrid.isFunction(callbackArr[i].callback)) {
                                     callbackArr[i].callback();
                                 }
                                 callbackArr.shift();
                             }
                             //
-                            _jsOnloadQueue= B.arrayRemoveFilter(_jsOnloadQueue,"key",src);
+                            _jsOnloadQueue = B.arrayRemoveFilter(_jsOnloadQueue, "key", src);
                         }
 
                     }
                 };
             } else {
                 _script.onload = function () {
-                    var callbackArr =  B.arrayObjectFilter(_jsOnloadQueue,"key",src);
-                    if(callbackArr.length > 0 ){
-                        for(var i =0 ;i <callbackArr.length;){
+                    var callbackArr = B.arrayObjectFilter(_jsOnloadQueue, "key", src);
+                    if (callbackArr.length > 0) {
+                        for (var i = 0; i < callbackArr.length;) {
                             if (BCGrid.isFunction(callbackArr[i].callback)) {
                                 callbackArr[i].callback();
                             }
                             callbackArr.shift();
                         }
                         //
-                        _jsOnloadQueue= B.arrayRemoveFilter(_jsOnloadQueue,"key",src);
+                        _jsOnloadQueue = B.arrayRemoveFilter(_jsOnloadQueue, "key", src);
                     }
                 };
             }
@@ -823,21 +823,21 @@ window.console = window.console || (function () {
             rowStyle: null,//行样式
             tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
             rowSpanKeys: null,//合并行key['key1','key2'] 与rowDetail和tree互斥 rowDetail优先，其次tree
-            colResize:false// {liveDrag: true, minWidth: 20}  jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
+            colResize: false// {liveDrag: true, minWidth: 20}  jsonObject or null/false 列宽可变与showTitle互斥  showTitle优先
         };
         this.options = $.extend(true, {}, this.defaults, opt);
         this._rowIndex = 0;
         this._showColumnLength = 0;
         this._treeChildKey = '';
         //互斥
-        if(this.options.showTitle){
+        if (this.options.showTitle) {
             this.options.colResize = false;
         }
         //
-        if(this.options.showCheckbox && this.options.colResize){
-            if(BCGrid.isEmptyObject(this.options.colResize.disabledColumns)){
+        if (this.options.showCheckbox && this.options.colResize) {
+            if (BCGrid.isEmptyObject(this.options.colResize.disabledColumns)) {
                 this.options.colResize.disabledColumns = [0];
-            }else if(!BCGrid.inArray(this.options.colResize.disabledColumns,0)){
+            } else if (!BCGrid.inArray(this.options.colResize.disabledColumns, 0)) {
                 this.options.colResize.disabledColumns.unshift(0);
             }
         }
@@ -855,6 +855,7 @@ window.console = window.console || (function () {
             this.options.showStripe = false;
             this.options.rowSpanKeys = null;
         }
+        //tree
         if (this.options.tree) {
             this.options.tree = $.extend({}, {
                 displayID: '',
@@ -866,7 +867,11 @@ window.console = window.console || (function () {
             this.options.rowSpanKeys = null;
         }
         this.options.url = BCGrid.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
-        this.options.url = BCGrid.removeUrlParam(this.options.url,this.options.pageParamName);
+        this.options.url = BCGrid.removeUrlParam(this.options.url, this.options.pageParamName);
+        // private
+        this._localCurrentTempData = [];
+        this._rawData = [];//原始数据
+        this._applyColumns = [];//请求渲染数据的列
     };
     //定义bcGrid的方法
     BcGrid.prototype = {
@@ -878,7 +883,7 @@ window.console = window.console || (function () {
                 });
             }
             else {
-                 _init.call(g);
+                _init.call(g);
 
             }
             return this;
@@ -941,13 +946,13 @@ window.console = window.console || (function () {
                     dataType: 'json',
                     success: function (data) {
                         p.data = data;
-                        _rawData = g.getData();
+                        g._rawData = g.getData();
                         _displayData.call(g);
                         if (isReloadPage && p.enablePager) {
                             _displayPage.call(g);
                         }
                         if (p.showCheckbox) {
-                            $('#'+ g.ID + '_checkbox_all').prop('checked', false);
+                            $('#' + g.ID + '_checkbox_all').prop('checked', false);
                         }
                         if (p.onLoadedData) {
                             //
@@ -985,14 +990,14 @@ window.console = window.console || (function () {
 
                 p.data[p.rows] = tempData;
                 p.data[p.total] = p.localData.length;
-                _rawData = p.localData;
+                g._rawData = p.localData;
                 //  _localCurrentTempData = tempData;
                 _displayData.call(g, tempData);
                 if (isReloadPage && p.enablePager) {
                     _displayPage.call(g);
                 }
                 if (p.showCheckbox) {
-                    $('#'+ g.ID + '_checkbox_all').prop('checked', false);
+                    $('#' + g.ID + '_checkbox_all').prop('checked', false);
                 }
                 if (p.onLoadedData) {
                     // 
@@ -1041,39 +1046,39 @@ window.console = window.console || (function () {
         /**
          * rebuild
          */
-        rebuild:function(opt){
-          /*  var   g = this,p=this.options;
-            this.options = $.extend(true, {}, this.defaults, opt);
-            this._rowIndex = 0;
-            this._showColumnLength = 0;
-            this._treeChildKey = '';
-            this._initOption = opt;
-            //行明细
-            if (this.options.rowDetail) {
-                this.options.rowDetail = $.extend({}, {
-                    content: function (rowIndex, rowData) {
-                        return "";
-                    },//明细内容string / function(rowIndex,rowData),return string/false
-                    ctrlStyle: 'db',//控制样式 db/sg/pm
-                    align: null,
-                    expand: false
-                }, this.options.rowDetail);
-                this.options.tree = null;
-                this.options.showStripe = false;
-                this.options.rowSpanKeys = null;
-            }
-            if (this.options.tree) {
-                this.options.tree = $.extend({}, {
-                    displayID: '',
-                    key: 'id',
-                    parentKey: 'parentid',
-                    expand: false
-                }, this.options.tree);
-                this._treeChildKey = 'bc_t_' + BCGrid.getID();
-                this.options.rowSpanKeys = null;
-            }
-            this.options.url = BCGrid.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
-            _init.call(g);*/
+        rebuild: function (opt) {
+            /*  var   g = this,p=this.options;
+              this.options = $.extend(true, {}, this.defaults, opt);
+              this._rowIndex = 0;
+              this._showColumnLength = 0;
+              this._treeChildKey = '';
+              this._initOption = opt;
+              //行明细
+              if (this.options.rowDetail) {
+                  this.options.rowDetail = $.extend({}, {
+                      content: function (rowIndex, rowData) {
+                          return "";
+                      },//明细内容string / function(rowIndex,rowData),return string/false
+                      ctrlStyle: 'db',//控制样式 db/sg/pm
+                      align: null,
+                      expand: false
+                  }, this.options.rowDetail);
+                  this.options.tree = null;
+                  this.options.showStripe = false;
+                  this.options.rowSpanKeys = null;
+              }
+              if (this.options.tree) {
+                  this.options.tree = $.extend({}, {
+                      displayID: '',
+                      key: 'id',
+                      parentKey: 'parentid',
+                      expand: false
+                  }, this.options.tree);
+                  this._treeChildKey = 'bc_t_' + BCGrid.getID();
+                  this.options.rowSpanKeys = null;
+              }
+              this.options.url = BCGrid.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
+              _init.call(g);*/
 
         },
         /*  /!**
@@ -1105,7 +1110,7 @@ window.console = window.console || (function () {
 
         },
         getRawData: function () {
-            return _rawData;
+            return this._rawData;
         },
         getRowData: function (rowindex) {
             return this.options.data[this.options.rows][rowindex];
@@ -1115,7 +1120,7 @@ window.console = window.console || (function () {
         },
         deleteRow: function (rowIndex) {
             var g = this, p = this.options;
-          //  var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
+            //  var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
             var row = $('tr[data-rowindex="' + rowIndex + '"]', g.gridContent);
             if (p.rowDetail) {
                 row.next('tr[data-forrowindex="' + rowIndex + '"]').remove();
@@ -1132,7 +1137,7 @@ window.console = window.console || (function () {
             var tempDeleteRowCount = 0;
             $.each(rowIndexArr, function () {
                 var row = $('tr[data-rowindex="' + this + '"]', g.gridContent);
-               // var row = $('tr[id="bcgrid_' + g.ID + '_list_' + this + '"]', g.gridContent);
+                // var row = $('tr[id="bcgrid_' + g.ID + '_list_' + this + '"]', g.gridContent);
                 if (p.rowDetail) {
                     row.next('tr[data-forrowindex="' + this + '"]').remove();
                 }
@@ -1176,7 +1181,7 @@ window.console = window.console || (function () {
         setCheckedRow: function (rowIndex, isChecked) {
             var g = this, p = this.options;
             $("#" + g.ID + "_checkbox_" + rowIndex, g.gridContent).prop('checked', isChecked);
-           // $("#bcgrid_" + g.ID + "_checkbox_list_" + rowIndex, g.gridContent).prop('checked', isChecked);
+            // $("#bcgrid_" + g.ID + "_checkbox_list_" + rowIndex, g.gridContent).prop('checked', isChecked);
 
         },
         getCheckedRowsIndex: function () {
@@ -1201,28 +1206,28 @@ window.console = window.console || (function () {
                 rowItem = p.data[p.rows][rowIndex];
             }
             dataHtml.push(g._preRenderColumn(rowIndex));
-            $.each(p.columns, function (index, item) {
+            $.each(g._applyColumns, function (index, item) {
                 dataHtml.push(g._renderColumnData(item, rowItem, index));
             });
 
-         //   $("#bcgrid_" + g.ID + "_list_" + rowIndex).html(dataHtml.join(''));
+            //   $("#bcgrid_" + g.ID + "_list_" + rowIndex).html(dataHtml.join(''));
             _bindEvent.call(g);
         },
-        updateColumn: function (columnIndex, columnItem) {
-            var g = this, p = this.options;
-            if (columnItem) {
-                p.columns[columnIndex] = columnItem;
-            } else {
-                columnItem = p.columns[columnIndex];
-            }
-            var cells = $('td[data-role="data"][data-columnindex="' + columnIndex + '"]', g.gridContent);
-            cells.each(function () {
-                var self = $(this);
-                var rowIndex = self.parent("tr").data("rowindex");
-                self.replaceWith(g._renderColumnData(columnItem, p.data[p.rows][rowIndex], columnIndex, rowIndex));
-            });
+        /* updateColumn: function (columnIndex, columnItem) {
+             var g = this, p = this.options;
+             if (columnItem) {
+                 p.columns[columnIndex] = columnItem;
+             } else {
+                 columnItem = p.columns[columnIndex];
+             }
+             var cells = $('td[data-role="data"][data-columnindex="' + columnIndex + '"]', g.gridContent);
+             cells.each(function () {
+                 var self = $(this);
+                 var rowIndex = self.parent("tr").data("rowindex");
+                 self.replaceWith(g._renderColumnData(columnItem, p.data[p.rows][rowIndex], columnIndex, rowIndex));
+             });
 
-        },
+         },*/
         setTitle: function (title) {
             var g = this, p = this.options;
             p.title = title;
@@ -1233,12 +1238,12 @@ window.console = window.console || (function () {
             p.foot = foot;
             $("#" + g.ID + "_foot").html(foot);
         },
-        addColumn: function (column, index) {
-            var g = this, p = this.options;
-            var pos = index || p.columns.length - 1;
-            p.columns.splice(pos, 0, column || {});
-            g.refresh();
-        },
+        /* addColumn: function (column, index) {
+             var g = this, p = this.options;
+             var pos = index || p.columns.length - 1;
+             p.columns.splice(pos, 0, column || {});
+             g.refresh();
+         },*/
         /*  setData: function (rows) {
               var g = this, p = this.options;
               p.data[p.rows] = rows;
@@ -1249,7 +1254,7 @@ window.console = window.console || (function () {
             // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
             var rowsData = g.getData();
             var row = $('tr[data-rowindex="' + rowIndex + '"]', g.gridContent);
-         //   var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
+            //   var row = $('tr[id="bcgrid_' + g.ID + '_list_' + rowIndex + '"]', g.gridContent);
             var isExpand = _toggleDetail.call(g, row);
             if (p.onRowDetailExpandOrCollapse && BCGrid.isFunction(p.onRowDetailExpandOrCollapse)) {
                 p.onRowDetailExpandOrCollapse.call(g, isExpand, rowIndex, rowsData[rowIndex]);
@@ -1267,13 +1272,31 @@ window.console = window.console || (function () {
         }
     };
     // private function and variable
-    //初始化
-    var _localCurrentTempData = [];
-    var _rawData = [];//原始数据
+    //列定义
+    var _defaultColumnOpt = {
+        display: '',//标题显示
+        id: '',//id
+        name: 'name',//数据name
+        type: 'text',//数据类型
+        render: null,//执行行数
+        hide: false,//是否隐藏
+        width: null,//列宽
+        align: null,//文本水平对齐方式
+        vAlign: null,//文本垂直对齐方式
+        headAlign: null,//标题对齐方式
+        maxLength: null,//显示的最大长度
+        format: null,//显示数据格式(date)
+        role: 'data',
+        enableSort: false,//是否可以排序
+        allowNewline: false,//是否允许自动换行
+        elOpt: null,//可编辑控制参数
+        columns: [] //多表头
+    };
     var _timeFn = null;
     var _init = function () {
-        _rawData = [];
+
         var g = this, p = this.options;
+        g._rawData = [];
         if (BCGrid.isEmptyObject(p.data) && !BCGrid.isEmptyObject(p.localData)) {
             p.data[p.rows] = p.localData;
             p.data[p.total] = p.localData.length;
@@ -1344,7 +1367,7 @@ window.console = window.console || (function () {
         if (p.autoLoadData) {
             g.loadData(true);
         }
-        else{
+        else {
             _lastHandler.call(g);
         }
     };
@@ -1354,30 +1377,11 @@ window.console = window.console || (function () {
      */
     var _preRenderColumnOpt = function () {
         var g = this, p = this.options;
-        var defaultOpt = {
-            display: '',//标题显示
-            id: '',//id
-            name: 'name',//数据name
-            type: 'text',//数据类型
-            render: null,//执行行数
-            hide: false,//是否隐藏
-            width: null,//列宽
-            align: null,//文本水平对齐方式
-            vAlign:null,//文本垂直对齐方式
-            headAlign: null,//标题对齐方式
-            maxLength: null,//显示的最大长度
-            format: null,//显示数据格式(date)
-            role: 'data',
-            enableSort: false,//是否可以排序
-            allowNewline: false,//是否允许自动换行
-            elOpt: null,//可编辑控制参数
-            columns:[] //多表头
-
-        };
-        g._showColumnLength = p.columns.length;
-        for (var i = 0; i < p.columns.length; i++) {
-            p.columns[i] = $.extend({}, defaultOpt, p.columns[i] || {});
-            if (p.columns[i].hide) {
+        g._applyColumns = [];
+        g._showColumnLength =_calcApplyColumn.call(g, p.columns);
+        for (var i = 0; i < g._applyColumns.length; i++) {
+            //p.columns[i] = $.extend({}, _defaultColumnOpt, p.columns[i] || {});
+            if (g._applyColumns[i].hide) {
                 g._showColumnLength--;
             }
         }
@@ -1398,8 +1402,24 @@ window.console = window.console || (function () {
      * 计算用户设置列数
      * @private
      */
-    var _calcUserSetColumnCount = function (cols) {
+    var _calcApplyColumn = function (cols) {
         var g = this, p = this.options;
+        if (BCGrid.isEmptyObject(cols)) {
+            return 0;
+        }
+        var count = 0;
+        for (var i in cols) {
+            var item = cols[i];
+            if (BCGrid.isDefined(item.columns) && BCGrid.isArray(item.columns)) {
+                count += _calcApplyColumn.call(g, item.columns);
+            } else {
+                count++;
+                var tempItem = $.extend({}, _defaultColumnOpt, item || {});
+                delete tempItem.columns;
+                g._applyColumns.push(tempItem);
+            }
+        }
+        return count;
     };
 
     //head
@@ -1462,7 +1482,7 @@ window.console = window.console || (function () {
     var _getHeadColumn = function () {
         var g = this, p = this.options;
         var headAttr = [];
-        $.each(p.columns, function (index, item) {
+        $.each(g._applyColumns, function (index, item) {
             var showText = item.display;
             if (BCGrid.isFunction(showText)) {
                 showText = showText.call(g, item, index);
@@ -1501,8 +1521,9 @@ window.console = window.console || (function () {
         this.grid.append(this.gridContent);
     };
     var _displayData = function (data) {
-        _localCurrentTempData = [];
+
         var g = this, p = g.options;
+        g._localCurrentTempData = [];
         data = data || g.getData();
         g.gridContent.empty();
         g._rowIndex = 0;
@@ -1523,7 +1544,7 @@ window.console = window.console || (function () {
             $('input:checkbox[tag="bcgrid_checkbox"]', g.gridHead).removeAttr("disabled");
         }
         //
-        _setData.call(g, _localCurrentTempData);
+        _setData.call(g, g._localCurrentTempData);
         _bindEvent.call(g);
     };
     var _displayListData = function (data, depth, parentRowIndex) {
@@ -1554,7 +1575,7 @@ window.console = window.console || (function () {
                         style = opt;
                     }
                 }
-                _localCurrentTempData.push(rowItem);
+                g._localCurrentTempData.push(rowItem);
                 if (p.tree) {
                     subData = BCGrid.isDefined(rowItem[g._treeChildKey]) ? rowItem[g._treeChildKey] : [];
                     if (subData.length > 0) {
@@ -1566,10 +1587,10 @@ window.console = window.console || (function () {
                     }
                     //
                 }
-               // trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '"' + style + ' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
+                // trArr.push('<tr id="bcgrid_' + g.ID + '_list_' + g._rowIndex + '"' + style + ' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
                 trArr.push('<tr' + style + ' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
                 trArr.push(_preRenderColumn.call(g, showDetail));
-                $.each(p.columns, function (index, item) {
+                $.each(g._applyColumns, function (index, item) {
                     trArr.push(_renderColumnData.call(g, item, rowItem, index, g._rowIndex, depth, hasChild));
                 });
                 trArr.push('</tr>');
@@ -1581,7 +1602,7 @@ window.console = window.console || (function () {
                 g._rowIndex++;
                 if (p.tree && hasChild) {
                     //
-                    delete  _localCurrentTempData[_localCurrentTempData.length - 1][g._treeChildKey];
+                    delete  g._localCurrentTempData[g._localCurrentTempData.length - 1][g._treeChildKey];
                     trArr.push(_displayListData.call(g, subData, depth + 1, g._rowIndex));
                     delete rowItem[g._treeChildKey];
                 }
@@ -1619,7 +1640,7 @@ window.console = window.console || (function () {
         }
         if (p.showSerialNum) {
             var serial = 0;
-            if(p.enablePager) {
+            if (p.enablePager) {
                 if ((p.pageSize + '').toLowerCase() == 'all') {
                     serial = (g._rowIndex + 1);
                 }
@@ -1627,7 +1648,7 @@ window.console = window.console || (function () {
                     serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
                 }
             }
-            else{
+            else {
                 serial = (g._rowIndex + 1);
             }
             dataHtml.push('<td class="center" data-role="data">' + serial + '</td>');
@@ -1775,8 +1796,8 @@ window.console = window.console || (function () {
                     }
                     break;
                 case 'serial':
-                    var serial="";
-                    if(p.enablePager) {
+                    var serial = "";
+                    if (p.enablePager) {
                         if ((p.pageSize + '').toLowerCase() == 'all') {
                             serial = (g._rowIndex + 1);
                         }
@@ -1784,7 +1805,7 @@ window.console = window.console || (function () {
                             serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
                         }
                     }
-                    else{
+                    else {
                         serial = (g._rowIndex + 1);
                     }
                     dataRes = serial;
@@ -1838,11 +1859,11 @@ window.console = window.console || (function () {
         }
         //rowspan
         if (!BCGrid.isEmptyObject(p.rowSpanKeys) && BCGrid.inArray(p.rowSpanKeys, opt.name)) {
-            if(data['_spanCount'] > 0){
-                $ret.attr("rowspan",data['_spanCount']+1);
+            if (data['_spanCount'] > 0) {
+                $ret.attr("rowspan", data['_spanCount'] + 1);
             }
-            else if(data['_isroot'] == false){
-               return "";
+            else if (data['_isroot'] == false) {
+                return "";
             }
         }
         return $ret.prop('outerHTML');
@@ -2037,12 +2058,12 @@ window.console = window.console || (function () {
     };
     var _colResize = function () {
         var g = this, p = this.options;
-        if(p.colResize && BCGrid.isObject(p.colResize)){
+        if (p.colResize && BCGrid.isObject(p.colResize)) {
             //
             var colResizeOpt = p.colResize;
             if (!BCGrid.isEmptyObject(document.getElementById('bc_plugin_colResizable')) && BCGrid.isFunction($.fn.colResizable)) {
-                $("#"+g.ID+"").colResizable(colResizeOpt);
-            }else {
+                $("#" + g.ID + "").colResizable(colResizeOpt);
+            } else {
                 BCGrid.loadJS("bc_plugin_colResizable", "plugin/colResizable.js", function () {
                     $("#" + g.ID + "").colResizable(colResizeOpt);
                 });
@@ -2074,7 +2095,7 @@ window.console = window.console || (function () {
         $('th[data-col]', g.gridHead).on('click', function () {
             var self = $(this);
             var columnIndex = parseInt(self.data("columnindex"));
-            if (p.columns[columnIndex].enableSort) {
+            if (g._applyColumns[columnIndex].enableSort) {
                 var sortSpan = $("span.sort", self);
                 var name = self.data('col') || '';
                 var order = sortSpan.attr('order') || 'asc';
@@ -2343,7 +2364,7 @@ window.console = window.console || (function () {
      * 最后出来，完成所有执行后加载完后的处理
      * @private
      */
-    var _lastHandler  =function () {
+    var _lastHandler = function () {
         _colResize.call(this);
     };
     /**page**/

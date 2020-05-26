@@ -23,9 +23,19 @@
 <div class="title"><a class="back" href="/">&#60;Back</a><h1>BCGrid-Local Data source</h1></div>
 <div>
     <div id="table"></div>
+    <br/>
+    <br/>
+    <div id="table1"></div>
 </div>
 <script>
     var data = [{"id":1,"pid":0,"name":"Li","age":1,"gender":1,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
+        {"id":2,"pid":0,"name":"Han","age":2,"gender":2,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
+        {"id":3,"pid":-1,"name":"Wang","age":4,"gender":1,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
+        {"id":4,"pid":1,"name":"Zhang","age":3,"gender":2,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
+        {"id":5,"pid":2,"name":"Zhao","age":5,"gender":1,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
+        {"id":6,"pid":4,"name":"Meng","age":3,"gender":1,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
+        {"id":7,"pid":6,"name":"Meng111","age":20,"gender":1,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"}];
+    var data1 = [{"id":1,"pid":0,"name":"Li1111","age":1,"gender":1,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
         {"id":2,"pid":0,"name":"Han","age":2,"gender":2,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
         {"id":3,"pid":-1,"name":"Wang","age":4,"gender":1,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
         {"id":4,"pid":1,"name":"Zhang","age":3,"gender":2,"email":"bigq517@qq.com","mobile":"139****9517","sign":"Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!Youth is just a section of unoptimized code!"},
@@ -60,6 +70,37 @@
             localData:data,
             onSelectedRow: function (rowIndex, rowData) { //选择行事件
                 console.log(rowData);
+                console.log(this.getRawData());
+            },
+        });
+        var grid1=BCGrid.create("#table1",{
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {
+                    id: 'name', name: 'name', display: 'Name'
+                },
+                {
+                    name: 'gender', display: 'Gender', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
+                    }
+                },
+                {name: 'age', display: 'Age', format: '{value}Years', enableSort: true},
+                {name: 'email', display: 'Email', enableSort: true},
+                {name: 'mobile', display: 'Mobile'}
+
+            ],
+            enablePager:true,
+            dataSource:'local',
+            pageSizeOptions: [1,2,10, 20, 30, 40, 50, 100],
+            localData:data1,
+            onSelectedRow: function (rowIndex, rowData) { //选择行事件
+                console.log(rowData);
+                console.log(this.getRawData());
             },
         });
 
