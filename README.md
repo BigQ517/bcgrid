@@ -66,6 +66,7 @@ Change Log(v1.2.3):
       csrf: '',
       url: '', //ajax url
       model: 'table',  //模式：表格(table),流布局(flow),
+      contentHtml: '',//流布局的内容模板html
       localData: [],
       autoLoadData: true,
       showLoading: true, //是否显示加载状态提示
