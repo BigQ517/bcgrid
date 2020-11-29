@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>BC Gird</title>
+    <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid.min.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../dist/bc.grid.min.js"></script>
+    <style type="text/css">
+        .title {
+            margin: 20px;
+        }
+
+        .title h1 {
+            text-align: center;
+        }
+
+        .title a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="title">
+    <h1>BCGrid-流式布局</h1></div>
+<div>
+    <ul  id="dataList">
+
+    </ul>
+    <div id="pager"></div>
+    <br/> <br/>
+    <br/> <br/>
+</div>
+<script type="text/template" id="listTemplate">
+    <li>
+        {#"name":"id",type:'num'#}. ID：{#name:'id'#}  姓名：{#name:'name'#}  性别：{#name:'gender',render:renderGender#} 时间：{#name:'time',type:'date',formart:"yyyy-MM-dd"#}
+    </li>
+</script>
+<script>
+    $(function () {
+        var grid = BCGrid.create("#dataList", {
+            contentHtml:$("#listTemplate").html(),
+            model:'flow',
+            pagerElement:$('#pager'),
+            pageSize:10,
+            url: 'handler/data.json'
+        });
+
+
+        ///
+    });
+    function renderGender(item,index) {
+        return item.gender == 1 ?'男':'女';
+    }
+</script>
+
+<script>
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BC Gird</title>
+    <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../dist/css/bc.grid.min.css"/>
+    <script src="../lib/jquery-11.1.min.js"></script>
+    <script src="../dist/bc.grid.min.js"></script>
+    <style type="text/css">
+        .title {
+            margin: 20px;
+        }
+        .title h1 {
+            text-align: center;
+        }
+
+        .title a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="title">
+    <h1>BCGrid-复杂表头</h1></div>
+<div>
+    <div id="table"></div>
+    <br/> <br/>
+    <br/> <br/>
+
+</div>
+<script>
+    $(function () {
+        var grid = BCGrid.create("#table", {
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center',vAlign:'bottom',headVAlign:'top', headAlign:'left',enableSort:true},
+                {
+                    id: 'name', display: '合并',enableSort:true,columns: [
+                        {name: 'id', display: 'id1',enableSort:true},
+                        {
+                            name: 'id', display: 'id2', columns: [
+                                {name: 'id', display: 'id3'},
+                                {name: 'id', display: 'id4'},
+                            ]
+                        },
+                    ]
+                },
+                {
+                    name: 'gender', display: 'Gender', width: '20', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "Boy";
+                        }
+                        if (item.gender == 2) {
+                            return "Girl";
+                        }
+                    }
+                },
+                {name: 'age', display: 'Age',columns:[], format: '{value}Years'},
+                {name: 'email', display: 'Email'},
+                {name: 'mobile', display: 'Mobile'},
+                {name: 'sign', display: 'Sign', maxLength: 10},
+                {name: 'time', display: 'Time', type: 'dateTime', format: 'MM/dd yyyy hh:mm:ss'}
+
+            ],
+            title: 'BC Grid',
+            showTitle: true,
+            showFoot: true,
+            lang: 'zh',
+            foot: 'Foot<br>hello！',
+            showCheckbox: true,
+            showSerialNum: true,
+            url: 'handler/data.json'
+        });
+
+        ///
+    });
+</script>
+
+<script>
+    var columns = [
+        {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+        {
+            id: 'name', display: '合并', columns: [
+                {name: 'id', display: 'id1'},
+                {name: 'id', display: 'id2'}
+
+            ]
+        },
+        {
+            name: 'gender', display: 'Gender', width: '20', render: function (item, index) {
+                if (item.gender == 1) {
+                    return "Boy";
+                }
+                if (item.gender == 2) {
+                    return "Girl";
+                }
+            }
+        }];
+    var _calcApplyColumn = function (cols, depth) {
+        if (BCGrid.isEmptyObject(cols)) {
+            return 0;
+        }
+
+        var count = 0;
+        //  var depth = _applyColumsDepth;
+
+        for (var i in cols) {
+            var item = cols[i];
+            item._depth = depth;
+            if (BCGrid.isDefined(item.columns) && BCGrid.isArray(item.columns)) {
+                item._childCount = item.columns.length;
+                depth++;
+                count += _calcApplyColumn(item.columns, depth);
+            } else {
+                item._childCount = 0;
+                count++;
+                var tempItem = $.extend({}, item || {});
+                delete tempItem.columns;
+                _applyColumns.push(tempItem);
+            }
+        }
+        _applyColumsDepth++;
+        return count;
+    };
+    var _applyColumsDepth = 0;
+    var _applyColumns = [];
+    var _showColumnLength = 0;
+    //  _showColumnLength =_calcApplyColumn(columns,0);
+    // console.log("_applyColumsDepth",_applyColumsDepth);
+    // console.log(columns);
+
+</script>
+</body>
+</html>

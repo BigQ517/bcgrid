@@ -61,7 +61,7 @@ window.console = window.console || (function () {
         };
         return BCGrid;
     }());
-    var _jsOnloadQueue = [];
+    var _jsOnLoadQueue = [];
     var langMaps = {};
     //public methods
     (function (B) {
@@ -197,6 +197,23 @@ window.console = window.console || (function () {
                 a[n] = b[n];
             }
             return a;
+        };
+        /**
+         * replace all
+         * @param str
+         * @param findStr
+         * @param repStr
+         */
+        B.replaceAll = function (str, findStr, repStr) {
+            return str.replace(new RegExp(findStr, "gm"), repStr);
+        };
+        /**
+         * string trim
+         * @param str
+         * @returns {string | * | void}
+         */
+        B.trim = function (str) {
+            return str.replace(/^\s*|\s*$/g, "");
         };
         /**
          * get sub array
@@ -587,12 +604,12 @@ window.console = window.console || (function () {
                 }
             });
         };
-        B.loadJS = function (id, src, onload) {
-            _jsOnloadQueue.push({key: src, callback: onload});
+        B.loadJS = function (id, src, onLoad) {
+            _jsOnLoadQueue.push({key: src, callback: onLoad});
             var _script = null;
             if (!B.isEmptyObject(document.getElementById(id))) {
-                if (BCGrid.isFunction(onload)) {
-                    onload();
+                if (BCGrid.isFunction(onLoad)) {
+                    onLoad();
                 }
                 return;
                 // _script = document.getElementById(id);
@@ -608,7 +625,7 @@ window.console = window.console || (function () {
                 _script.onreadystatechange = function () {
                     if (/loaded|complete/.test(_script.readyState)) {
                         //
-                        var callbackArr = B.arrayObjectFilter(_jsOnloadQueue, "key", src);
+                        var callbackArr = B.arrayObjectFilter(_jsOnLoadQueue, "key", src);
                         if (callbackArr.length > 0) {
                             for (var i = 0; i < callbackArr.length;) {
                                 if (BCGrid.isFunction(callbackArr[i].callback)) {
@@ -617,14 +634,14 @@ window.console = window.console || (function () {
                                 callbackArr.shift();
                             }
                             //
-                            _jsOnloadQueue = B.arrayRemoveFilter(_jsOnloadQueue, "key", src);
+                            _jsOnLoadQueue = B.arrayRemoveFilter(_jsOnLoadQueue, "key", src);
                         }
 
                     }
                 };
             } else {
                 _script.onload = function () {
-                    var callbackArr = B.arrayObjectFilter(_jsOnloadQueue, "key", src);
+                    var callbackArr = B.arrayObjectFilter(_jsOnLoadQueue, "key", src);
                     if (callbackArr.length > 0) {
                         for (var i = 0; i < callbackArr.length;) {
                             if (BCGrid.isFunction(callbackArr[i].callback)) {
@@ -633,15 +650,15 @@ window.console = window.console || (function () {
                             callbackArr.shift();
                         }
                         //
-                        _jsOnloadQueue = B.arrayRemoveFilter(_jsOnloadQueue, "key", src);
+                        _jsOnLoadQueue = B.arrayRemoveFilter(_jsOnLoadQueue, "key", src);
                     }
                 };
             }
         };
-        B.loadCSS = function (id, src, onload) {
+        B.loadCSS = function (id, src, onLoad) {
             if (!B.isEmptyObject(document.getElementById(id))) {
-                if (BCGrid.isFunction(onload)) {
-                    onload();
+                if (BCGrid.isFunction(onLoad)) {
+                    onLoad();
                 }
                 return;
             }
@@ -654,15 +671,15 @@ window.console = window.console || (function () {
             if ('onreadystatechange' in _link) {
                 _link.onreadystatechange = function () {
                     if (/loaded|complete/.test(_link.readyState)) {
-                        if (BCGrid.isFunction(onload)) {
-                            onload();
+                        if (BCGrid.isFunction(onLoad)) {
+                            onLoad();
                         }
                     }
                 };
             } else {
                 _link.onload = function () {
-                    if (BCGrid.isFunction(onload)) {
-                        onload();
+                    if (BCGrid.isFunction(onLoad)) {
+                        onLoad();
                     }
                 };
             }
@@ -752,7 +769,7 @@ window.console = window.console || (function () {
             height: '',                          //宽度值
             enableCsrf: false,
             csrfName: '_csrf',
-            lang: 'en',
+            lang: 'zh',
             theme: '',
             csrf: '',
             url: '',                             //ajax url
@@ -760,7 +777,7 @@ window.console = window.console || (function () {
             localData: [],
             autoLoadData: true,
             showLoading: true,               //是否显示加载状态提示
-            loadingTip: 'Loading',//加载提示信息
+            loadingTip: '加载中...',//加载提示信息
             loadingStyle: 3,//加载样式
             enablePager: true,                         //是否分页
             page: 1,                                //默认当前页
@@ -772,6 +789,8 @@ window.console = window.console || (function () {
             sortOrder: "",                      //排序方向
             params: [],                         //提交到服务器的参数
             columns: [],                          //数据源
+            model: 'table',  //模型：表格(table),流布局(flow),
+            contentHtml: '',//流布局的内容模板html
             dataSource: 'server',                     //数据源：本地(local)或(server)
             //pageSourceType: 'ajax',                    //分页的方式：本地(local)或(server),选择本地方式时将在客服端分页、排序。
             ajaxType: 'post', //ajax数据提交方式 get/post
@@ -819,6 +838,10 @@ window.console = window.console || (function () {
             onTextFieldChange: null,//文本输入改变事件
             onDataSave: null,
             toolBtns: [],
+            columnDepthKeyName: '_colDepth',
+            columnChildCountKeyName: '_colChildCount',
+            columnColSpanKeyName: '_colColSpan',
+            columnRowSpanKeyName: '_colRowSpan',
             rowDetail: null,//明细 与tree和rowSpanKeys互斥 rowDetail优先，其次tree
             rowStyle: null,//行样式
             tree: null,//tree设置 与rowDetail和rowSpanKeys互斥 rowDetail优先，其次tree
@@ -829,49 +852,12 @@ window.console = window.console || (function () {
         this._rowIndex = 0;
         this._showColumnLength = 0;
         this._treeChildKey = '';
-        //互斥
-        if (this.options.showTitle) {
-            this.options.colResize = false;
-        }
-        //
-        if (this.options.showCheckbox && this.options.colResize) {
-            if (BCGrid.isEmptyObject(this.options.colResize.disabledColumns)) {
-                this.options.colResize.disabledColumns = [0];
-            } else if (!BCGrid.inArray(this.options.colResize.disabledColumns, 0)) {
-                this.options.colResize.disabledColumns.unshift(0);
-            }
-        }
-        //行明细
-        if (this.options.rowDetail) {
-            this.options.rowDetail = $.extend({}, {
-                content: function (rowIndex, rowData) {
-                    return "";
-                },//明细内容string / function(rowIndex,rowData),return string/false
-                ctrlStyle: 'db',//控制样式 db/sg/pm
-                align: null,
-                expand: false
-            }, this.options.rowDetail);
-            this.options.tree = null;
-            this.options.showStripe = false;
-            this.options.rowSpanKeys = null;
-        }
-        //tree
-        if (this.options.tree) {
-            this.options.tree = $.extend({}, {
-                displayID: '',
-                key: 'id',
-                parentKey: 'parentid',
-                expand: false
-            }, this.options.tree);
-            this._treeChildKey = 'bc_t_' + BCGrid.getID();
-            this.options.rowSpanKeys = null;
-        }
-        this.options.url = BCGrid.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
-        this.options.url = BCGrid.removeUrlParam(this.options.url, this.options.pageParamName);
+        _preOption.call(this);
         // private
         this._localCurrentTempData = [];
         this._rawData = [];//原始数据
         this._applyColumns = [];//请求渲染数据的列
+        this._applyColumsDepth = 0;//列深度
     };
     //定义bcGrid的方法
     BcGrid.prototype = {
@@ -1238,17 +1224,6 @@ window.console = window.console || (function () {
             p.foot = foot;
             $("#" + g.ID + "_foot").html(foot);
         },
-        /* addColumn: function (column, index) {
-             var g = this, p = this.options;
-             var pos = index || p.columns.length - 1;
-             p.columns.splice(pos, 0, column || {});
-             g.refresh();
-         },*/
-        /*  setData: function (rows) {
-              var g = this, p = this.options;
-              p.data[p.rows] = rows;
-              p.data[p.total] = rows.length;
-          },*/
         toggleRowDetail: function (rowIndex) {
             var g = this, p = this.options;
             // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
@@ -1283,7 +1258,8 @@ window.console = window.console || (function () {
         width: null,//列宽
         align: null,//文本水平对齐方式
         vAlign: null,//文本垂直对齐方式
-        headAlign: null,//标题对齐方式
+        headAlign: null,//标题对齐方式,
+        headVAlign: null,//标题对齐方式
         maxLength: null,//显示的最大长度
         format: null,//显示数据格式(date)
         role: 'data',
@@ -1294,7 +1270,6 @@ window.console = window.console || (function () {
     };
     var _timeFn = null;
     var _init = function () {
-
         var g = this, p = this.options;
         g._rawData = [];
         if (BCGrid.isEmptyObject(p.data) && !BCGrid.isEmptyObject(p.localData)) {
@@ -1311,6 +1286,15 @@ window.console = window.console || (function () {
         if (p.enableCsrf && BCGrid.isEmptyObject(p.csrf)) {
             p.csrf = $("input[name='" + p.csrfName + "']").val();
         }
+        if (p.model == "flow") {
+            _initFlow.call(g);
+        } else {
+            _initTable.call(g);
+        }
+
+    };
+    var _initTable = function () {
+        var g = this, p = this.options;
         if (!g.gridWrap.hasClass(p.wrapCssClass)) {
             g.gridWrap.addClass(p.wrapCssClass);
         }
@@ -1345,7 +1329,7 @@ window.console = window.console || (function () {
         if (!BCGrid.isEmptyObject(p.height)) {
             tableWrap.css("height", p.height);
         }
-        _preRenderColumnOpt.call(g);
+        _preRenderTableColumnOpt.call(g);
         if (p.showHead || p.showTitle) {
             _setHead.call(g);
         }
@@ -1371,20 +1355,95 @@ window.console = window.console || (function () {
             _lastHandler.call(g);
         }
     };
+    var _initFlow = function () {
+        var g = this, p = this.options;
+
+        //page
+        var page = BCGrid.getQueryString(p.pageParamName);
+        if (!isNaN(page) && page != '') {
+            p.page = page;
+        }
+        _preRenderFlowColumnOpt.call(g);
+        if (p.onCompleted) {
+            p.onCompleted.call(g);
+        }
+        if (p.autoLoadData) {
+            g.loadData(true);
+        }
+        else {
+            _lastHandler.call(g);
+        }
+
+    };
+    /**
+     * 参数预处理
+     * @private
+     */
+    var _preOption = function () {
+        if (this.options.model == "flow") {
+            this.options.showHead = false;
+            this.options.showFoot = false;
+            this.options.colResize = false;
+            this.options.showTitle = false;
+            this.options.showCheckbox = false;
+            this.options.rowDetail = false;
+            this.options.tree = false;
+            this.options.rowSpanKeys = null;
+            if (BCGrid.isEmptyObject(this.options.pagerElement)) {
+                this.options.enablePager = false;
+            }
+
+        } else {
+            //互斥
+            if (this.options.showTitle) {
+                this.options.colResize = false;
+            }
+            //
+            if (this.options.showCheckbox && this.options.colResize) {
+                if (BCGrid.isEmptyObject(this.options.colResize.disabledColumns)) {
+                    this.options.colResize.disabledColumns = [0];
+                } else if (!BCGrid.inArray(this.options.colResize.disabledColumns, 0)) {
+                    this.options.colResize.disabledColumns.unshift(0);
+                }
+            }
+            //行明细
+            if (this.options.rowDetail) {
+                this.options.rowDetail = $.extend({}, {
+                    content: function (rowIndex, rowData) {
+                        return "";
+                    },//明细内容string / function(rowIndex,rowData),return string/false
+                    ctrlStyle: 'db',//控制样式 db/sg/pm
+                    align: null,
+                    expand: false
+                }, this.options.rowDetail);
+                this.options.tree = null;
+                this.options.showStripe = false;
+                this.options.rowSpanKeys = null;
+            }
+            //tree
+            if (this.options.tree) {
+                this.options.tree = $.extend({}, {
+                    displayID: '',
+                    key: 'id',
+                    parentKey: 'parentid',
+                    expand: false
+                }, this.options.tree);
+                this._treeChildKey = 'bc_t_' + BCGrid.getID();
+                this.options.rowSpanKeys = null;
+            }
+        }
+        this.options.url = BCGrid.isEmptyObject(this.options.url) ? window.location.href : this.options.url;
+        this.options.url = BCGrid.removeUrlParam(this.options.url, this.options.pageParamName);
+    };
     /**
      * 准备列配置
      * @private
      */
-    var _preRenderColumnOpt = function () {
+    var _preRenderTableColumnOpt = function () {
         var g = this, p = this.options;
         g._applyColumns = [];
-        g._showColumnLength =_calcApplyColumn.call(g, p.columns);
-        for (var i = 0; i < g._applyColumns.length; i++) {
-            //p.columns[i] = $.extend({}, _defaultColumnOpt, p.columns[i] || {});
-            if (g._applyColumns[i].hide) {
-                g._showColumnLength--;
-            }
-        }
+        g._applyColumsDepth = 0;
+        g._showColumnLength = _calcApplyColumn.call(g, p.columns, 1);
         //
         if (p.showCheckbox) {
             g._showColumnLength++;
@@ -1396,32 +1455,157 @@ window.console = window.console || (function () {
         if (p.rowDetail) {
             g._showColumnLength++;
         }
+        //
 
+        if (g._applyColumsDepth > 1) {
+            _calcColAndRowSpan.call(g, g._applyColumns);
+        }
+    };
+    var _preRenderFlowColumnOpt = function () {
+        var g = this, p = this.options;
+        g._applyColumns = [];
+        g._applyColumsDepth = 0;
+        // g._showColumnLength = _calcApplyColumn.call(g, p.columns, 1);
+        //
+        var _flowItemRegex = /\{\#\s*([\s\S]+?)\s*\#\}/gmi;
+        var m;
+        while ((m = _flowItemRegex.exec(p.contentHtml)) !== null) {
+            if (m.index === _flowItemRegex.lastIndex) {
+                _flowItemRegex.lastIndex++;
+            }
+            if (m.length > 1) {
+                var columnItem = BCGrid.extend({}, _defaultColumnOpt);
+                try {
+                    // console.log("{"+BCGrid.trim(m[1])+"}");
+                    var flaStr = "{" + BCGrid.trim(m[1]) + "}";
+                    //    var flagItem ={};
+                    // eval('flagItem='+flaStr);
+                    var flagItem = (new Function("", "return " + flaStr + ";"))();
+                    columnItem = BCGrid.extend(columnItem, flagItem);
+                    columnItem = BCGrid.extend(columnItem, {
+                        id: '',
+                        hide: false,
+                        width: null,
+                        align: null,
+                        vAlign: null,
+                        headAlign: null,
+                        headVAlign: null,
+                        enableSort: false,
+                        allowNewline: false,
+                        elOpt: null,
+                        columns: []
+                    });
+                    columnItem.display = m[0];
+                    //
+                    g._applyColumns.push(columnItem);
+                }
+                catch (e) {
+                    console.error(e);
+                }
+            }
+        }
+        _flowItemRegex.lastIndex = 0;
     };
     /**
      * 计算用户设置列数
      * @private
      */
-    var _calcApplyColumn = function (cols) {
+    var _calcApplyColumn = function (cols, depth) {
         var g = this, p = this.options;
         if (BCGrid.isEmptyObject(cols)) {
             return 0;
         }
+        g._applyColumsDepth++;
         var count = 0;
         for (var i in cols) {
-            var item = cols[i];
-            if (BCGrid.isDefined(item.columns) && BCGrid.isArray(item.columns)) {
-                count += _calcApplyColumn.call(g, item.columns);
+            var item = BCGrid.objectDeepCopy(cols[i]);
+            g._applyColumns.push(item);
+            item[p.columnDepthKeyName] = depth;
+            if (BCGrid.isDefined(item.columns) && BCGrid.isArray(item.columns) && item.columns.length > 0) {
+                var childItems = BCGrid.objectDeepCopy(item.columns);
+                delete  item.columns;
+                if (BCGrid.isDefined(item.render)) {
+                    delete item.render;
+                }
+                if (BCGrid.isDefined(item.hide)) {
+                    delete item.hide;
+                }
+                if (BCGrid.isDefined(item.enableSort)) {
+                    delete item.enableSort;
+                }
+                if (BCGrid.isDefined(item.name)) {
+                    delete item.name;
+                }
+                if (BCGrid.isDefined(item.format)) {
+                    delete item.format;
+                }
+                if (BCGrid.isDefined(item.type)) {
+                    delete item.type;
+                }
+                if (BCGrid.isDefined(item.elOpt)) {
+                    delete item.elOpt;
+                }
+                if (BCGrid.isDefined(item.hide)) {
+                    delete item.hide;
+                }
+                var childCount = _calcApplyColumn.call(g, childItems, depth + 1);
+                item[p.columnChildCountKeyName] = childCount;
+                count += childCount;
             } else {
-                count++;
-                var tempItem = $.extend({}, _defaultColumnOpt, item || {});
-                delete tempItem.columns;
-                g._applyColumns.push(tempItem);
+                item[p.columnChildCountKeyName] = 0;
+                //兼容下undefined
+                if (item.hide) {
+                } else {
+                    count++;
+                }
+                //var tempItem = $.extend({}, _defaultColumnOpt, item || {});
+                //delete tempItem.columns;
+                //  g._applyColumns.push(tempItem);
             }
         }
         return count;
     };
-
+    /**
+     * 计算row 和 col span
+     * @param cols
+     * @private
+     */
+    var _calcColAndRowSpan = function (cols) {
+        var g = this, p = this.options;
+        for (var id in cols) {
+            var item = cols[id];
+            if (item[p.columnChildCountKeyName] > 1) {
+                item[p.columnColSpanKeyName] = item[p.columnChildCountKeyName];
+            }
+            if (item[p.columnChildCountKeyName] == 0 && item[p.columnDepthKeyName] != g._applyColumsDepth) {
+                item[p.columnRowSpanKeyName] = g._applyColumsDepth - item[p.columnDepthKeyName] + 1;
+            }
+        }
+    };
+    /**
+     * 根据dep 获取columns
+     * @param depth
+     * @returns {Array}
+     * @private
+     */
+    var _getColumns = function (depth) {
+        var g = this, p = this.options;
+        var columns = [];
+        for (var id in g._applyColumns) {
+            var item = g._applyColumns[id];
+            if (BCGrid.isDefined(depth)) {
+                if (item[p.columnDepthKeyName] == depth) {
+                    columns.push(item);
+                }
+            }
+            else {
+                if (item[p.columnChildCountKeyName] == 0) {
+                    columns.push(item);
+                }
+            }
+        }
+        return columns;
+    };
     //head
     var _setHead = function () {
         var g = this, p = this.options;
@@ -1433,32 +1617,42 @@ window.console = window.console || (function () {
             headAttr.push('</tr>');
         }
         if (p.showHead) {
-            headAttr.push('<tr role="row">');
-            if (p.rowDetail) {
-                headAttr.push('<th class="center col-ctrl"></th>');
-            }
-            if (p.showCheckbox) {
-                headAttr.push('<th class="center col-ctrl"> <label><input type="checkbox" id="' + g.ID + '_checkbox_all" tag="bcgrid_checkbox"/><span class="lbl"></span></label></th>');
-            }
-            if (p.showSerialNum) {
-                //width
-                var serialNumStyle = 'class="center';
-                if (!BCGrid.isEmptyObject(p.serialNumWidth)) {
-                    if (!isNaN(p.serialNumWidth)) {
-                        serialNumStyle = serialNumStyle + ' width-' + p.serialNumWidth + '"';
+            for (var i = 0; i < g._applyColumsDepth; i++) {
+                var columns = _getColumns.call(g, i + 1);
+                headAttr.push('<tr role="row">');
+                //第一行
+                if (i == 0) {
+                    //复杂列头
+                    var ctrlRowSpan = '';
+                    if (g._applyColumsDepth > 1) {
+                        ctrlRowSpan = ' rowspan="' + (g._applyColumsDepth) + '"';
                     }
-                    else {
+                    if (p.rowDetail) {
+                        headAttr.push('<th class="center col-ctrl"' + ctrlRowSpan + '></th>');
+                    }
+                    if (p.showCheckbox) {
+                        headAttr.push('<th class="center col-ctrl"' + ctrlRowSpan + '><label><input type="checkbox" id="' + g.ID + '_checkbox_all" tag="bcgrid_checkbox"/><span class="lbl"></span></label></th>');
+                    }
+                    if (p.showSerialNum) {
+                        //width
+                        var serialNumStyle = 'class="center';
+                        if (!BCGrid.isEmptyObject(p.serialNumWidth)) {
+                            if (!isNaN(p.serialNumWidth)) {
+                                serialNumStyle = serialNumStyle + ' width-' + p.serialNumWidth + '"';
+                            }
+                            else {
 
-                        serialNumStyle = serialNumStyle + '" width="' + p.serialNumWidth + '"';
+                                serialNumStyle = serialNumStyle + '" width="' + p.serialNumWidth + '"';
+                            }
+                        } else {
+                            serialNumStyle = serialNumStyle + '"';
+                        }
+                        headAttr.push('<th ' + serialNumStyle + ctrlRowSpan + '>' + BCGrid.getLangText(p.lang, "Serial") + '</th>');
                     }
-                } else {
-                    serialNumStyle = serialNumStyle + '"';
                 }
-                headAttr.push('<th ' + serialNumStyle + '>' + BCGrid.getLangText(p.lang, "Serial") + '</th>');
+                headAttr.push(_getHeadColumn.call(g, columns));
+                headAttr.push('</tr>');
             }
-            //标题
-            headAttr.push(_getHeadColumn.call(g));
-            headAttr.push('</tr>');
         }
         headAttr.push('</thead>');
         g.gridHead = $(headAttr.join(''));
@@ -1479,10 +1673,10 @@ window.console = window.console || (function () {
         g.grid.append(g.gridFoot);
     };
     //th
-    var _getHeadColumn = function () {
+    var _getHeadColumn = function (columns) {
         var g = this, p = this.options;
         var headAttr = [];
-        $.each(g._applyColumns, function (index, item) {
+        $.each(columns, function (index, item) {
             var showText = item.display;
             if (BCGrid.isFunction(showText)) {
                 showText = showText.call(g, item, index);
@@ -1490,9 +1684,16 @@ window.console = window.console || (function () {
                     showText = "";
                 }
             }
-            var $th = $('<th data-col="' + item.name + '" data-columnindex="' + index + '"></th>');
+            var $th = $('<th data-columnindex="' + index + '"></th>');
+            if (BCGrid.isDefined(item.name)) {
+                $th.attr("data-col", item.name);
+                // data-col="' + item.name + '"
+            }
             if (BCGrid.isDefined(item.headAlign)) {
                 $th.addClass(item.headAlign);
+            }
+            if (BCGrid.isDefined(item.headVAlign)) {
+                $th.addClass(item.headVAlign);
             }
             if (!BCGrid.isEmptyObject(item.width)) {
                 if (!isNaN(item.width)) {
@@ -1512,6 +1713,13 @@ window.console = window.console || (function () {
                 var $sortEl = $('<span class="sort"><i class="asc"></i><i class="desc"></i></span>');
                 $th.append($sortEl);
             }
+            //rowspan
+            if (BCGrid.isDefined(item[p.columnRowSpanKeyName]) && item[p.columnRowSpanKeyName] > 0) {
+                $th.attr("rowspan", item[p.columnRowSpanKeyName]);
+            }
+            if (BCGrid.isDefined(item[p.columnColSpanKeyName]) && item[p.columnColSpanKeyName] > 0) {
+                $th.attr("colspan", item[p.columnColSpanKeyName]);
+            }
             headAttr.push($th.prop('outerHTML'));
         });
         return headAttr.join("");
@@ -1519,14 +1727,24 @@ window.console = window.console || (function () {
     var _setGridContent = function () {
         this.gridContent = $('<tbody></tbody>');
         this.grid.append(this.gridContent);
+
     };
     var _displayData = function (data) {
-
         var g = this, p = g.options;
         g._localCurrentTempData = [];
         data = data || g.getData();
-        g.gridContent.empty();
         g._rowIndex = 0;
+        if (p.model == "flow") {
+            _displayFlowData.call(g,data);
+
+        } else {
+            _displayTableData.call(g, data);
+        }
+
+
+    };
+    var _displayTableData = function (data) {
+        var g = this, p = g.options;
         var tempData = BCGrid.objectDeepCopy(data);
         //tree
         if (p.tree) {
@@ -1536,7 +1754,8 @@ window.console = window.console || (function () {
             //rowspan
             tempData = BCGrid.arraySortOnGroup(tempData, p.rowSpanKeys);
         }
-        g.gridContent.html(_displayListData.call(g, tempData, 0));
+        g.gridContent.empty();
+        g.gridContent.html(_displayTableListData.call(g, tempData, 0));
         if (tempData.length == 0) {
             $('input:checkbox[tag="bcgrid_checkbox"]', g.gridHead).attr("disabled", "disabled");
 
@@ -1547,7 +1766,24 @@ window.console = window.console || (function () {
         _setData.call(g, g._localCurrentTempData);
         _bindEvent.call(g);
     };
-    var _displayListData = function (data, depth, parentRowIndex) {
+    var _displayFlowData = function (data) {
+        var g = this, p = g.options;
+        var tempData = BCGrid.objectDeepCopy(data);
+        //tree
+        if (p.tree) {
+            tempData = BCGrid.arrayToTree(tempData, p.tree.key, p.tree.parentKey, g._treeChildKey);
+        }
+        else if (!BCGrid.isEmptyObject(p.rowSpanKeys)) {
+            //rowspan
+            tempData = BCGrid.arraySortOnGroup(tempData, p.rowSpanKeys);
+        }
+        g.gridWrap.empty();
+        g.gridWrap.html(_displayFlowListData.call(g, tempData, 0));
+        //
+        _setData.call(g, g._localCurrentTempData);
+        _bindEvent.call(g);
+    };
+    var _displayTableListData = function (data, depth, parentRowIndex) {
         var g = this, p = this.options;
         var trArr = [];
         if (BCGrid.isUnDefined(depth)) depth = 0;
@@ -1591,7 +1827,9 @@ window.console = window.console || (function () {
                 trArr.push('<tr' + style + ' role="row" data-rowindex="' + g._rowIndex + '"' + appendAttr + '>');
                 trArr.push(_preRenderColumn.call(g, showDetail));
                 $.each(g._applyColumns, function (index, item) {
-                    trArr.push(_renderColumnData.call(g, item, rowItem, index, g._rowIndex, depth, hasChild));
+                    if (item[p.columnChildCountKeyName] == 0) {
+                        trArr.push(_renderColumnData.call(g, item, rowItem, index, g._rowIndex, depth, hasChild));
+                    }
                 });
                 trArr.push('</tr>');
                 //detail
@@ -1603,11 +1841,31 @@ window.console = window.console || (function () {
                 if (p.tree && hasChild) {
                     //
                     delete  g._localCurrentTempData[g._localCurrentTempData.length - 1][g._treeChildKey];
-                    trArr.push(_displayListData.call(g, subData, depth + 1, g._rowIndex));
+                    trArr.push(_displayTableListData.call(g, subData, depth + 1, g._rowIndex));
                     delete rowItem[g._treeChildKey];
                 }
 
 
+            });
+        }
+        return trArr.join('');
+    };
+    var _displayFlowListData = function (data) {
+        var g = this, p = this.options;
+        var trArr = [];
+        if (data.length == 0) {
+            trArr.push(p.noDataHtml);
+        }
+        else {
+            $.each(data, function (index, rowItem) {
+                g._localCurrentTempData.push(rowItem);
+                var templateHtml = p.contentHtml + "";
+                trArr.push(_renderFlowItemData.call(g,rowItem, g._rowIndex, templateHtml));
+
+              //  trArr.push(templateHtml);
+
+                //tree
+                g._rowIndex++;
             });
         }
         return trArr.join('');
@@ -1795,6 +2053,7 @@ window.console = window.console || (function () {
                         opt.align = "center";
                     }
                     break;
+                case 'num':
                 case 'serial':
                     var serial = "";
                     if (p.enablePager) {
@@ -1867,6 +2126,82 @@ window.console = window.console || (function () {
             }
         }
         return $ret.prop('outerHTML');
+    };
+
+    /**
+     *  流元素数据
+     * @param data
+     * @param rowIndex
+     * @param templateHtml
+     * @returns {*}
+     * @private
+     */
+    var _renderFlowItemData = function (data, rowIndex, templateHtml) {
+        var g = this, p = this.options;
+        $.each(g._applyColumns, function (index, item) {
+
+            if(templateHtml.indexOf(item.display) > -1) {
+                var opt = item;
+                var dataRes = '';
+                if (BCGrid.isString(opt.render)) {
+                    eval("opt.render=" + opt.render);
+                }
+                if (BCGrid.isFunction(opt.render)) {
+                    dataRes = opt.render.call(g, data, g._rowIndex);
+                    if (BCGrid.isObject(dataRes)) {
+                        if (BCGrid.isJqueryObject(dataRes)) {
+                            dataRes = dataRes[0].outerHTML;
+                        }
+                        else {
+                            dataRes = dataRes.outerHTML;
+                        }
+                    }
+                    if (!BCGrid.isDefined(dataRes)) {
+                        dataRes = "";
+                    }
+                }
+                else {
+                    switch (opt.type) {
+                        case 'dateTime':
+                        case 'date':
+                            dataRes = _formatDate.call(g, data[opt.name], opt.format);
+                            break;
+                        case 'num':
+                        case 'serial':
+                            var serial = "";
+                            if (p.enablePager) {
+                                if ((p.pageSize + '').toLowerCase() == 'all') {
+                                    serial = (g._rowIndex + 1);
+                                }
+                                else {
+                                    serial = (g._rowIndex + 1) + (p.page - 1) * p.pageSize;
+                                }
+                            }
+                            else {
+                                serial = (g._rowIndex + 1);
+                            }
+                            dataRes = serial;
+                            break;
+                        default:
+                            var val = BCGrid.isDefined(data[opt.name]) ? data[opt.name] + '' : '';
+                            if (opt.maxLength && BCGrid.isNumber(opt.maxLength)) {
+                                if (val.length > opt.maxLength) {
+                                    val = val.substr(0, opt.maxLength) + '...';
+                                }
+                            }
+                            dataRes = _formatText.call(this, val, opt.format);
+                            break;
+                    }
+                }
+                dataRes += "";
+                templateHtml = templateHtml.replace(opt.display,dataRes);
+            }
+           /* else{
+                console.log(item.display,templateHtml);
+            }*/
+
+        });
+       return templateHtml;
     };
     /**
      * 子表格
@@ -2072,144 +2407,146 @@ window.console = window.console || (function () {
     };
     var _bindEvent = function () {
         var g = this, p = this.options;
-        // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
-        var rowsData = g.getData();
-        //全选
-        $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).unbind();
-        $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).on('click', function (e) {
-            var isChecked = false;
-            if ($(this).is(':checked')) {
-                isChecked = true;
-                $(":checkbox[tag='bcgrid_checkbox']", g.gridContent).prop('checked', true);
-            }
-            else {
-                isChecked = false;
-                $(":checkbox[tag='bcgrid_checkbox']", g.gridContent).prop('checked', false);
-            }
-            if (p.onCheckAllClick && BCGrid.isFunction(p.onCheckAllClick)) {
-                p.onCheckAllClick.call(g, isChecked);
-            }
-        });
-        //排序
-        $('th[data-col]', g.gridHead).unbind();
-        $('th[data-col]', g.gridHead).on('click', function () {
-            var self = $(this);
-            var columnIndex = parseInt(self.data("columnindex"));
-            if (g._applyColumns[columnIndex].enableSort) {
-                var sortSpan = $("span.sort", self);
-                var name = self.data('col') || '';
-                var order = sortSpan.attr('order') || 'asc';
-                if (BCGrid.isDefined(name)) {
-                    //
-                    $('span.sort', g.gridHead).removeAttr("order");
-                    if (order == 'asc') {
-                        sortSpan.attr('order', 'desc');
-                    } else {
-                        sortSpan.attr('order', 'asc');
+        if(p.model != "flow") {
+            // var rowsData = p.dataSource == 'local' ? _localCurrentTempData : p.data[p.rows];
+            var rowsData = g.getData();
+            //全选
+            $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).unbind();
+            $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridHead).on('click', function (e) {
+                var isChecked = false;
+                if ($(this).is(':checked')) {
+                    isChecked = true;
+                    $(":checkbox[tag='bcgrid_checkbox']", g.gridContent).prop('checked', true);
+                }
+                else {
+                    isChecked = false;
+                    $(":checkbox[tag='bcgrid_checkbox']", g.gridContent).prop('checked', false);
+                }
+                if (p.onCheckAllClick && BCGrid.isFunction(p.onCheckAllClick)) {
+                    p.onCheckAllClick.call(g, isChecked);
+                }
+            });
+            //排序
+            $('th[data-col]', g.gridHead).unbind();
+            $('th[data-col]', g.gridHead).on('click', function () {
+                var self = $(this);
+                //   var columnIndex = parseInt(self.data("columnindex"));
+                if ($("span.sort", self).length > 0) {
+                    var sortSpan = $("span.sort", self);
+                    var name = self.data('col') || '';
+                    var order = sortSpan.attr('order') || 'asc';
+                    if (BCGrid.isDefined(name)) {
+                        //
+                        $('span.sort', g.gridHead).removeAttr("order");
+                        if (order == 'asc') {
+                            sortSpan.attr('order', 'desc');
+                        } else {
+                            sortSpan.attr('order', 'asc');
+                        }
+                        p.sortName = name;
+                        p.sortOrder = order;
+                        g.loadData();
                     }
-                    p.sortName = name;
-                    p.sortOrder = order;
-                    g.loadData();
-                }
 
-            }
-        });
-        //checkbox
-        $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridContent).unbind();
-        $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridContent).on('click', function (e) {
-            var isChecked = false, self = $(this);
-            var tr = self.closest('tr');
-            if (self.is(':checked')) {
-                isChecked = true;
-                tr.addClass("active");
-            }
-            else {
-                tr.removeClass("active");
-            }
-            var rowIndex = parseInt(tr.data('rowindex'));
-            if (p.onCheckClick && BCGrid.isFunction(p.onCheckClick)) {
-                p.onCheckClick.call(g, rowIndex, isChecked, rowsData[rowIndex]);
-            }
-            //
-            e.stopPropagation();
-        });
-        $('tr[role="row"]:not(.no_data)', g.gridContent).unbind();
-        //行单击
-        $('tr[role="row"]:not(.no_data)', g.gridContent).on("click", function (e) {
-            clearTimeout(_timeFn);
-            var timeSpan = (p.onRowDbClick && BCGrid.isFunction(p.onRowDbClick)) ? 200 : 0;
-            var self = $(this);
-            _timeFn = setTimeout(function () {
-                if (_isEditTarget(e.target)) {
-                    return;
                 }
-                var rowIndex = parseInt(self.data('rowindex'));
-                if (p.enableSelectRow) {
-                    var isSelected = false;
-                    if (self.hasClass("selected")) {
-                        isSelected = false;
-                        self.removeClass("selected");
-                    } else {
-                        isSelected = true;
-                        self.addClass("selected");
-                        if (p.enableMultiSelectRow == false) {
-                            self.siblings().removeClass("selected");
+            });
+            //checkbox
+            $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridContent).unbind();
+            $('input[type="checkbox"][tag="bcgrid_checkbox"]', g.gridContent).on('click', function (e) {
+                var isChecked = false, self = $(this);
+                var tr = self.closest('tr');
+                if (self.is(':checked')) {
+                    isChecked = true;
+                    tr.addClass("active");
+                }
+                else {
+                    tr.removeClass("active");
+                }
+                var rowIndex = parseInt(tr.data('rowindex'));
+                if (p.onCheckClick && BCGrid.isFunction(p.onCheckClick)) {
+                    p.onCheckClick.call(g, rowIndex, isChecked, rowsData[rowIndex]);
+                }
+                //
+                e.stopPropagation();
+            });
+            $('tr[role="row"]:not(.no_data)', g.gridContent).unbind();
+            //行单击
+            $('tr[role="row"]:not(.no_data)', g.gridContent).on("click", function (e) {
+                clearTimeout(_timeFn);
+                var timeSpan = (p.onRowDbClick && BCGrid.isFunction(p.onRowDbClick)) ? 200 : 0;
+                var self = $(this);
+                _timeFn = setTimeout(function () {
+                    if (_isEditTarget(e.target)) {
+                        return;
+                    }
+                    var rowIndex = parseInt(self.data('rowindex'));
+                    if (p.enableSelectRow) {
+                        var isSelected = false;
+                        if (self.hasClass("selected")) {
+                            isSelected = false;
+                            self.removeClass("selected");
+                        } else {
+                            isSelected = true;
+                            self.addClass("selected");
+                            if (p.enableMultiSelectRow == false) {
+                                self.siblings().removeClass("selected");
+                            }
+                        }
+                        if (p.onSelectedRow && isSelected && BCGrid.isFunction(p.onSelectedRow)) {
+                            p.onSelectedRow.call(g, rowIndex, rowsData[rowIndex]);
                         }
                     }
-                    if (p.onSelectedRow && isSelected && BCGrid.isFunction(p.onSelectedRow)) {
-                        p.onSelectedRow.call(g, rowIndex, rowsData[rowIndex]);
+                    if (p.onRowClick && BCGrid.isFunction(p.onRowClick)) {
+                        p.onRowClick.call(g, rowIndex, rowsData[rowIndex]);
                     }
+                }, timeSpan);
+            });
+            //行双击
+            $('tr[role="row"]:not(.no_data)', g.gridContent).on("dblclick", function (e) {
+                if (p.onRowDbClick && BCGrid.isFunction(p.onRowDbClick)) {
+                    clearTimeout(_timeFn);
+                    if (_isEditTarget(e.target)) {
+                        return;
+                    }
+                    var self = $(this);
+                    var rowIndex = parseInt(self.data('rowindex'));
+                    p.onRowDbClick.call(g, rowIndex, rowsData[rowIndex]);
                 }
-                if (p.onRowClick && BCGrid.isFunction(p.onRowClick)) {
-                    p.onRowClick.call(g, rowIndex, rowsData[rowIndex]);
-                }
-            }, timeSpan);
-        });
-        //行双击
-        $('tr[role="row"]:not(.no_data)', g.gridContent).on("dblclick", function (e) {
-            if (p.onRowDbClick && BCGrid.isFunction(p.onRowDbClick)) {
-                clearTimeout(_timeFn);
-                if (_isEditTarget(e.target)) {
-                    return;
-                }
-                var self = $(this);
-                var rowIndex = parseInt(self.data('rowindex'));
-                p.onRowDbClick.call(g, rowIndex, rowsData[rowIndex]);
+            });
+            //detail
+            $('span.row-detail-expander', g.gridContent).unbind();
+            if (p.rowDetail) {
+                $('span.row-detail-expander', g.gridContent).on("click", function (e) {
+                    var self = $(this);
+                    var row = self.closest("tr");
+                    var rowIndex = row.data("rowindex");
+                    var isExpand = _toggleDetail.call(g, row);
+                    if (p.onRowDetailExpandOrCollapse && BCGrid.isFunction(p.onRowDetailExpandOrCollapse)) {
+                        p.onRowDetailExpandOrCollapse.call(g, isExpand, rowIndex, rowsData[rowIndex]);
+                    }
+                    // e.stopPropagation();
+                });
+
             }
-        });
-        //detail
-        $('span.row-detail-expander', g.gridContent).unbind();
-        if (p.rowDetail) {
-            $('span.row-detail-expander', g.gridContent).on("click", function (e) {
-                var self = $(this);
-                var row = self.closest("tr");
-                var rowIndex = row.data("rowindex");
-                var isExpand = _toggleDetail.call(g, row);
-                if (p.onRowDetailExpandOrCollapse && BCGrid.isFunction(p.onRowDetailExpandOrCollapse)) {
-                    p.onRowDetailExpandOrCollapse.call(g, isExpand, rowIndex, rowsData[rowIndex]);
-                }
-                // e.stopPropagation();
-            });
+            //tree
+            $('span.tree-expander', g.gridContent).unbind();
+            if (p.tree) {
+                $('span.tree-expander', g.gridContent).on("click", function (e) {
+                    var self = $(this);
+                    var row = self.closest("tr");
+                    var rowIndex = row.data("rowindex");
+                    var isExpand = _toggleTree.call(g, row);
+                    if (p.onTreeExpandOrCollapse && BCGrid.isFunction(p.onTreeExpandOrCollapse)) {
+                        p.onTreeExpandOrCollapse.call(g, isExpand, rowIndex, rowsData[rowIndex]);
+                    }
+                    //  e.stopPropagation();
+                });
 
+            }
+            //
+
+            _bindDataChangeEvent.call(g);
         }
-        //tree
-        $('span.tree-expander', g.gridContent).unbind();
-        if (p.tree) {
-            $('span.tree-expander', g.gridContent).on("click", function (e) {
-                var self = $(this);
-                var row = self.closest("tr");
-                var rowIndex = row.data("rowindex");
-                var isExpand = _toggleTree.call(g, row);
-                if (p.onTreeExpandOrCollapse && BCGrid.isFunction(p.onTreeExpandOrCollapse)) {
-                    p.onTreeExpandOrCollapse.call(g, isExpand, rowIndex, rowsData[rowIndex]);
-                }
-                //  e.stopPropagation();
-            });
-
-        }
-        //
-
-        _bindDataChangeEvent.call(g);
         _lastHandler.call(g);
 
     };
@@ -2365,7 +2702,9 @@ window.console = window.console || (function () {
      * @private
      */
     var _lastHandler = function () {
-        _colResize.call(this);
+        if(this.options.model != "flow") {
+            _colResize.call(this);
+        }
     };
     /**page**/
     var Pager = function (ele, opt) {

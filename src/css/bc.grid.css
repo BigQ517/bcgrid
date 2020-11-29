@@ -53,12 +53,7 @@
     border-top: 0;
 }
 
-.bc-table > thead > tr > th {
-    vertical-align: middle;
-    border-color: #ddd;
-    font-weight: normal;
-    border-bottom: 2px solid #ddd;
-}
+
 
 .bc-table td, .bc-table th {
     white-space: nowrap;
@@ -88,7 +83,12 @@
     vertical-align: top;
     border-top: 1px solid #ddd;
 }
-
+.bc-table > thead > tr > th {
+    vertical-align: middle;
+    border-color: #ddd;
+    font-weight: normal;
+    border-bottom: 2px solid #ddd;
+}
 .bc-table.th, .bc-table.td, .bc-table.table-bordered {
     border-radius: 0 !important;
 }
@@ -250,6 +250,16 @@
     text-align: right !important;
 }
 
+.bc-table-wrap .top, .bc-page .top, .bc-page.top {
+    vertical-align: top !important;
+}
+
+.bc-table-wrap .middle, .bc-page .middle, .bc-page.middle {
+    vertical-align: middle !important;
+}
+.bc-table-wrap .bottom, .bc-page .bottom, .bc-page.bottom {
+    vertical-align: bottom !important;
+}
 .bc-table td .tree-expander {
     width: 16px;
     display: inline-block;
@@ -776,14 +786,3 @@
     color: #d9d9d9 !important;
 }
 /** Color end**/
-/**v-align**/
-.bc-table-wrap .top {
-    vertical-align: top !important;
-}
-.bc-table-wrap .middle {
-    vertical-align: middle !important;
-}
-.bc-table-wrap .bottom {
-    vertical-align: bottom !important;
-}
-/**v-align end**/

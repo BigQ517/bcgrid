@@ -1,19 +1,20 @@
 BCGrid
 ------------
-A grid plugin for jquery.
+一个基于jquery的表格插件。
 
 
-Flexible, convenient and free!
+灵活、方便，注重对后端开发的友好！
 
 
-Change Log(v1.2.2):
+Change Log(v1.2.3):
 ------------
-* Fixed bug
-* Add getSelectedRows method
-* add column item type "serial"
+* 修复了一些bug
+* 新增复杂表头支持
+* 新增流布局模式(非table列表)
+* 默认语言变为zh
 
 
-How to use:
+如何使用:
 ------------
 ```html
     <link rel="stylesheet" href="../dist/css/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -64,6 +65,7 @@ How to use:
       lang: 'en',
       csrf: '',
       url: '', //ajax url
+      model: 'table',  //模式：表格(table),流布局(flow),
       localData: [],
       autoLoadData: true,
       showLoading: true, //是否显示加载状态提示

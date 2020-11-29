@@ -20,9 +20,13 @@
     </style>
 </head>
 <body>
-<div class="title"><a class="back" href="/">&#60;Back</a><h1>BCGrid-Language</h1></div>
+<div class="title"><a class="back" href="/">&#60;Back</a><h1>BCGrid-多语言</h1></div>
 <div>
     <div id="table"></div>
+    <br/>
+    <br/>
+    <br/>
+    <div id="table1"></div>
 </div>
 <script>
     $(function () {
@@ -51,6 +55,32 @@
             enablePager:true,
             url: 'handler/data.json',
             lang:'zh'
+        });
+        var grid1=BCGrid.create("#table1",{
+            columns: [
+                {id: 'id', name: 'id', display: 'ID', align: 'center', hide: true},
+                {  name: 'name',display: 'name', render: function (item, index) {
+                        return item.name;
+                    }
+                },
+                {
+                    name: 'gender', display: 'gender', render: function (item, index) {
+                        if (item.gender == 1) {
+                            return "男";
+                        }
+                        if (item.gender == 2) {
+                            return "女";
+                        }
+                    }
+                },
+                {name: 'age', display: 'age', format: '{value}s'},
+                {name: 'email', display: 'email'},
+                {name: 'mobile', display: 'mobile'}
+
+            ],
+            enablePager:true,
+            url: 'handler/data.json',
+            lang:'en'
         });
 
         ///
