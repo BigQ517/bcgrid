@@ -138,7 +138,7 @@
     </style>
 </head>
 <body>
-  <div class="title"><a class="back" href="/">&#60;Back</a><h1>BCGrid-Java Server</h1></div>
+  <div class="title"><a class="back" href="javascript:history.go(-1);">&#60;Back</a><h1>BCGrid-Java Server</h1></div>
 <div>
     <form id="form1"><div>姓名：<input name="name" id="name"  value=""/>&nbsp;&nbsp;&nbsp;&nbsp;编号：<input name="num" id="num"  value=""/>&nbsp;&nbsp;<button type="button" id="searchBtn">搜索</button></div></form>
     <div id="dataTable" style="margin-top: 20px"></div>
